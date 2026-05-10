@@ -1,6 +1,6 @@
-import PrimaryButton from '@/Components/PrimaryButton';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import GuestLayout from "@/Layouts/GuestLayout";
+import { Head, Link, useForm } from "@inertiajs/react";
+import { MdMarkEmailUnread } from "react-icons/md";
 
 export default function VerifyEmail({ status }) {
     const { post, processing } = useForm({});
@@ -8,43 +8,62 @@ export default function VerifyEmail({ status }) {
     const submit = (e) => {
         e.preventDefault();
 
-        post(route('verification.send'));
+        post(route("verification.send"));
     };
 
     return (
         <GuestLayout>
-            <Head title="Email Verification" />
+            <Head title="تأكيد البريد الإلكتروني" />
 
-            <div className="mb-4 text-sm text-gray-600">
-                Thanks for signing up! Before getting started, could you verify
-                your email address by clicking on the link we just emailed to
-                you? If you didn't receive the email, we will gladly send you
-                another.
-            </div>
+            <div className="min-h-[420px] flex flex-col justify-center">
 
-            {status === 'verification-link-sent' && (
-                <div className="mb-4 text-sm font-medium text-green-600">
-                    A new verification link has been sent to the email address
-                    you provided during registration.
+            
+                <div className="w-16 h-16 rounded-2xl bg-[var(--primary)]/10 flex items-center justify-center mb-5">
+                    <MdMarkEmailUnread className="w-8 h-8 text-[var(--primary)]" />
                 </div>
-            )}
 
-            <form onSubmit={submit}>
-                <div className="mt-4 flex items-center justify-between">
-                    <PrimaryButton disabled={processing}>
-                        Resend Verification Email
-                    </PrimaryButton>
+          
+                <div className="mb-5">
+                    <h2 className="text-2xl font-bold mb-2">
+                        تأكيد البريد الإلكتروني
+                    </h2>
 
+                    <p className="text-gray-500 text-sm leading-relaxed">
+                        شكرًا لانضمامك إلينا. قبل البدء، يرجى تأكيد
+                        بريدك الإلكتروني عبر الرابط الذي قمنا بإرساله
+                        إليك.
+                    </p>
+                </div>
+
+                {status === "verification-link-sent" && (
+                    <div className="mb-4 text-sm font-medium text-green-600 bg-green-50 border border-green-100 rounded-xl px-4 py-3">
+                        تم إرسال رابط تحقق جديد إلى بريدك الإلكتروني.
+                    </div>
+                )}
+
+            
+                <form onSubmit={submit} className="space-y-4">
+
+                    
+                    <button
+                        disabled={processing}
+                        className="w-full h-12 bg-[var(--primary)] text-white rounded-xl font-bold hover:opacity-90 transition flex items-center justify-center gap-2 shadow-md"
+                    >
+                        إعادة إرسال رابط التحقق
+                        <span>←</span>
+                    </button>
+
+                   
                     <Link
-                        href={route('logout')}
+                        href={route("logout")}
                         method="post"
                         as="button"
-                        className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        className="w-full h-11 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
                     >
-                        Log Out
+                        تسجيل الخروج
                     </Link>
-                </div>
-            </form>
+                </form>
+            </div>
         </GuestLayout>
     );
 }

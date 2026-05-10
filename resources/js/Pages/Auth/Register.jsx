@@ -133,7 +133,7 @@ export default function Register() {
                         </div>
 
                         {errors.password && (
-                            <p className="text-red-500 text-sm">
+                            <p className="text-red-500 text-xs">
                                 {errors.password}
                             </p>
                         )}
@@ -181,7 +181,7 @@ export default function Register() {
                         </div>
 
                         {errors.password_confirmation && (
-                            <p className="text-red-500 text-sm">
+                            <p className="text-red-500 text-xs">
                                 {errors.password_confirmation}
                             </p>
                         )}

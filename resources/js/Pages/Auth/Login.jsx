@@ -86,7 +86,7 @@ export default function Login({ status, canResetPassword }) {
                     </div>
 
                     {errors.password && (
-                        <p className="text-red-500 text-sm">
+                        <p className="text-red-500 text-xs">
                             {errors.password}
                         </p>
                     )}
