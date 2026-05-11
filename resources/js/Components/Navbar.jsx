@@ -148,6 +148,7 @@ function UserIcons({ auth, mobile = false }) {
                             rounded-full
                             flex items-center justify-center
                             animate-floating
+
                         "
                     >
                         0
@@ -161,7 +162,7 @@ function UserIcons({ auth, mobile = false }) {
         <div className="flex items-center gap-5 text-gray-700">
 
             {auth?.user ? (
-                <FiUser size={22} className={iconClass} />
+                <a href="/profile"><FiUser size={22} className={iconClass} /></a>
             ) : (
                 <div className="flex items-center gap-2 text-sm md:text-base font-medium">
                     <a
@@ -211,7 +212,7 @@ function Logo() {
     return (
         <ApplicationLogo
             className="
-                h-12 md:h-14
+                h-16 md:h-20
                 w-auto
                 transition-all duration-300
             "

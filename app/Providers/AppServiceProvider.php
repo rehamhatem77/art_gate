@@ -27,6 +27,10 @@ class AppServiceProvider extends ServiceProvider
             'auth' => fn() => [
                 'user' => Auth::user(),
             ],
+            'flash' => fn() => [
+                'success' => session('success'),
+                'error' => session('error'),
+            ],
         ]);
     }
 }

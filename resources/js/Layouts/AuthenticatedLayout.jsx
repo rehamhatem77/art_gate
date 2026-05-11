@@ -1,176 +1,144 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
-import Dropdown from '@/Components/Dropdown';
-import NavLink from '@/Components/NavLink';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { 
+    FiGrid, FiGift, FiStar, FiTrendingUp, FiMenu, FiLogOut,
+    FiSettings,
+    FiUsers,
+    FiGlobe,
+    FiHome,
+    FiBriefcase
+} from "react-icons/fi";
+import { IoColorPaletteOutline } from "react-icons/io5";
 
-export default function AuthenticatedLayout({ header, children }) {
+import { MdOutlineHotel, MdOutlineCategory } from "react-icons/md";
+import { FaRegBuilding, FaMapLocationDot } from "react-icons/fa6";
+import { FaHandsHelping, FaRegCommentDots } from "react-icons/fa";
+import { LuPackagePlus } from "react-icons/lu";
+import { LuUngroup } from "react-icons/lu";
+import { AiOutlineTags } from "react-icons/ai";
+import { SlSizeFullscreen } from "react-icons/sl";
+import { RxDimensions } from "react-icons/rx";
+import { GoNumber } from "react-icons/go";
+import { TbHomeLink } from "react-icons/tb";
+import { FaMoneyBillTrendUp } from "react-icons/fa6";
+
+
+import { BsStars } from "react-icons/bs";
+import SidebarContent from '@/Components/Sidebar';
+import FlashToast from '@/Components/FlashToast';
+import Header from '@/Components/Header';
+
+export default function AuthenticatedLayout({ children }) {
     const user = usePage().props.auth.user;
+    const { url } = usePage();
 
-    const [showingNavigationDropdown, setShowingNavigationDropdown] =
-        useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(false); 
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(false); 
+
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 1024);
+            if (window.innerWidth > 1024) setSidebarOpen(false);
+        };
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+
+    const dashboardLinks = [
+        { name: 'لوحة التحكم', icon: <FiGrid />, path: '/dashboard' },
+        { name: 'اللوحات', icon: <IoColorPaletteOutline  />, path: '/admin/offers' },
+        { name: 'المجموعات', icon: <LuUngroup />, path: '/admin/special-offers' },
+        { name: 'الأقسام', icon: <AiOutlineTags  />, path: '/admin/features' },
+        { name: 'المقاسات', icon: <SlSizeFullscreen  />, path: '/admin/popular-offers' },
+        { name: 'أنواع الاطار', icon: <MdOutlineCategory />, path: '/admin/governorates' },
+        { name: 'شكل اللوحة', icon: <RxDimensions  />, path: '/admin/tour-companies' },
+        { name: 'عدد قطع اللوحة', icon: <GoNumber  />, path: '/admin/hotels' },
+        { name: 'الأماكن ', icon: <TbHomeLink  />, path: '/admin/trip-types' },
+
+        { name: 'الخدمات', icon: <FaHandsHelping />, path: '/admin/services' },
+        // { name: 'الإعدادات', icon: <FiSettings />, path: '/users' },
+        { name: 'الطلبات ', icon: <FaMoneyBillTrendUp   />, path: '/admin/trip-types' },
+      
+    ];
+
+     const sitePages = [
+        { name: 'الصفحة الرئيسية', icon: <FiHome />, path: '/admin/homepage' },
+        { name: 'من نحن', icon: <FiBriefcase />, path: '/admin/about-us' },
+        { name: 'تواصل معنا', icon: <FiGlobe />, path: '/admin/contact-us' },
+        { name: 'رسائل العملاء', icon: <FaRegCommentDots  />, path: '/admin/contact-messages' },
+    ];
+
+ 
+    const renderLinks = (links, expanded) => (
+        links.map(link => {
+            const isActive = url.includes(link.path);
+            return (
+                <Link
+                    key={link.name}
+                    href={link.path}
+                    className={`flex items-center gap-3 px-4 py-2 mx-2 transition
+                        ${isActive
+                            ? ' text-[var(--primary)] border-r-2 border-[var(--primary)] font-bold bg-[var(--bg-light)]'
+                            : 'hover:bg-[var(--hover-accent)]  text-gray-700 transition duration-200 ease-in-out'
+                        }`}
+                >
+                    <span className={`text-lg ${isActive ? 'text-[var(--primary)]' : 'text-[var(--app-primary)]'}`}>{link.icon}</span>
+                    {expanded && link.name}
+                </Link>
+            );
+        })
+    );
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <nav className="border-b border-gray-100 bg-white">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex h-16 justify-between">
-                        <div className="flex">
-                            <div className="flex shrink-0 items-center">
-                                <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
-                                </Link>
-                            </div>
+        <div className="max-h-screen flex bg-gray-100 overflow-hidden " dir="rtl">
 
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink
-                                    href={route('dashboard')}
-                                    active={route().current('dashboard')}
-                                >
-                                    Dashboard
-                                </NavLink>
-                            </div>
-                        </div>
-
-                        <div className="hidden sm:ms-6 sm:flex sm:items-center">
-                            <div className="relative ms-3">
-                                <Dropdown>
-                                    <Dropdown.Trigger>
-                                        <span className="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
-                                            >
-                                                {user.name}
-
-                                                <svg
-                                                    className="-me-0.5 ms-2 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </Dropdown.Trigger>
-
-                                    <Dropdown.Content>
-                                        <Dropdown.Link
-                                            href={route('profile.edit')}
-                                        >
-                                            Profile
-                                        </Dropdown.Link>
-                                        <Dropdown.Link
-                                            href={route('logout')}
-                                            method="post"
-                                            as="button"
-                                        >
-                                            Log Out
-                                        </Dropdown.Link>
-                                    </Dropdown.Content>
-                                </Dropdown>
-                            </div>
-                        </div>
-
-                        <div className="-me-2 flex items-center sm:hidden">
-                            <button
-                                onClick={() =>
-                                    setShowingNavigationDropdown(
-                                        (previousState) => !previousState,
-                                    )
-                                }
-                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
-                            >
-                                <svg
-                                    className="h-6 w-6"
-                                    stroke="currentColor"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        className={
-                                            !showingNavigationDropdown
-                                                ? 'inline-flex'
-                                                : 'hidden'
-                                        }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        className={
-                                            showingNavigationDropdown
-                                                ? 'inline-flex'
-                                                : 'hidden'
-                                        }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
+            {sidebarOpen && isMobile && (
                 <div
-                    className={
-                        (showingNavigationDropdown ? 'block' : 'hidden') +
-                        ' sm:hidden'
-                    }
-                >
-                    <div className="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink
-                            href={route('dashboard')}
-                            active={route().current('dashboard')}
-                        >
-                            Dashboard
-                        </ResponsiveNavLink>
-                    </div>
-
-                    <div className="border-t border-gray-200 pb-1 pt-4">
-                        <div className="px-4">
-                            <div className="text-base font-medium text-gray-800">
-                                {user.name}
-                            </div>
-                            <div className="text-sm font-medium text-gray-500">
-                                {user.email}
-                            </div>
-                        </div>
-
-                        <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')}>
-                                Profile
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                method="post"
-                                href={route('logout')}
-                                as="button"
-                            >
-                                Log Out
-                            </ResponsiveNavLink>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-
-            {header && (
-                <header className="bg-white shadow">
-                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                        {header}
-                    </div>
-                </header>
+                    className="fixed inset-0 z-30 bg-black/30"
+                    onClick={() => setSidebarOpen(false)}
+                />
             )}
 
-            <main>{children}</main>
+
+            <aside
+                className={`fixed lg:relative z-40 bg-[var(--bg-lighter)] border-r flex-shrink-0 transition-all duration-300
+                    ${isMobile
+                        ? sidebarOpen ? 'w-60' : 'w-20' 
+                        : sidebarCollapsed ? 'w-20' : 'w-60' 
+                    } h-screen flex flex-col`}
+            >
+                <SidebarContent
+                    user={user}
+                    sidebarOpen={isMobile ? sidebarOpen : !sidebarCollapsed}
+                    setSidebarOpen={setSidebarOpen}
+                    sidebarCollapsed={sidebarCollapsed}
+                    setSidebarCollapsed={setSidebarCollapsed}
+                    renderLinks={renderLinks}
+                    dashboardLinks={dashboardLinks}
+                    sitePages={sitePages}
+                    isMobile={isMobile}
+                />
+            </aside>
+
+            <div className="flex-1 flex flex-col lg:ml-0">
+                <Header
+                    user={user}
+                    sidebarOpen={sidebarOpen}
+                    setSidebarOpen={setSidebarOpen}
+                    isMobile={isMobile}
+                />
+
+                <main className="p-6 flex-1 bg-gray-50 scrollbar-hide h-[calc(100vh-80px)] overflow-y-auto  ">
+                     <FlashToast />
+                    {children}
+                </main>
+            </div>
         </div>
     );
 }
+
+
