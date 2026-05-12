@@ -19,7 +19,7 @@ export default function SidebarContent({
             <div className="flex items-center justify-between h-20 border-b px-3">
                 {sidebarOpen && (
                     <div className="flex items-center gap-3">
-                        <ApplicationLogo className="h-16 w-auto text-[var(--primary)]" />
+                        <ApplicationLogo className="px-5 h-16 w-auto text-[var(--primary)]" />
                     </div>
                 )}
 
@@ -34,7 +34,7 @@ export default function SidebarContent({
                 </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-2 py-4 space-y-4  no-scrollbar ">
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4  no-scrollbar ">
                 <div className="space-y-1">{renderLinks(dashboardLinks, sidebarOpen)}</div>
                 <div>
                     {sidebarOpen && <p className="px-4 mb-2 text-xs font-bold ">الصفحات الثابتة</p>}

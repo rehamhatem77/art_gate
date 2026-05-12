@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\ProfileController;
@@ -24,8 +25,10 @@ Route::get('/', [HomePageController::class, 'index'])->name('home');
 
 Route::middleware('auth')->group(function () {
 Route::middleware('admin.only')->group(function () {
+Route::prefix('admin')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
+    Route::resource('categories', CategoriesController::class);
+});
     //  Route::get('/users', [DashboardController::class, 'users'])->name('users.index');
     // Route::post('/users', [DashboardController::class, 'addUserAdmin'])->name('users.store');
     // Route::put('/users/{user}', [DashboardController::class, 'updateUser'])->name('users.update');

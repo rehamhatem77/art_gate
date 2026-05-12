@@ -1,13 +1,18 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import { Link, usePage } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
-import { 
-    FiGrid, FiGift, FiStar, FiTrendingUp, FiMenu, FiLogOut,
+import ApplicationLogo from "@/Components/ApplicationLogo";
+import { Link, usePage } from "@inertiajs/react";
+import { useState, useEffect } from "react";
+import {
+    FiGrid,
+    FiGift,
+    FiStar,
+    FiTrendingUp,
+    FiMenu,
+    FiLogOut,
     FiSettings,
     FiUsers,
     FiGlobe,
     FiHome,
-    FiBriefcase
+    FiBriefcase,
 } from "react-icons/fi";
 import { IoColorPaletteOutline } from "react-icons/io5";
 
@@ -23,18 +28,17 @@ import { GoNumber } from "react-icons/go";
 import { TbHomeLink } from "react-icons/tb";
 import { FaMoneyBillTrendUp } from "react-icons/fa6";
 
-
 import { BsStars } from "react-icons/bs";
-import SidebarContent from '@/Components/Sidebar';
-import FlashToast from '@/Components/FlashToast';
-import Header from '@/Components/Header';
+import SidebarContent from "@/Components/Sidebar";
+import FlashToast from "@/Components/FlashToast";
+import Header from "@/Components/Header";
 
 export default function AuthenticatedLayout({ children }) {
     const user = usePage().props.auth.user;
     const { url } = usePage();
 
-    const [sidebarOpen, setSidebarOpen] = useState(false); 
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(false); 
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
     const [isMobile, setIsMobile] = useState(false);
     useEffect(() => {
@@ -43,73 +47,115 @@ export default function AuthenticatedLayout({ children }) {
             if (window.innerWidth > 1024) setSidebarOpen(false);
         };
         handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-
     const dashboardLinks = [
-        { name: 'لوحة التحكم', icon: <FiGrid />, path: '/dashboard' },
-        { name: 'اللوحات', icon: <IoColorPaletteOutline  />, path: '/admin/offers' },
-        { name: 'المجموعات', icon: <LuUngroup />, path: '/admin/special-offers' },
-        { name: 'الأقسام', icon: <AiOutlineTags  />, path: '/admin/features' },
-        { name: 'المقاسات', icon: <SlSizeFullscreen  />, path: '/admin/popular-offers' },
-        { name: 'أنواع الاطار', icon: <MdOutlineCategory />, path: '/admin/governorates' },
-        { name: 'شكل اللوحة', icon: <RxDimensions  />, path: '/admin/tour-companies' },
-        { name: 'عدد قطع اللوحة', icon: <GoNumber  />, path: '/admin/hotels' },
-        { name: 'الأماكن ', icon: <TbHomeLink  />, path: '/admin/trip-types' },
+        { name: "لوحة التحكم", icon: <FiGrid />, path: "/admin/dashboard" },
+        {
+            name: "اللوحات",
+            icon: <IoColorPaletteOutline />,
+            path: "/admin/offers",
+        },
+        { name: "المجموعات", icon: <LuUngroup />, path: "/admin/categories" },
+        { name: "التصنيفات", icon: <AiOutlineTags />, path: "/admin/features" },
+        {
+            name: "المقاسات",
+            icon: <SlSizeFullscreen />,
+            path: "/admin/popular-offers",
+        },
+        {
+            name: "أنواع الاطار",
+            icon: <MdOutlineCategory />,
+            path: "/admin/governorates",
+        },
+        {
+            name: "شكل اللوحة",
+            icon: <RxDimensions />,
+            path: "/admin/tour-companies",
+        },
+        { name: "عدد قطع اللوحة", icon: <GoNumber />, path: "/admin/hotels" },
+        { name: "الأماكن ", icon: <TbHomeLink />, path: "/admin/trip-types" },
 
-        { name: 'الخدمات', icon: <FaHandsHelping />, path: '/admin/services' },
+        { name: "الخدمات", icon: <FaHandsHelping />, path: "/admin/services" },
         // { name: 'الإعدادات', icon: <FiSettings />, path: '/users' },
-        { name: 'الطلبات ', icon: <FaMoneyBillTrendUp   />, path: '/admin/trip-types' },
-      
+        {
+            name: "الطلبات ",
+            icon: <FaMoneyBillTrendUp />,
+            path: "/admin/trip-types",
+        },
     ];
 
-     const sitePages = [
-        { name: 'الصفحة الرئيسية', icon: <FiHome />, path: '/admin/homepage' },
-        { name: 'من نحن', icon: <FiBriefcase />, path: '/admin/about-us' },
-        { name: 'تواصل معنا', icon: <FiGlobe />, path: '/admin/contact-us' },
-        { name: 'رسائل العملاء', icon: <FaRegCommentDots  />, path: '/admin/contact-messages' },
+    const sitePages = [
+        { name: "الصفحة الرئيسية", icon: <FiHome />, path: "/admin/homepage" },
+        { name: "من نحن", icon: <FiBriefcase />, path: "/admin/about-us" },
+        { name: "تواصل معنا", icon: <FiGlobe />, path: "/admin/contact-us" },
+        {
+            name: "رسائل العملاء",
+            icon: <FaRegCommentDots />,
+            path: "/admin/contact-messages",
+        },
     ];
 
- 
-    const renderLinks = (links, expanded) => (
-        links.map(link => {
+    const renderLinks = (links, expanded) =>
+        links.map((link) => {
             const isActive = url.includes(link.path);
             return (
                 <Link
                     key={link.name}
                     href={link.path}
                     className={`flex items-center gap-3 px-4 py-2 mx-2 transition
-                        ${isActive
-                            ? ' text-[var(--primary)] border-r-2 border-[var(--primary)] font-bold bg-[var(--bg-light)]'
-                            : 'hover:bg-[var(--hover-accent)]  text-gray-700 transition duration-200 ease-in-out'
+                        ${
+                            isActive
+                                ? " text-[var(--primary)] border-r-2 border-[var(--primary)] font-bold bg-[var(--bg-light)]"
+                                : "hover:bg-[var(--hover-accent)]  text-gray-700 transition duration-200 ease-in-out"
                         }`}
                 >
-                    <span className={`text-lg ${isActive ? 'text-[var(--primary)]' : 'text-[var(--app-primary)]'}`}>{link.icon}</span>
+                    <span
+                        className={`text-lg ${isActive ? "text-[var(--primary)]" : "text-[var(--app-primary)]"}`}
+                    >
+                        {link.icon}
+                    </span>
                     {expanded && link.name}
                 </Link>
             );
-        })
-    );
+        });
 
     return (
-        <div className="max-h-screen flex bg-gray-100 overflow-hidden " dir="rtl">
-
-            {sidebarOpen && isMobile && (
+        <div
+            className="h-screen flex bg-[var(--bg-light)] overflow-hidden"
+            dir="rtl"
+        >
+            {/* {sidebarOpen && isMobile && (
                 <div
                     className="fixed inset-0 z-30 bg-black/30"
                     onClick={() => setSidebarOpen(false)}
                 />
-            )}
-
+            )} */}
 
             <aside
-                className={`fixed lg:relative z-40 bg-[var(--bg-lighter)] border-r flex-shrink-0 transition-all duration-300
-                    ${isMobile
-                        ? sidebarOpen ? 'w-60' : 'w-20' 
-                        : sidebarCollapsed ? 'w-20' : 'w-60' 
-                    } h-screen flex flex-col`}
+                className={`
+        bg-[var(--bg-lighter)]
+        border-l
+        flex-shrink-0
+        transition-all duration-300 ease-in-out
+        overflow-hidden
+
+
+        ${
+            isMobile
+                ? sidebarOpen
+                    ? "w-64"
+                    : "w-20"
+                : sidebarCollapsed
+                  ? "w-20"
+                  : "w-64"
+        }
+
+        h-screen
+        flex flex-col
+    `}
             >
                 <SidebarContent
                     user={user}
@@ -132,13 +178,12 @@ export default function AuthenticatedLayout({ children }) {
                     isMobile={isMobile}
                 />
 
-                <main className="p-6 flex-1 bg-gray-50 scrollbar-hide h-[calc(100vh-80px)] overflow-y-auto  ">
-                     <FlashToast />
+                <main className="flex-1 overflow-y-auto p-4 md:p-6">
+                    {" "}
+                    <FlashToast />
                     {children}
                 </main>
             </div>
         </div>
     );
 }
-
-

@@ -50,7 +50,7 @@ class RegisteredUserController extends Controller
 
 
          return $user->role === 'admin'
-        ? redirect()->route('dashboard')
+        ? redirect()->route('/admin/dashboard')
         : redirect()->route('home');
     }
 }
