@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\FrameTypesController;
+use App\Http\Controllers\Admin\SizesController;
 use App\Http\Controllers\Admin\TagsController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\ProfileController;
@@ -45,6 +47,26 @@ Route::get('/tags', [TagsController::class, 'index'])
         ->name('tags.update');
     Route::delete('/tags/{tag}', [TagsController::class, 'destroy'])
         ->name('tags.destroy');
+
+
+Route::get('/sizes', [SizesController::class, 'index'])
+        ->name('sizes.index');
+    Route::post('/sizes', [SizesController::class, 'store'])
+        ->name('sizes.store');
+    Route::put('/sizes/{size}', [SizesController::class, 'update'])
+        ->name('sizes.update');
+    Route::delete('/sizes/{size}', [SizesController::class, 'destroy'])
+        ->name('sizes.destroy');
+
+
+Route::get('/frame-types', [FrameTypesController::class, 'index'])
+        ->name('frame-types.index');
+    Route::post('/frame-types', [FrameTypesController::class, 'store'])
+        ->name('frame-types.store');
+    Route::put('/frame-types/{frameType}', [FrameTypesController::class, 'update'])
+        ->name('frame-types.update');
+    Route::delete('/frame-types/{frameType}', [FrameTypesController::class, 'destroy'])
+        ->name('frame-types.destroy');
 
 });
     //  Route::get('/users', [DashboardController::class, 'users'])->name('users.index');

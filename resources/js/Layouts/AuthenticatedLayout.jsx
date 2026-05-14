@@ -63,12 +63,12 @@ export default function AuthenticatedLayout({ children }) {
         {
             name: "المقاسات",
             icon: <SlSizeFullscreen />,
-            path: "/admin/popular-offers",
+            path: "/admin/sizes",
         },
         {
             name: "أنواع الاطار",
             icon: <MdOutlineCategory />,
-            path: "/admin/governorates",
+            path: "/admin/frame-types",
         },
         {
             name: "شكل اللوحة",
