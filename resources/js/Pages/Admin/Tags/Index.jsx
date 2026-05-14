@@ -1,135 +1,123 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router, useForm } from "@inertiajs/react";
 import { useMemo, useState } from "react";
-import { getImage } from "@/Utils/GetImage";
+
 import Modal from "@/Components/Modal";
-import CategoryCard from "./Components/CategoryCard";
 
 import {
     FiPlus,
     FiSearch,
     FiChevronLeft,
     FiAlertTriangle,
-    FiUploadCloud,
     FiX,
+    FiTag,
+    FiEdit2,
+    FiTrash2,
 } from "react-icons/fi";
 
-import { LuUngroup } from "react-icons/lu";
-
-export default function Index({ categories }) {
+export default function Index({ tags }) {
     const [search, setSearch] = useState("");
-
     const [showModal, setShowModal] = useState(false);
-
     const [deleteModal, setDeleteModal] = useState(false);
-
-    const [selectedCategory, setSelectedCategory] = useState(null);
-const [frontendErrors, setFrontendErrors] = useState({});
-
+    const [selectedTag, setSelectedTag] = useState(null);
+    const [frontendErrors, setFrontendErrors] = useState({});
 
     const { data, setData, post, processing, reset, errors } = useForm({
         name: "",
-        image: null,
         _method: "POST",
     });
 
-const validate = () => {
-    const errors = {};
+    // validation
+    const validate = () => {
+        const e = {};
 
-    if (!data.name || data.name.trim() === "") {
-        errors.name = "اسم المجموعة مطلوب";
-    }
+        if (!data.name?.trim()) {
+            e.name = "اسم التصنيف مطلوب";
+        }
 
-    // الصورة مطلوبة فقط في حالة الإنشاء
-    if (!selectedCategory && !data.image) {
-        errors.image = "صورة المجموعة مطلوبة";
-    }
+        setFrontendErrors(e);
 
-    setFrontendErrors(errors);
+        return Object.keys(e).length === 0;
+    };
 
-    return Object.keys(errors).length === 0;
-};
-
-    const filteredCategories = useMemo(() => {
-        return categories.filter((category) =>
-            category.name.toLowerCase().includes(search.toLowerCase()),
+    // filter tags
+    const filteredTags = useMemo(() => {
+        return tags.filter((tag) =>
+            tag.name.toLowerCase().includes(search.toLowerCase()),
         );
-    }, [categories, search]);
+    }, [tags, search]);
 
+    // open create
     const openCreate = () => {
         reset();
 
-        setSelectedCategory(null);
+        setSelectedTag(null);
 
         setData({
             name: "",
-            image: null,
             _method: "POST",
         });
 
+        setFrontendErrors({});
         setShowModal(true);
     };
 
-    const openEdit = (category) => {
-        setSelectedCategory(category);
+    // open edit
+    const openEdit = (tag) => {
+        setSelectedTag(tag);
 
         setData({
-            name: category.name,
-            image: null,
+            name: tag.name,
             _method: "PUT",
         });
 
+        setFrontendErrors({});
         setShowModal(true);
     };
 
+    // submit
     const submit = (e) => {
-    e.preventDefault();
+        e.preventDefault();
 
-    if (!validate()) return;
+        if (!validate()) return;
 
-    if (selectedCategory) {
-        post(route("categories.update", selectedCategory.id), {
-            forceFormData: true,
-            onSuccess: () => {
-                setShowModal(false);
-                reset();
-                setFrontendErrors({});
-            },
-        });
-    } else {
-        post(route("categories.store"), {
-            forceFormData: true,
-            onSuccess: () => {
-                setShowModal(false);
-                reset();
-                setFrontendErrors({});
-            },
-        });
-    }
-};
+        if (selectedTag) {
+            post(route("tags.update", selectedTag.id), {
+                onSuccess: () => {
+                    setShowModal(false);
+                    reset();
+                },
+            });
+        } else {
+            post(route("tags.store"), {
+                onSuccess: () => {
+                    setShowModal(false);
+                    reset();
+                },
+            });
+        }
+    };
 
-    const openDelete = (category) => {
-        setSelectedCategory(category);
-
+    // delete
+    const openDelete = (tag) => {
+        setSelectedTag(tag);
         setDeleteModal(true);
     };
 
     const destroy = () => {
-        router.delete(route("categories.destroy", selectedCategory.id), {
+        router.delete(route("tags.destroy", selectedTag.id), {
             onSuccess: () => {
                 setDeleteModal(false);
             },
         });
     };
-    
 
     return (
         <AuthenticatedLayout>
-            <Head title="المجموعات" />
+            <Head title="التصنيفات" />
 
             <main className="space-y-4">
-                {/* Breadcrumb */}
-
+               
                 <div className="flex items-center gap-1 text-sm">
                     <button
                         onClick={() => router.get(route("dashboard"))}
@@ -141,32 +129,31 @@ const validate = () => {
                     <FiChevronLeft />
 
                     <span className="text-[var(--primary)] font-medium">
-                        المجموعات
+                        التصنيفات
                     </span>
                 </div>
 
                 {/* Header */}
-
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
                     <div className="flex items-center gap-4">
                         <div
-                            className="
+                         className="
                                 w-14 h-14
                                 rounded-2xl
                                  bg-[var(--hover-accent)]
                                 flex items-center justify-center
                             "
                         >
-                            <LuUngroup className="text-2xl text-[var(--primary)]" />
+                            <FiTag className="text-2xl text-[var(--primary)]" />
                         </div>
 
                         <div>
                             <h1 className="text-2xl font-bold text-[var(--text-dark)]">
-                                إدارة المجموعات
+                                إدارة التصنيفات
                             </h1>
 
-                            <p className=" text-gray-500 mt-1">
-                                إدارة جميع مجموعات اللوحات
+                            <p className="text-gray-500 mt-1">
+                                إدارة جميع تصنيفات اللوحات
                             </p>
                         </div>
                     </div>
@@ -174,7 +161,7 @@ const validate = () => {
                     <button
                         onClick={openCreate}
                         className="flex items-center justify-center gap-2
-            px-5 py-2 rounded-xl
+                         px-5 py-2 rounded-xl
             bg-[var(--primary)]
             text-white font-medium
             shadow-sm
@@ -182,109 +169,177 @@ const validate = () => {
             transition-all gap-2"
                     >
                         <FiPlus />
-                        إضافة مجموعة
+                        إضافة تصنيف
                     </button>
                 </div>
 
                 {/* Search */}
-
                 <div className="relative">
                     <FiSearch className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" />
 
                     <input
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        placeholder="ابحث باسم المجموعة..."
+                        placeholder="ابحث باسم التصنيف..."
                         className="
-                w-full h-12 rounded-2xl
-                border border-gray-200
-                bg-white
-                pr-12 pl-4
-                text-sm
-                shadow-sm
-border-none 
-                outline-none
-                transition-all
-focus:ring-offset-1
-                focus:ring-1 focus:ring-[var(--primary)]
-                focus:border-[var(--primary)]
-            "
+                            w-full h-12
+                            rounded-2xl
+                            border border-gray-200
+                            bg-white
+                            pr-12 pl-4
+                            text-sm
+                            shadow-sm
+                            outline-none
+                            transition-all
+                            focus:ring-1
+                            focus:ring-[var(--primary)]
+                            focus:border-[var(--primary)]
+                        "
                     />
                 </div>
 
-                {/* Grid */}
-
-                {filteredCategories.length > 0 ? (
+                {filteredTags.length > 0 ? (
                     <div
                         className="
-                            grid
-                            grid-cols-2
-                            sm:grid-cols-3
-                            md:grid-cols-4
-                            xl:grid-cols-5
-                            gap-6
-                        "
+                        flex flex-wrap gap-4
+                        rounded-3xl
+                        bg-white
+                        border border-gray-100
+                        p-6
+                        shadow-sm
+                    "
                     >
-                        {filteredCategories.map((category) => (
-                            <CategoryCard
-                                key={category.id}
-                                category={category}
-                                onEdit={openEdit}
-                                onDelete={openDelete}
-                            />
+                        {filteredTags.map((tag) => (
+                            <div
+                                key={tag.id}
+                                className="
+                                    group
+                                    relative
+                                    flex items-center gap-3
+                                    px-5 py-3
+                                    rounded-2xl
+                                    bg-gray-50
+                                    border border-gray-100
+                                    hover:border-[var(--primary)]/20
+                                    hover:bg-white
+                                    transition-all duration-300
+                                "
+                            >
+                                {/* Icon */}
+                                <div
+                                    className="
+                                    w-9 h-9
+                                    rounded-xl
+                                    bg-[var(--primary)]/10
+                                    flex items-center justify-center
+                                    text-[var(--primary)]
+                                "
+                                >
+                                    <FiTag size={16} />
+                                </div>
+
+                                {/* Name */}
+                                <span
+                                    className="
+                                    font-medium
+                                    text-[var(--text-dark)]
+                                "
+                                >
+                                    {tag.name}
+                                </span>
+
+                                {/* Actions */}
+                                <div
+                                    className="
+                                    flex items-center gap-2
+                                    opacity-0
+                                    group-hover:opacity-100
+                                    transition
+                                "
+                                >
+                                    <button
+                                        onClick={() => openEdit(tag)}
+                                        className="
+                                            w-8 h-8
+                                            rounded-lg
+                                            flex items-center justify-center
+                                            text-gray-500
+                                            hover:bg-blue-50
+                                            hover:text-blue-500
+                                            transition
+                                        "
+                                    >
+                                        <FiEdit2 size={15} />
+                                    </button>
+
+                                    <button
+                                        onClick={() => openDelete(tag)}
+                                        className="
+                                            w-8 h-8
+                                            rounded-lg
+                                            flex items-center justify-center
+                                            text-gray-500
+                                            hover:bg-red-50
+                                            hover:text-red-500
+                                            transition
+                                        "
+                                    >
+                                        <FiTrash2 size={15} />
+                                    </button>
+                                </div>
+                            </div>
                         ))}
                     </div>
                 ) : (
                     <div
                         className="
-                            bg-white
-                            rounded-3xl
-                            border border-dashed
-                            border-gray-300
-                            py-20
-                            text-center
-                        "
+                        bg-white
+                        rounded-3xl
+                        border border-dashed border-gray-300
+                        py-20
+                        text-center
+                    "
                     >
                         <div
                             className="
-                                w-20 h-20
-                                rounded-full
-                                bg-gray-100
-                                mx-auto
-                                flex items-center justify-center
-                            "
+                            w-20 h-20
+                            rounded-full
+                            bg-gray-100
+                            mx-auto
+                            flex items-center justify-center
+                        "
                         >
-                            <LuUngroup className="text-3xl text-gray-400" />
+                            <FiTag className="text-3xl text-gray-400" />
                         </div>
 
                         <h2 className="mt-5 text-xl font-bold">
-                            لا توجد مجموعات
+                            لا توجد تصنيفات
                         </h2>
 
                         <p className="text-gray-500 mt-2">
-                            قم بإضافة أول مجموعة الآن
+                            قم بإضافة أول تصنيف الآن
                         </p>
                     </div>
                 )}
 
                 {/* Create / Edit Modal */}
-
                 <Modal
                     show={showModal}
                     onClose={() => setShowModal(false)}
-                    maxWidth="lg"
+                    maxWidth="md"
                 >
                     <form onSubmit={submit} className="p-6 space-y-6">
+                        {/* Header */}
                         <div className="flex items-center justify-between">
                             <div>
                                 <h2 className="text-2xl font-bold">
-                                    {selectedCategory
-                                        ? "تعديل المجموعة"
-                                        : "إضافة مجموعة جديدة"}
+                                    {selectedTag
+                                        ? "تعديل التصنيف"
+                                        : "إضافة تصنيف جديد"}
                                 </h2>
 
                                 <p className="text-sm text-gray-500 mt-1">
-                                    قم بإدخال بيانات المجموعة
+                                    قم بإدخال بيانات التصنيف
                                 </p>
                             </div>
 
@@ -303,10 +358,9 @@ focus:ring-offset-1
                         </div>
 
                         {/* Name */}
-
                         <div>
                             <label className="block mb-2 font-medium">
-                                اسم المجموعة
+                                اسم التصنيف
                             </label>
 
                             <input
@@ -315,117 +369,28 @@ focus:ring-offset-1
                                 onChange={(e) =>
                                     setData("name", e.target.value)
                                 }
+                                placeholder="أدخل اسم التصنيف"
                                 className="
                                     w-full h-12
                                     rounded-xl
                                     border border-gray-200
                                     px-4
                                     outline-none
-                                    
                                     transition-all
-                                    focus:ring-1 focus:ring-[var(--primary)]
+                                    focus:ring-1
+                                    focus:ring-[var(--primary)]
                                     focus:border-[var(--primary)]
                                 "
-                                placeholder="أدخل اسم المجموعة"
                             />
 
-                            { frontendErrors.name&& (
+                            {(frontendErrors.name || errors.name) && (
                                 <p className="text-red-500 text-sm mt-2">
-                                    { frontendErrors.name}
-                                </p>
-                            )}
-                        </div>
-
-                        {/* Image */}
-
-                        <div>
-                            <div className="flex items-center gap-2 mb-2">
-                                <label className="block font-medium">
-                                    صورة المجموعة
-                                </label>
-                                <span className="text-sm text-gray-500">
-                                    (PNG - JPG - WEBP - JPEG)
-                                </span>
-                            </div>
-
-                            <div
-                                className="
-            flex items-center gap-4
-            rounded-2xl
-            border border-gray-200
-            bg-gray-50
-            p-3
-        "
-                            >
-                                {/* Preview */}
-
-                                <div
-                                    className="
-                w-20 h-20
-                rounded-xl
-                overflow-hidden
-                border
-                bg-white
-                flex items-center justify-center
-                flex-shrink-0
-            "
-                                >
-                                    {data.image || selectedCategory?.image ? (
-                                        <img
-                                            src={
-                                                data.image
-                                                    ? URL.createObjectURL(
-                                                          data.image,
-                                                      )
-                                                    : getImage(
-                                                          selectedCategory.image,
-                                                      )
-                                            }
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        <FiUploadCloud className="text-2xl text-gray-400" />
-                                    )}
-                                </div>
-
-                                {/* Upload Content */}
-
-                                <label
-                                    className="
-                    mt-3 inline-flex
-                    items-center gap-2
-                    px-4 py-2
-                    rounded-xl
-                    bg-[var(--primary)]
-                    text-white
-                    text-sm
-                    cursor-pointer
-                    hover:opacity-90
-                    transition
-                "
-                                >
-                                    <FiUploadCloud />
-                                    رفع صورة
-                                    <input
-                                        type="file"
-                                        accept="image/png, image/jpeg, image/webp"
-                                        hidden
-                                        onChange={(e) =>
-                                            setData("image", e.target.files[0])
-                                        }
-                                    />
-                                </label>
-                            </div>
-
-                            {frontendErrors.image && (
-                                <p className="text-red-500 text-sm mt-2">
-                                    {frontendErrors.image}
+                                    {frontendErrors.name || errors.name}
                                 </p>
                             )}
                         </div>
 
                         {/* Actions */}
-
                         <div className="flex gap-3 pt-2">
                             <button
                                 type="button"
@@ -453,16 +418,15 @@ focus:ring-offset-1
                             >
                                 {processing
                                     ? "جاري الحفظ..."
-                                    : selectedCategory
+                                    : selectedTag
                                       ? "حفظ التعديلات"
-                                      : "إضافة المجموعة"}
+                                      : "إضافة التصنيف"}
                             </button>
                         </div>
                     </form>
                 </Modal>
 
                 {/* Delete Modal */}
-
                 <Modal
                     show={deleteModal}
                     onClose={() => setDeleteModal(false)}
@@ -471,22 +435,20 @@ focus:ring-offset-1
                     <div className="p-8 text-center">
                         <div
                             className="
-                                w-20 h-20
-                                rounded-full
-                                bg-red-100
-                                flex items-center justify-center
-                                mx-auto
-                            "
+                            w-20 h-20
+                            rounded-full
+                            bg-red-100
+                            flex items-center justify-center
+                            mx-auto
+                        "
                         >
                             <FiAlertTriangle className="text-4xl text-red-500" />
                         </div>
 
-                        <h2 className="text-2xl font-bold mt-5">
-                            حذف المجموعة
-                        </h2>
+                        <h2 className="text-2xl font-bold mt-5">حذف التصنيف</h2>
 
                         <p className="text-gray-500 mt-3 leading-7">
-                            هل أنت متأكد من حذف المجموعة ؟
+                            هل أنت متأكد من حذف التصنيف ؟
                             <br />
                             لا يمكن التراجع عن هذا الإجراء
                         </p>
@@ -515,7 +477,7 @@ focus:ring-offset-1
                                     transition
                                 "
                             >
-                                حذف المجموعة
+                                حذف التصنيف
                             </button>
                         </div>
                     </div>

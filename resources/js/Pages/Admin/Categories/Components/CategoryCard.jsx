@@ -1,10 +1,7 @@
+import { getImage } from "@/Utils/GetImage";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 
-export default function CategoryCard({
-    category,
-    onEdit,
-    onDelete,
-}) {
+export default function CategoryCard({ category, onEdit, onDelete }) {
     return (
         <div
             className="
@@ -14,18 +11,18 @@ export default function CategoryCard({
                 transition-all duration-500
             "
         >
-            {/* OUTER GLOW */}
+           
             <div
                 className="
                     absolute inset-0
                     rounded-full
-                    bg-[var(--primary)]/10
+                    bg-[var(--secondary)]
                     blur-2xl
                     scale-75
                     opacity-0
                     transition-all duration-500
                     group-hover:opacity-100
-                    group-hover:scale-100
+                    
                 "
             />
 
@@ -37,22 +34,22 @@ export default function CategoryCard({
                     sm:w-52 sm:h-52
                     rounded-full
                     overflow-hidden
-                    shadow-[0_10px_40px_rgba(0,0,0,0.12)]
-                    ring-4 ring-white
+                    shadow-[0_7px_30px_rgba(0,0,0,0.12)]
+                    ring-2 ring-white
                     transition-all duration-500
-                    group-hover:-translate-y-2
-                    group-hover:shadow-[0_20px_60px_rgba(0,0,0,0.22)]
+                    group-hover:-translate-y-1
+                    group-hover:shadow-[0_10px_30px_rgba(0,0,0,0.22)]
                 "
             >
-                {/* IMAGE */}
+                
                 <img
-                    src={category.image}
+                     src={getImage(category.image)}
                     alt={category.name}
                     className="
                         w-full h-full
                         object-cover
                         transition-all duration-700
-                        scale-100
+                        scale-70
                         group-hover:scale-110
                     "
                 />
@@ -63,7 +60,7 @@ export default function CategoryCard({
                         absolute inset-0
                         bg-gradient-to-t
                         from-black/80
-                        via-black/20
+                        via-black/50
                         to-transparent
                         opacity-70
                         transition-all duration-500
@@ -84,10 +81,9 @@ export default function CategoryCard({
                     {/* CATEGORY NAME */}
                     <div
                         className="
-                            px-4 py-2
+                            px-6 py-2
                             rounded-full
-                            bg-white/15
-                            backdrop-blur-xl
+                            bg-[var(--secondary)]
                             border border-white/20
                             text-white
                             text-sm
@@ -100,7 +96,7 @@ export default function CategoryCard({
                         {category.name}
                     </div>
 
-                    {/* ACTIONS */}
+                   
                     <div
                         className="
                             mt-3
@@ -114,50 +110,51 @@ export default function CategoryCard({
                             group-hover:translate-y-0
                         "
                     >
-                        {/* EDIT */}
+                        
                         <button
                             onClick={() => onEdit(category)}
                             className="
-                                w-10 h-10
+                                w-8 h-8
                                 rounded-full
                                 flex items-center justify-center
 
-                                bg-white/15
-                                backdrop-blur-xl
+                                bg-[var(--accent)]
+                
                                 border border-white/20
 
                                 text-white
                                 shadow-lg
 
                                 transition-all duration-300
-                                hover:bg-blue-500
+                                hover:bg-blue-600
                                 hover:scale-110
                             "
                         >
-                            <FiEdit2 size={17} />
+                            <FiEdit2 size={14} />
                         </button>
 
-                        {/* DELETE */}
+                        
                         <button
                             onClick={() => onDelete(category)}
                             className="
-                                w-10 h-10
+                                w-8 h-8
                                 rounded-full
                                 flex items-center justify-center
 
-                                bg-white/15
-                                backdrop-blur-xl
+                                bg-[var(--accent)]
+                                border border-white/20
+
                                 border border-white/20
 
                                 text-white
                                 shadow-lg
 
                                 transition-all duration-300
-                                hover:bg-red-500
+                                hover:bg-red-600
                                 hover:scale-110
                             "
                         >
-                            <FiTrash2 size={17} />
+                            <FiTrash2 size={14} />
                         </button>
                     </div>
                 </div>

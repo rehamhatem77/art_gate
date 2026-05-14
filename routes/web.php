@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\TagsController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -27,7 +28,24 @@ Route::middleware('auth')->group(function () {
 Route::middleware('admin.only')->group(function () {
 Route::prefix('admin')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::resource('categories', CategoriesController::class);
+     Route::get('/categories', [CategoriesController::class, 'index'])
+        ->name('categories.index');
+    Route::post('/categories', [CategoriesController::class, 'store'])
+        ->name('categories.store');
+    Route::put('/categories/{category}', [CategoriesController::class, 'update'])
+        ->name('categories.update');
+    Route::delete('/categories/{category}', [CategoriesController::class, 'destroy'])
+        ->name('categories.destroy');
+
+Route::get('/tags', [TagsController::class, 'index'])
+        ->name('tags.index');
+    Route::post('/tags', [TagsController::class, 'store'])
+        ->name('tags.store');
+    Route::put('/tags/{tag}', [TagsController::class, 'update'])
+        ->name('tags.update');
+    Route::delete('/tags/{tag}', [TagsController::class, 'destroy'])
+        ->name('tags.destroy');
+
 });
     //  Route::get('/users', [DashboardController::class, 'users'])->name('users.index');
     // Route::post('/users', [DashboardController::class, 'addUserAdmin'])->name('users.store');

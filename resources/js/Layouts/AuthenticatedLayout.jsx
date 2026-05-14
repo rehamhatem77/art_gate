@@ -59,7 +59,7 @@ export default function AuthenticatedLayout({ children }) {
             path: "/admin/offers",
         },
         { name: "المجموعات", icon: <LuUngroup />, path: "/admin/categories" },
-        { name: "التصنيفات", icon: <AiOutlineTags />, path: "/admin/features" },
+        { name: "التصنيفات", icon: <AiOutlineTags />, path: "/admin/tags" },
         {
             name: "المقاسات",
             icon: <SlSizeFullscreen />,
