@@ -73,10 +73,10 @@ export default function AuthenticatedLayout({ children }) {
         {
             name: "شكل اللوحة",
             icon: <RxDimensions />,
-            path: "/admin/tour-companies",
+            path: "/admin/shapes",
         },
-        { name: "عدد قطع اللوحة", icon: <GoNumber />, path: "/admin/hotels" },
-        { name: "الأماكن ", icon: <TbHomeLink />, path: "/admin/trip-types" },
+        // { name: "عدد قطع اللوحة", icon: <GoNumber />, path: "/admin/tableau-numbers" },
+        // { name: "الأماكن ", icon: <TbHomeLink />, path: "/admin/trip-types" },
 
         { name: "الخدمات", icon: <FaHandsHelping />, path: "/admin/services" },
         // { name: 'الإعدادات', icon: <FiSettings />, path: '/users' },

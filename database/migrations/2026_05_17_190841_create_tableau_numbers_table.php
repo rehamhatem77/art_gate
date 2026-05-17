@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('frame_types', function (Blueprint $table) {
+        Schema::create('tableau_numbers', function (Blueprint $table) {
             $table->id();
-                $table->string('type')->nullable(false);
-                $table->json('colors')->nullable(true);
-
-                $table->timestamps();
+            $table->string('tableau_number')->nullable(false);
+            $table->timestamps();
         });
     }
 
@@ -25,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('frame_types');
+        Schema::dropIfExists('tableau_numbers');
     }
 };

@@ -12,4 +12,8 @@ class FrameType extends Model
         'colors' => 'array',
     ];
 
+    public function productVariants()
+{
+    return $this->hasMany(ProductVariant::class);
+}
 }

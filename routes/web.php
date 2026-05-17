@@ -3,7 +3,9 @@
 use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FrameTypesController;
+use App\Http\Controllers\Admin\ShapesController;
 use App\Http\Controllers\Admin\SizesController;
+use App\Http\Controllers\Admin\TableauNumbersController;
 use App\Http\Controllers\Admin\TagsController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\ProfileController;
@@ -67,6 +69,29 @@ Route::get('/frame-types', [FrameTypesController::class, 'index'])
         ->name('frame-types.update');
     Route::delete('/frame-types/{frameType}', [FrameTypesController::class, 'destroy'])
         ->name('frame-types.destroy');
+
+
+
+Route::get('/shapes', [ShapesController::class, 'index'])
+        ->name('shapes.index');
+    Route::post('/shapes', [ShapesController::class, 'store'])
+        ->name('shapes.store');
+    Route::put('/shapes/{shape}', [ShapesController::class, 'update'])
+        ->name('shapes.update');
+    Route::delete('/shapes/{shape}', [ShapesController::class, 'destroy'])
+        ->name('shapes.destroy');
+
+
+
+
+// Route::get('/tableau-numbers', [TableauNumbersController::class, 'index'])
+//         ->name('tableau-numbers.index');
+//     Route::post('/tableau-numbers', [TableauNumbersController::class, 'store'])
+//         ->name('tableau-numbers.store');
+//     Route::put('/tableau-numbers/{tableauNumber}', [TableauNumbersController::class, 'update'])
+//         ->name('tableau-numbers.update');
+//     Route::delete('/tableau-numbers/{tableauNumber}', [TableauNumbersController::class, 'destroy'])
+//         ->name('tableau-numbers.destroy');
 
 });
     //  Route::get('/users', [DashboardController::class, 'users'])->name('users.index');

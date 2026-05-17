@@ -35,9 +35,9 @@ export default function Index({ frameTypes }) {
             e.type = "اسم النوع مطلوب";
         }
 
-        if (!data.colors.length) {
-            e.colors = "يجب إضافة لون واحد على الأقل";
-        }
+        // if (!data.colors.length) {
+        //     e.colors = "يجب إضافة لون واحد على الأقل";
+        // }
 
         data.colors.forEach((c, i) => {
             if (!c.name?.trim()) {
@@ -236,7 +236,7 @@ group relative overflow-hidden
 rounded-3xl
 border border-gray-100
 bg-white
-h-[90px] min-h-[80px] max-h-[100px]
+
 flex flex-col
 px-3 py-2
 shadow-[0_2px_12px_rgba(0,0,0,0.04)]
@@ -250,8 +250,8 @@ transition-all duration-300
             absolute top-0 inset-x-0 h-1
             bg-gradient-to-r
             from-[var(--primary)]
-            via-purple-400
-            to-pink-400
+            via-yellow-400
+            to-[var(--primary)]
         "
                                 />
 

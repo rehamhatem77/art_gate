@@ -22,7 +22,7 @@ class FrameTypesController extends Controller
     {
         $request->validate([
             'type' => 'required|string|max:255',
-            'colors' => 'required|array',
+            'colors' => 'nullable|array',
         ]);
 
 try{
@@ -42,7 +42,7 @@ try{
     {
         $request->validate([
              'type' => 'required|string|max:255',
-            'colors' => 'required|array',
+            'colors' => 'nullable|array',
         ]);
 
        
