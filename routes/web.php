@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FrameTypesController;
+use App\Http\Controllers\Admin\ProductsController;
 use App\Http\Controllers\Admin\ShapesController;
 use App\Http\Controllers\Admin\SizesController;
 use App\Http\Controllers\Admin\TableauNumbersController;
@@ -80,6 +81,24 @@ Route::get('/shapes', [ShapesController::class, 'index'])
         ->name('shapes.update');
     Route::delete('/shapes/{shape}', [ShapesController::class, 'destroy'])
         ->name('shapes.destroy');
+
+
+
+Route::get('/products', [ProductsController::class, 'index'])
+        ->name('products.index');
+Route::get('/products/create', [ProductsController::class, 'create'])
+        ->name('products.create');
+Route::get('/products/{product}/edit', [ProductsController::class, 'edit'])
+        ->name('products.edit');
+    Route::post('/products', [ProductsController::class, 'store'])
+        ->name('products.store');
+    Route::put('/products/{product}', [ProductsController::class, 'update'])
+        ->name('products.update');
+    Route::delete('/products/{product}', [ProductsController::class, 'destroy'])
+        ->name('products.destroy');
+
+    Route::delete('/frame-types/{frameType}', [FrameTypesController::class, 'destroy'])
+        ->name('frame-types.destroy');
 
 
 

@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     //
-     protected $fillable = [
+    protected $fillable = [
         'name',
         'code',
+        'slug',
         'description',
         'category_id',
         'shape_id',
@@ -21,14 +22,15 @@ class Product extends Model
         'main_image',
         'is_active',
         'featured',
+
     ];
-     protected $casts = [
+    protected $casts = [
         'tags' => 'array',
         'design_colors' => 'array',
         'is_active' => 'boolean',
         'featured' => 'boolean',
     ];
-     public function category()
+    public function category()
     {
         return $this->belongsTo(Category::class);
     }
@@ -37,13 +39,13 @@ class Product extends Model
     {
         return $this->belongsTo(Shape::class);
     }
-     public function images()
+    public function images()
     {
         return $this->hasMany(ProductImage::class);
     }
 
     public function variants()
-{
-    return $this->hasMany(ProductVariant::class);
-}
+    {
+        return $this->hasMany(ProductVariant::class);
+    }
 }

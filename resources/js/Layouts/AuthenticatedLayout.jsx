@@ -56,7 +56,7 @@ export default function AuthenticatedLayout({ children }) {
         {
             name: "اللوحات",
             icon: <IoColorPaletteOutline />,
-            path: "/admin/offers",
+            path: "/admin/products",
         },
         { name: "المجموعات", icon: <LuUngroup />, path: "/admin/categories" },
         { name: "التصنيفات", icon: <AiOutlineTags />, path: "/admin/tags" },
