@@ -49,15 +49,7 @@ return new class extends Migration
         'تجريدي',
     ])->nullable();
 
-     $table->enum('place', [
-        'غرفة نوم',
-        'غرفة معيشة',
-        'مكتب',
-        'ممر',
-        'مطعم',
-        'فندق',
-        'مجلس',
-    ])->nullable();
+     $table->json('place')->nullable();
 
      $table->enum('pieces_count', [
         'تابلوه واحد',

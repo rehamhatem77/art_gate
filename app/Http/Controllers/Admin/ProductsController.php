@@ -81,11 +81,23 @@ class ProductsController extends Controller
             'tags.*' => 'string|max:255',
 
             'design_colors' => 'nullable|array',
-            'design_colors.*' => 'string|max:255',
+
+            'design_colors.*.hex' => [
+                'required',
+                'regex:/^#[0-9A-Fa-f]{6}$/'
+            ],
+
+            'design_colors.*.name' => [
+                'nullable',
+                'string',
+                'max:255'
+            ],
 
             'artistic_type' => 'nullable|string|max:255',
 
-            'place' => 'nullable|string|max:255',
+
+            'place' => 'nullable|array',
+            'place.*' => 'string|max:255',
 
             'pieces_count' => 'nullable|string|max:255',
 
@@ -215,7 +227,7 @@ class ProductsController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('admin.products.index')
+                ->route('products.index')
                 ->with(
                     'success',
                     'تم إضافة اللوحة بنجاح'
@@ -283,7 +295,7 @@ class ProductsController extends Controller
 
             'artistic_type' => 'nullable|string|max:255',
 
-            'place' => 'nullable|string|max:255',
+            'place' => 'nullable|array',
 
             'pieces_count' => 'nullable|string|max:255',
 
@@ -374,7 +386,7 @@ class ProductsController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('admin.products.index')
+                ->route('products.index')
                 ->with(
                     'success',
                     'تم تحديث اللوحة بنجاح'

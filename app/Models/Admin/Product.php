@@ -29,7 +29,21 @@ class Product extends Model
         'design_colors' => 'array',
         'is_active' => 'boolean',
         'featured' => 'boolean',
+        'place' => 'array',
     ];
+public function getTagsAttribute($value)
+{
+    $ids = json_decode($value, true);
+
+    if (!$ids || !is_array($ids)) {
+        return [];
+    }
+
+    return Tag::whereIn('id', $ids)
+        ->select('id', 'name')
+        ->get()
+        ->toArray();
+}
     public function category()
     {
         return $this->belongsTo(Category::class);

@@ -1,6 +1,51 @@
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 
 export default function ProductCard({ product, onEdit, onDelete }) {
+    const variants = product.variants || [];
+
+    /*
+|--------------------------------------------------------------------------
+| Get smallest variant from array
+|--------------------------------------------------------------------------
+*/
+    const getSmallestVariant = (items) => {
+        if (!items.length) return null;
+
+        return [...items].sort((a, b) => {
+            const aSize =
+                Number(a.size?.width || 0) * Number(a.size?.height || 0);
+
+            const bSize =
+                Number(b.size?.width || 0) * Number(b.size?.height || 0);
+
+            return aSize - bSize;
+        })[0];
+    };
+
+    /*
+|--------------------------------------------------------------------------
+| Priority:
+| 1. بدون اطار + أصغر مقاس
+| 2. بإطار + أصغر مقاس
+| 3. بإطار مع اكريليك + أصغر مقاس
+|--------------------------------------------------------------------------
+*/
+
+    const defaultVariant =
+        getSmallestVariant(
+            variants.filter(
+                (variant) => variant.frame_type?.type === "بدون اطار",
+            ),
+        ) ||
+        getSmallestVariant(
+            variants.filter((variant) => variant.frame_type?.type === "بإطار"),
+        ) ||
+        getSmallestVariant(
+            variants.filter(
+                (variant) => variant.frame_type?.type === "بإطار مع اكريليك",
+            ),
+        ) ||
+        getSmallestVariant(variants);
     return (
         <div
             className="
@@ -20,7 +65,7 @@ max-h-[600px]
             {/* IMAGE */}
             <div className="relative overflow-hidden rounded-t-[28px]">
                 <img
-                    src={product.main_image}
+                    src={`/storage/${product.main_image}`}
                     alt={product.name}
                     className="
             w-full
@@ -58,7 +103,7 @@ max-h-[600px]
                 {product.design_colors?.length > 0 && (
                     <div className="absolute bottom-3 right-3 flex items-center">
                         {product.design_colors
-                            .slice(0, 9)
+                            ?.slice(0, 9)
                             .map((color, index) => (
                                 <div
                                     key={index}
@@ -71,7 +116,7 @@ max-h-[600px]
                             first:mr-0
                         "
                                     style={{
-                                        backgroundColor: color,
+                                        backgroundColor: color.hex,
                                         zIndex: 10 - index,
                                     }}
                                 />
@@ -81,16 +126,14 @@ max-h-[600px]
             </div>
 
             {/* CONTENT */}
-           {/* CONTENT */}
-<div className="px-5 pt-4 pb-4">
+            <div className="px-5 pt-3 pb-3">
                 {/* TITLE */}
                 <h2
                     className="
-                        text-[20px]
-                        leading-[38px]
+                        text-[18px]
                         text-[var(--text-dark)]
                         text-start
-                        line-clamp-1
+                        line-clamp-2
                     "
                 >
                     {product.name}
@@ -102,7 +145,7 @@ max-h-[600px]
                         
                         text-start
                         text-[var(--secondary)]
-                        text-[17px]
+                        text-[16px]
                         font-medium
                         leading-2
                     "
@@ -130,9 +173,9 @@ max-h-[600px]
                             text-[var(--primary)]
                         "
                     >
-                        {Number(
-                            product.variants?.[0]?.price || 0,
-                        ).toLocaleString("en-US")}
+                        {Number(defaultVariant?.price || 0).toLocaleString(
+                            "en-US",
+                        )}
                         <span className="text-[17px] mr-1">جنيه</span>
                     </h3>
                 </div>
