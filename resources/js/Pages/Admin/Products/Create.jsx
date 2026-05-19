@@ -223,6 +223,13 @@ export default function Create({
                 }
             });
         }
+        /*|--------------------------------------------------------------------------
+| Pieces count Validation
+|--------------------------------------------------------------------------
+*/
+        if (!data.pieces_count) {
+            newErrors.pieces_count = "عدد القطع مطلوب";
+        }
 
         return newErrors;
     };
@@ -321,7 +328,27 @@ export default function Create({
             variants: data.variants,
         };
     }, [data]);
+    const isSizeDisabled = (sizeId, currentFrameTypeId, currentIndex) => {
+        return data.variants.some((variant, index) => {
+            if (index === currentIndex) return false;
 
+            return (
+                String(variant.size_id) === String(sizeId) &&
+                String(variant.frame_type_id) === String(currentFrameTypeId)
+            );
+        });
+    };
+
+    const isFrameDisabled = (frameTypeId, currentSizeId, currentIndex) => {
+        return data.variants.some((variant, index) => {
+            if (index === currentIndex) return false;
+
+            return (
+                String(variant.frame_type_id) === String(frameTypeId) &&
+                String(variant.size_id) === String(currentSizeId)
+            );
+        });
+    };
     return (
         <AuthenticatedLayout>
             <Head title="إضافة لوحة" />
@@ -812,6 +839,11 @@ export default function Create({
                                                     <option
                                                         key={size.id}
                                                         value={size.id}
+                                                        disabled={isSizeDisabled(
+                                                            size.id,
+                                                            variant.frame_type_id,
+                                                            index,
+                                                        )}
                                                     >
                                                         {size.width}x
                                                         {size.height}
@@ -859,6 +891,11 @@ export default function Create({
                                                     <option
                                                         key={frame.id}
                                                         value={frame.id}
+                                                        disabled={isFrameDisabled(
+                                                            frame.id,
+                                                            variant.size_id,
+                                                            index,
+                                                        )}
                                                     >
                                                         {frame.type}
                                                     </option>
@@ -1452,16 +1489,33 @@ export default function Create({
                                                         <input
                                                             value={color.hex}
                                                             onChange={(e) => {
-    const updated = [...data.design_colors];
+                                                                const updated =
+                                                                    [
+                                                                        ...data.design_colors,
+                                                                    ];
 
-    let value = e.target.value
-        .replace(/[^a-fA-F0-9]/g, "")
-        .slice(0, 6);
+                                                                let value =
+                                                                    e.target.value
+                                                                        .replace(
+                                                                            /[^a-fA-F0-9]/g,
+                                                                            "",
+                                                                        )
+                                                                        .slice(
+                                                                            0,
+                                                                            6,
+                                                                        );
 
-    updated[index].hex = value ? `#${value}` : "";
+                                                                updated[
+                                                                    index
+                                                                ].hex = value
+                                                                    ? `#${value}`
+                                                                    : "";
 
-    setData("design_colors", updated);
-}}
+                                                                setData(
+                                                                    "design_colors",
+                                                                    updated,
+                                                                );
+                                                            }}
                                                             placeholder="#D4AF37"
                                                             className="
                                         w-full h-8
