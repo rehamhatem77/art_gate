@@ -14,6 +14,8 @@ import {
 } from "react-icons/fi";
 import { IoColorPaletteOutline } from "react-icons/io5";
 import ProductCard from "./Components/ProductCard";
+import Breadcrumb from "@/Components/Breadcrumb";
+import AdminPageHeader from "@/Components/AdminPageHeader";
 
 export default function Index({ products }) {
     const [search, setSearch] = useState("");
@@ -36,65 +38,36 @@ export default function Index({ products }) {
 
             <main className="space-y-4">
                 {/* Breadcrumb */}
-                <div className="flex items-center gap-1 text-sm">
-                    <button
-                        onClick={() => router.get(route("dashboard"))}
-                        className="hover:text-[var(--primary)]"
-                    >
-                        لوحة التحكم
-                    </button>
-
-                    <FiChevronLeft />
-
-                    <span className="text-[var(--primary)] font-medium">
-                        اللوحات
-                    </span>
-                </div>
+                <Breadcrumb items={[
+                    { name: "لوحة التحكم", link: route("dashboard") },
+                    { name: "اللوحات" }
+                ]} />
 
                 {/* Header */}
-                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-                    <div className="flex items-center gap-4">
-                        <div
-                            className="
-                            w-14 h-14
-                            rounded-2xl
-                            bg-[var(--hover-accent)]
-                            flex items-center justify-center
-                        "
-                        >
-                            <IoColorPaletteOutline className="text-2xl text-[var(--primary)]" />
-                        </div>
-
-                        <div>
-                            <h1 className="text-2xl font-bold text-[var(--text-dark)]">
-                                إدارة اللوحات
-                            </h1>
-
-                            <p className="text-gray-500 mt-1">
-                                إدارة جميع اللوحات والتصاميم والمتغيرات الخاصة
-                                بها
-                            </p>
-                        </div>
-                    </div>
-
-                    <button
-                        onClick={() => router.get(route("products.create"))}
-                        className="
-                        flex items-center justify-center gap-2
-                        px-5 py-2
-                        rounded-xl
-                        bg-[var(--primary)]
-                        text-white
-                        font-medium
-                        shadow-sm
-                        hover:opacity-90
-                        transition-all
-                    "
-                    >
-                        <FiPlus />
-                        إضافة لوحة
-                    </button>
-                </div>
+                
+<AdminPageHeader
+    title="إدارة اللوحات"
+    description="إدارة جميع اللوحات والتصاميم والمتغيرات الخاصة بها"
+    icon={IoColorPaletteOutline}
+    actions={[
+        {
+            label: "إضافة لوحة",
+            icon: FiPlus,
+            onClick: () => router.get(route("products.create")),
+            className: `
+                flex items-center justify-center gap-2
+                px-5 py-2
+                rounded-xl
+                bg-[var(--primary)]
+                text-white
+                font-medium
+                shadow-sm
+                hover:opacity-90
+                transition-all
+            `,
+        },
+    ]}
+/>
 
                 {/* Search */}
                 <div className="relative">

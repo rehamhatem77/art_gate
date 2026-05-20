@@ -78,7 +78,7 @@ class ProductsController extends Controller
             'shape_id' => 'nullable|exists:shapes,id',
 
             'tags' => 'nullable|array',
-            'tags.*' => 'string|max:255',
+            'tags.*' => 'nullable',
 
             'design_colors' => 'nullable|array',
 
@@ -149,6 +149,31 @@ class ProductsController extends Controller
             /*
             Create Product
             */
+            $tagIds = [];
+
+            if ($request->tags) {
+
+                foreach ($request->tags as $tagValue) {
+
+                    /*
+        Existing Tag ID
+        */
+                    if (is_numeric($tagValue)) {
+
+                        $tagIds[] = (int) $tagValue;
+                    } else {
+
+                        /*
+            Create New Tag
+            */
+                        $tag = Tag::firstOrCreate([
+                            'name' => trim($tagValue)
+                        ]);
+
+                        $tagIds[] = $tag->id;
+                    }
+                }
+            }
             $product = Product::create([
                 'name' => $request->name,
 
@@ -162,7 +187,7 @@ class ProductsController extends Controller
 
                 'shape_id' => $request->shape_id,
 
-                'tags' => $request->tags,
+                'tags' => $tagIds,
 
                 'design_colors' => $request->design_colors,
 
@@ -265,6 +290,7 @@ class ProductsController extends Controller
             'shapes' => Shape::latest()->get(),
 
             'sizes' => Size::latest()->get(),
+            'tags' => Tag::latest()->get(),
 
             'frameTypes' => FrameType::latest()->get(),
         ]);
@@ -328,10 +354,71 @@ class ProductsController extends Controller
                     ->file('main_image')
                     ->store('products/main', 'public');
             }
+            
+
+            if ($request->filled('deleted_images')) {
+
+                foreach ($request->deleted_images as $imageId) {
+
+                    $image = ProductImage::find($imageId);
+
+                    if ($image) {
+
+                        if (
+                            $image->image &&
+                            Storage::disk('public')->exists($image->image)
+                        ) {
+                            Storage::disk('public')->delete($image->image);
+                        }
+
+                        $image->delete();
+                    }
+                }
+            }
+
+            /*
+|--------------------------------------------------------------------------
+| ADD NEW GALLERY IMAGES
+|--------------------------------------------------------------------------
+*/
+            if ($request->hasFile('images')) {
+
+                foreach ($request->file('images') as $index => $image) {
+
+                    $path = $image->store('products/gallery', 'public');
+
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image' => $path,
+                        'sort_order' => $index,
+                        'is_primary' => false,
+                    ]);
+                }
+            }
 
             /*
             Update Product
             */
+
+            $tagIds = [];
+
+            if ($request->tags) {
+
+                foreach ($request->tags as $tagValue) {
+
+                    if (is_numeric($tagValue)) {
+
+                        $tagIds[] = (int) $tagValue;
+                    } else {
+
+                        $tag = Tag::firstOrCreate([
+                            'name' => trim($tagValue)
+                        ]);
+
+                        $tagIds[] = $tag->id;
+                    }
+                }
+            }
             $product->update([
                 'name' => $request->name,
 
@@ -343,7 +430,7 @@ class ProductsController extends Controller
 
                 'shape_id' => $request->shape_id,
 
-                'tags' => $request->tags,
+                'tags' => $tagIds,
 
                 'design_colors' => $request->design_colors,
 

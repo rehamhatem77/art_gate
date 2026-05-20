@@ -15,6 +15,8 @@ import {
 } from "react-icons/fi";
 
 import { LuUngroup } from "react-icons/lu";
+import Breadcrumb from "@/Components/Breadcrumb";
+import AdminPageHeader from "@/Components/AdminPageHeader";
 
 export default function Index({ categories }) {
     const [search, setSearch] = useState("");
@@ -24,8 +26,7 @@ export default function Index({ categories }) {
     const [deleteModal, setDeleteModal] = useState(false);
 
     const [selectedCategory, setSelectedCategory] = useState(null);
-const [frontendErrors, setFrontendErrors] = useState({});
-
+    const [frontendErrors, setFrontendErrors] = useState({});
 
     const { data, setData, post, processing, reset, errors } = useForm({
         name: "",
@@ -33,22 +34,22 @@ const [frontendErrors, setFrontendErrors] = useState({});
         _method: "POST",
     });
 
-const validate = () => {
-    const errors = {};
+    const validate = () => {
+        const errors = {};
 
-    if (!data.name || data.name.trim() === "") {
-        errors.name = "اسم المجموعة مطلوب";
-    }
+        if (!data.name || data.name.trim() === "") {
+            errors.name = "اسم المجموعة مطلوب";
+        }
 
-    // الصورة مطلوبة فقط في حالة الإنشاء
-    if (!selectedCategory && !data.image) {
-        errors.image = "صورة المجموعة مطلوبة";
-    }
+        // الصورة مطلوبة فقط في حالة الإنشاء
+        if (!selectedCategory && !data.image) {
+            errors.image = "صورة المجموعة مطلوبة";
+        }
 
-    setFrontendErrors(errors);
+        setFrontendErrors(errors);
 
-    return Object.keys(errors).length === 0;
-};
+        return Object.keys(errors).length === 0;
+    };
 
     const filteredCategories = useMemo(() => {
         return categories.filter((category) =>
@@ -83,30 +84,30 @@ const validate = () => {
     };
 
     const submit = (e) => {
-    e.preventDefault();
+        e.preventDefault();
 
-    if (!validate()) return;
+        if (!validate()) return;
 
-    if (selectedCategory) {
-        post(route("categories.update", selectedCategory.id), {
-            forceFormData: true,
-            onSuccess: () => {
-                setShowModal(false);
-                reset();
-                setFrontendErrors({});
-            },
-        });
-    } else {
-        post(route("categories.store"), {
-            forceFormData: true,
-            onSuccess: () => {
-                setShowModal(false);
-                reset();
-                setFrontendErrors({});
-            },
-        });
-    }
-};
+        if (selectedCategory) {
+            post(route("categories.update", selectedCategory.id), {
+                forceFormData: true,
+                onSuccess: () => {
+                    setShowModal(false);
+                    reset();
+                    setFrontendErrors({});
+                },
+            });
+        } else {
+            post(route("categories.store"), {
+                forceFormData: true,
+                onSuccess: () => {
+                    setShowModal(false);
+                    reset();
+                    setFrontendErrors({});
+                },
+            });
+        }
+    };
 
     const openDelete = (category) => {
         setSelectedCategory(category);
@@ -121,7 +122,6 @@ const validate = () => {
             },
         });
     };
-    
 
     return (
         <AuthenticatedLayout>
@@ -130,61 +130,34 @@ const validate = () => {
             <main className="space-y-4">
                 {/* Breadcrumb */}
 
-                <div className="flex items-center gap-1 text-sm">
-                    <button
-                        onClick={() => router.get(route("dashboard"))}
-                        className="hover:text-[var(--primary)] transition"
-                    >
-                        لوحة التحكم
-                    </button>
-
-                    <FiChevronLeft />
-
-                    <span className="text-[var(--primary)] font-medium">
-                        المجموعات
-                    </span>
-                </div>
+                <Breadcrumb
+                    items={[
+                        { name: "لوحة التحكم", link: route("dashboard") },
+                        { name: "المجموعات" },
+                    ]}
+                />
 
                 {/* Header */}
 
-                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-                    <div className="flex items-center gap-4">
-                        <div
-                            className="
-                                w-14 h-14
-                                rounded-2xl
-                                 bg-[var(--hover-accent)]
-                                flex items-center justify-center
-                            "
-                        >
-                            <LuUngroup className="text-2xl text-[var(--primary)]" />
-                        </div>
-
-                        <div>
-                            <h1 className="text-2xl font-bold text-[var(--text-dark)]">
-                                إدارة المجموعات
-                            </h1>
-
-                            <p className=" text-gray-500 mt-1">
-                                إدارة جميع مجموعات اللوحات
-                            </p>
-                        </div>
-                    </div>
-
-                    <button
-                        onClick={openCreate}
-                        className="flex items-center justify-center gap-2
+                <AdminPageHeader
+                    title="إدارة المجموعات"
+                    description="إدارة جميع مجموعات اللوحات"
+                    icon={LuUngroup}
+                    actions={[
+                        {
+                            label: "إضافة مجموعة",
+                            onClick: openCreate,
+                            icon: FiPlus,
+                            className: `flex items-center justify-center gap-2
             px-5 py-2 rounded-xl
             bg-[var(--primary)]
             text-white font-medium
             shadow-sm
             hover:opacity-90
-            transition-all gap-2"
-                    >
-                        <FiPlus />
-                        إضافة مجموعة
-                    </button>
-                </div>
+            transition-all gap-2`,
+                        },
+                    ]}
+                />
 
                 {/* Search */}
 
@@ -329,9 +302,9 @@ focus:ring-offset-1
                                 placeholder="أدخل اسم المجموعة"
                             />
 
-                            { frontendErrors.name&& (
+                            {frontendErrors.name && (
                                 <p className="text-red-500 text-sm mt-2">
-                                    { frontendErrors.name}
+                                    {frontendErrors.name}
                                 </p>
                             )}
                         </div>

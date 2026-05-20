@@ -17,6 +17,8 @@ import {
     FiBox,
 } from "react-icons/fi";
 import { GoNumber } from "react-icons/go";
+import Breadcrumb from "@/Components/Breadcrumb";
+import AdminPageHeader from "@/Components/AdminPageHeader";
 
 export default function Index({ tableauNumbers }) {
     const [search, setSearch] = useState("");
@@ -46,9 +48,7 @@ export default function Index({ tableauNumbers }) {
     // filter
     const filteredItems = useMemo(() => {
         return tableauNumbers.filter((item) =>
-            item.tableau_number
-                .toLowerCase()
-                .includes(search.toLowerCase()),
+            item.tableau_number.toLowerCase().includes(search.toLowerCase()),
         );
     }, [tableauNumbers, search]);
 
@@ -110,14 +110,11 @@ export default function Index({ tableauNumbers }) {
     };
 
     const destroy = () => {
-        router.delete(
-            route("tableau-numbers.destroy", selectedItem.id),
-            {
-                onSuccess: () => {
-                    setDeleteModal(false);
-                },
+        router.delete(route("tableau-numbers.destroy", selectedItem.id), {
+            onSuccess: () => {
+                setDeleteModal(false);
             },
-        );
+        });
     };
 
     const getPiecesText = (value) => {
@@ -130,66 +127,38 @@ export default function Index({ tableauNumbers }) {
 
             <main className="space-y-4">
                 {/* Breadcrumbs */}
-                
- <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <button
-                        onClick={() => router.get(route("dashboard"))}
-                        className="hover:text-[var(--primary)] transition"
-                    >
-                        لوحة التحكم
-                    </button>
+                <Breadcrumb
+                    items={[
+                        { name: "لوحة التحكم", link: route("dashboard") },
+                        { name: "أعداد قطع التابلوه" },
+                    ]}
+                />
 
-                    <FiChevronLeft size={15} />
-
-                    <span className="text-[var(--primary)] font-medium">
-                        عدد قطع اللوحة
-                    </span>
-                </div>
                 {/* Header */}
-        
-               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-                                                 <div className="flex items-center gap-4">
-                                                     <div
-                                                         className="
-                                                           w-14 h-14
-                                                           rounded-2xl
-                                                           bg-[var(--hover-accent)]
-                                                           flex items-center justify-center
-                                                       "
-                                                     >
-                                                         <GoNumber className="text-2xl text-[var(--primary)]" />
-                                                     </div>
-                             
-                                                     <div>
-                                                         <h1 className="text-2xl font-bold text-[var(--text-dark)]">
-                                                           إدارة أعداد قطع التابلوه
-                                                         </h1>
-                             
-                                                         <p className="text-gray-500 mt-1">
-                                                                                         إدارة تقسيمات اللوحات وعدد القطع الخاصة بها
 
-                                                         </p>
-                                                     </div>
-                                                 </div>
-                             
-                                                 <button
-                                                     onClick={openCreate}
-                                                     className="
-                                                       flex items-center justify-center gap-2
-                                                       px-5 py-2
-                                                       rounded-xl
-                                                       bg-[var(--primary)]
-                                                       text-white
-                                                       font-medium
-                                                       shadow-sm
-                                                       hover:opacity-90
-                                                       transition-all
-                                                   "
-                                                 >
-                                                     <FiPlus />
-                                                     إضافة عدد جديد
-                                                 </button>
-                                             </div>
+                <AdminPageHeader
+                    title="إدارة أعداد قطع التابلوه"
+                    description="إدارة تقسيمات اللوحات وعدد القطع الخاصة بها"
+                    icon={GoNumber}
+                    actions={[
+                        {
+                            label: "إضافة عدد جديد",
+                            icon: FiPlus,
+                            onClick: openCreate,
+                            className: `
+                flex items-center justify-center gap-2
+                px-5 py-2
+                rounded-xl
+                bg-[var(--primary)]
+                text-white
+                font-medium
+                shadow-sm
+                hover:opacity-90
+                transition-all
+            `,
+                        },
+                    ]}
+                />
 
                 {/* Search */}
                 <div className="relative">
@@ -296,9 +265,7 @@ export default function Index({ tableauNumbers }) {
                                         </button>
 
                                         <button
-                                            onClick={() =>
-                                                openDelete(item)
-                                            }
+                                            onClick={() => openDelete(item)}
                                             className="
                                                 w-9 h-9
                                                 rounded-xl
@@ -340,9 +307,7 @@ export default function Index({ tableauNumbers }) {
                                             mt-4
                                         "
                                     >
-                                        {getPiecesText(
-                                            item.tableau_number,
-                                        )}
+                                        {getPiecesText(item.tableau_number)}
                                     </h2>
 
                                     <p className="text-gray-500 mt-2 leading-7">
@@ -358,9 +323,7 @@ export default function Index({ tableauNumbers }) {
                                 <div className="mt-6 flex items-end gap-2">
                                     {Array.from({
                                         length: Math.min(
-                                            parseInt(
-                                                item.tableau_number,
-                                            ) || 1,
+                                            parseInt(item.tableau_number) || 1,
                                             5,
                                         ),
                                     }).map((_, i) => (
@@ -376,10 +339,7 @@ export default function Index({ tableauNumbers }) {
                                             "
                                             style={{
                                                 height: `${
-                                                    45 +
-                                                    (i % 2 === 0
-                                                        ? 20
-                                                        : 0)
+                                                    45 + (i % 2 === 0 ? 20 : 0)
                                                 }px`,
                                             }}
                                         />
@@ -478,10 +438,7 @@ export default function Index({ tableauNumbers }) {
                                 type="text"
                                 value={data.tableau_number}
                                 onChange={(e) =>
-                                    setData(
-                                        "tableau_number",
-                                        e.target.value,
-                                    )
+                                    setData("tableau_number", e.target.value)
                                 }
                                 placeholder="مثال : واحد / اثنين / ثلاثة"
                                 className="
@@ -534,9 +491,7 @@ export default function Index({ tableauNumbers }) {
                                     </div>
 
                                     <h3 className="text-xl font-bold">
-                                        {getPiecesText(
-                                            data.tableau_number,
-                                        )}
+                                        {getPiecesText(data.tableau_number)}
                                     </h3>
                                 </div>
                             </div>

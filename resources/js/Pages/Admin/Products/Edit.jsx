@@ -1,3 +1,5 @@
+// Edit.jsx
+
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router, useForm } from "@inertiajs/react";
 import { useMemo, useState } from "react";
@@ -17,7 +19,8 @@ import ProductCard from "./Components/ProductCard";
 import Breadcrumb from "@/Components/Breadcrumb";
 import AdminPageHeader from "@/Components/AdminPageHeader";
 
-export default function Create({
+export default function Edit({
+    product,
     categories,
     shapes,
     sizes,
@@ -25,51 +28,84 @@ export default function Create({
     tags,
 }) {
     const [frontendErrors, setFrontendErrors] = useState({});
+
     const {
         data,
         setData,
-        post,
+        put,
         processing,
         errors: backendErrors,
+        transform,
     } = useForm({
-        name: "",
-        code: "",
-        description: "",
+        name: product?.name || "",
+        code: product?.code || "",
+        description: product?.description || "",
 
-        category_id: "",
+        category_id: product?.category_id || "",
 
-        shape_id: "",
+        shape_id: product?.shape_id || "",
 
-        artistic_type: "",
-        place: [],
-        pieces_count: "",
+        artistic_type: product?.artistic_type || "",
+        place: product?.place || [],
+        pieces_count: product?.pieces_count || "",
 
-        featured: false,
-        is_active: true,
+        featured: Boolean(product?.featured),
+        is_active: Boolean(product?.is_active),
 
-        tags: [],
-        design_colors: [],
+        tags: (product?.tags || []).map((tag) =>
+            typeof tag === "object" ? tag.id : tag,
+        ),
 
-        main_image: null,
-        images: [],
+        design_colors:
+            product?.design_colors?.map((color) => ({
+                hex: color.hex,
+                name: color.name,
+            })) || [],
 
-        variants: [
-            {
-                size_id: "",
-                frame_type_id: "",
-                price: "",
-                stock: "",
-            },
-        ],
+        main_image: product?.main_image || null,
+
+        images:
+            product?.images?.map((image) => ({
+                id: image.id,
+                file: null,
+                image: image.image || image.url,
+                is_old: true,
+            })) || [],
+        deleted_images: [],
+
+        variants: product?.variants?.length
+            ? product.variants.map((variant) => ({
+                  id: variant.id,
+
+                  size_id: variant.size_id?.toString() || "",
+
+                  frame_type_id: variant.frame_type_id?.toString() || "",
+
+                  price: variant.price?.toString() || "",
+
+                  stock: variant.stock?.toString() || "",
+              }))
+            : [
+                  {
+                      size_id: "",
+                      frame_type_id: "",
+                      price: "",
+                      stock: "",
+                  },
+              ],
     });
+
+    const errors = {
+        ...backendErrors,
+        ...frontendErrors,
+    };
     const [tagInput, setTagInput] = useState("");
     const [showSuggestions, setShowSuggestions] = useState(false);
-
-    const filteredTags = tags.filter((tag) => {
+    const filteredTags = (tags || []).filter((tag) => {
         /*
     Exclude selected
     */
-        const selected = data.tags.some((t) => String(t) === String(tag.id));
+        const selected = data.tags.includes(tag.id);
 
         if (selected) return false;
 
@@ -78,19 +114,20 @@ export default function Create({
     */
         return tag.name.toLowerCase().includes(tagInput.toLowerCase());
     });
-    const errors = {
-        ...backendErrors,
-        ...frontendErrors,
-    };
+    /*
+	|--------------------------------------------------------------------------
+	| Validation
+	|--------------------------------------------------------------------------
+	*/
 
     const validateForm = () => {
         const newErrors = {};
 
         /*
-    |--------------------------------------------------------------------------
-    | Basic Info
-    |--------------------------------------------------------------------------
-    */
+	|--------------------------------------------------------------------------
+	| Basic Info
+	|--------------------------------------------------------------------------
+	*/
 
         if (!data.name.trim()) {
             newErrors.name = "اسم اللوحة مطلوب";
@@ -99,15 +136,16 @@ export default function Create({
         if (!data.code.trim()) {
             newErrors.code = "كود المنتج مطلوب";
         }
+
         if (!data.description.trim()) {
             newErrors.description = "وصف اللوحة مطلوب";
         }
 
         /*
-    |--------------------------------------------------------------------------
-    | Category / Shape
-    |--------------------------------------------------------------------------
-    */
+	|--------------------------------------------------------------------------
+	| Category / Shape
+	|--------------------------------------------------------------------------
+	*/
 
         if (!data.category_id) {
             newErrors.category_id = "اختر المجموعة";
@@ -118,10 +156,10 @@ export default function Create({
         }
 
         /*
-    |--------------------------------------------------------------------------
-    | Main Image
-    |--------------------------------------------------------------------------
-    */
+	|--------------------------------------------------------------------------
+	| Main Image
+	|--------------------------------------------------------------------------
+	*/
 
         const allowedTypes = [
             "image/png",
@@ -132,7 +170,9 @@ export default function Create({
 
         if (!data.main_image) {
             newErrors.main_image = "الصورة الرئيسية مطلوبة";
-        } else {
+        }
+
+        if (data.main_image instanceof File) {
             if (!allowedTypes.includes(data.main_image.type)) {
                 newErrors.main_image =
                     "الصورة الرئيسية يجب أن تكون PNG أو JPG أو JPEG أو WEBP";
@@ -144,26 +184,21 @@ export default function Create({
         }
 
         /*
-    |--------------------------------------------------------------------------
-    | Gallery Images
-    |--------------------------------------------------------------------------
-    */
+	|--------------------------------------------------------------------------
+	| Gallery Images
+	|--------------------------------------------------------------------------
+	*/
 
         if (data.images.length) {
             data.images.forEach((image, index) => {
-                const allowedTypes = [
-                    "image/png",
-                    "image/jpeg",
-                    "image/jpg",
-                    "image/webp",
-                ];
+                if (image.is_old) return;
 
-                if (!allowedTypes.includes(image.type)) {
+                if (!allowedTypes.includes(image.file.type)) {
                     newErrors[`images.${index}`] =
                         `الصورة رقم ${index + 1} غير مدعومة`;
                 }
 
-                if (image.size > 5 * 1024 * 1024) {
+                if (image.file.size > 5 * 1024 * 1024) {
                     newErrors[`images.${index}`] =
                         `الصورة رقم ${index + 1} أكبر من 5MB`;
                 }
@@ -171,10 +206,10 @@ export default function Create({
         }
 
         /*
-    |--------------------------------------------------------------------------
-    | Variants
-    |--------------------------------------------------------------------------
-    */
+	|--------------------------------------------------------------------------
+	| Variants
+	|--------------------------------------------------------------------------
+	*/
 
         if (!data.variants.length) {
             newErrors.variants = "يجب إضافة متغير واحد على الأقل";
@@ -199,6 +234,7 @@ export default function Create({
                 newErrors[`variants.${index}.stock`] = "المخزون غير صحيح";
             }
         });
+
         /*
 |--------------------------------------------------------------------------
 | Design Colors Validation
@@ -207,16 +243,10 @@ export default function Create({
 
         if (data.design_colors.length) {
             data.design_colors.forEach((color, index) => {
-                /*
-        HEX Required
-        */
                 if (!color.hex?.trim()) {
                     newErrors[`design_colors.${index}.hex`] = "كود اللون مطلوب";
                 }
 
-                /*
-        HEX Format
-        */
                 const hexRegex = /^#([0-9A-F]{3}){1,2}$/i;
 
                 if (color.hex && !hexRegex.test(color.hex)) {
@@ -224,39 +254,36 @@ export default function Create({
                         "كود HEX غير صحيح";
                 }
 
-                /*
-        Name Required
-        */
                 if (!color.name?.trim()) {
                     newErrors[`design_colors.${index}.name`] =
                         "اسم اللون مطلوب";
                 }
 
-                /*
-        Name Length
-        */
                 if (color.name && color.name.length > 30) {
                     newErrors[`design_colors.${index}.name`] =
                         "اسم اللون طويل جدًا";
                 }
             });
         }
-        /*|--------------------------------------------------------------------------
+
+        /*
+|--------------------------------------------------------------------------
 | Pieces count Validation
 |--------------------------------------------------------------------------
 */
+
         if (!data.pieces_count) {
             newErrors.pieces_count = "عدد القطع مطلوب";
         }
 
         return newErrors;
     };
-    /*
-    |--------------------------------------------------------------------------
-    | Submit
-    |--------------------------------------------------------------------------
-    */
 
+    /*
+	|--------------------------------------------------------------------------
+	| Submit
+	|--------------------------------------------------------------------------
+	*/
     const submit = (e) => {
         e.preventDefault();
 
@@ -268,14 +295,127 @@ export default function Create({
             return;
         }
 
-        post(route("products.store"));
-    };
+        const formData = new FormData();
 
-    /*
+        /*
     |--------------------------------------------------------------------------
-    | Add Variant
+    | Basic Fields
     |--------------------------------------------------------------------------
     */
+
+        formData.append("name", data.name);
+        formData.append("code", data.code);
+        formData.append("description", data.description);
+
+        formData.append("category_id", data.category_id);
+        formData.append("shape_id", data.shape_id);
+
+        formData.append("artistic_type", data.artistic_type || "");
+        formData.append("pieces_count", data.pieces_count || "");
+
+        formData.append("featured", data.featured ? 1 : 0);
+        formData.append("is_active", data.is_active ? 1 : 0);
+
+        /*
+    |--------------------------------------------------------------------------
+    | Main Image
+    |--------------------------------------------------------------------------
+    */
+
+        if (data.main_image instanceof File) {
+            formData.append("main_image", data.main_image);
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | Tags
+    |--------------------------------------------------------------------------
+    */
+
+        data.tags.forEach((tag, index) => {
+            formData.append(`tags[${index}]`, tag);
+        });
+
+        /*
+    |--------------------------------------------------------------------------
+    | Places
+    |--------------------------------------------------------------------------
+    */
+
+        data.place.forEach((place, index) => {
+            formData.append(`place[${index}]`, place);
+        });
+
+        /*
+    |--------------------------------------------------------------------------
+    | Design Colors
+    |--------------------------------------------------------------------------
+    */
+
+        data.design_colors.forEach((color, index) => {
+            formData.append(`design_colors[${index}][hex]`, color.hex);
+
+            formData.append(`design_colors[${index}][name]`, color.name);
+        });
+
+        /*
+    |--------------------------------------------------------------------------
+    | Variants
+    |--------------------------------------------------------------------------
+    */
+
+        data.variants.forEach((variant, index) => {
+            formData.append(`variants[${index}][id]`, variant.id || "");
+
+            formData.append(`variants[${index}][size_id]`, variant.size_id);
+
+            formData.append(
+                `variants[${index}][frame_type_id]`,
+                variant.frame_type_id,
+            );
+
+            formData.append(`variants[${index}][price]`, variant.price);
+
+            formData.append(`variants[${index}][stock]`, variant.stock);
+        });
+
+        /*
+    |--------------------------------------------------------------------------
+    | NEW IMAGES ONLY
+    |--------------------------------------------------------------------------
+    */
+
+        data.images.forEach((img) => {
+            if (!img.is_old && img.file) {
+                formData.append("images[]", img.file);
+            }
+        });
+
+        /*
+    |--------------------------------------------------------------------------
+    | Deleted Images
+    |--------------------------------------------------------------------------
+    */
+
+        data.deleted_images?.forEach((id, index) => {
+            formData.append(`deleted_images[${index}]`, id);
+        });
+
+        /*
+    |--------------------------------------------------------------------------
+    | PUT Method
+    |--------------------------------------------------------------------------
+    */
+
+        formData.append("_method", "PUT");
+
+        router.post(route("products.update", product.id), formData);
+    };
+    /*
+	|--------------------------------------------------------------------------
+	| Variants
+	|--------------------------------------------------------------------------
+	*/
 
     const addVariant = () => {
         setData("variants", [
@@ -289,24 +429,12 @@ export default function Create({
         ]);
     };
 
-    /*
-    |--------------------------------------------------------------------------
-    | Remove Variant
-    |--------------------------------------------------------------------------
-    */
-
     const removeVariant = (index) => {
         setData(
             "variants",
             data.variants.filter((_, i) => i !== index),
         );
     };
-
-    /*
-    |--------------------------------------------------------------------------
-    | Update Variant
-    |--------------------------------------------------------------------------
-    */
 
     const updateVariant = (index, field, value) => {
         const updated = [...data.variants];
@@ -317,35 +445,11 @@ export default function Create({
     };
 
     /*
-    |--------------------------------------------------------------------------
-    | Add Color
-    |--------------------------------------------------------------------------
-    */
+	|--------------------------------------------------------------------------
+	| Unique Variant Logic
+	|--------------------------------------------------------------------------
+	*/
 
-    const addColor = () => {
-        setData("design_colors", [...data.design_colors, "#d4af37"]);
-    };
-
-    /*
-    |--------------------------------------------------------------------------
-    | Preview
-    |--------------------------------------------------------------------------
-    */
-
-    const previewProduct = useMemo(() => {
-        return {
-            ...data,
-
-            main_image:
-                data.main_image instanceof File
-                    ? URL.createObjectURL(data.main_image)
-                    : null,
-
-            category: categories.find((c) => c.id == data.category_id),
-
-            variants: data.variants,
-        };
-    }, [data]);
     const isSizeDisabled = (sizeId, currentFrameTypeId, currentIndex) => {
         return data.variants.some((variant, index) => {
             if (index === currentIndex) return false;
@@ -367,51 +471,57 @@ export default function Create({
             );
         });
     };
+
     return (
         <AuthenticatedLayout>
-            <Head title="إضافة لوحة" />
+            <Head title="تعديل لوحة" />
 
             <form onSubmit={submit} className="space-y-6">
                 {/* Breadcrumb */}
-                <Breadcrumb items={[
-                    { name: "لوحة التحكم", link: route("dashboard") },
-                    { name: "اللوحات", link: route("products.index") },
-                    { name: "إضافة لوحة" },
-                ]} />
+                <Breadcrumb
+                    items={[
+                        { name: "لوحة التحكم", link: route("dashboard") },
+                        { name: "اللوحات", link: route("products.index") },
+                        { name: "تعديل لوحة" },
+                    ]}
+                />
 
                 {/* Header */}
-<AdminPageHeader
-    title="إضافة لوحة جديدة"
-    description="إضافة لوحة جديدة مع المتغيرات والصور الخاصة بها"
-    icon={IoColorPaletteOutline}
-actions={[
-    {
-        label: "إلغاء",
-        onClick: () => router.get(route("products.index")),
-        className: `
-            h-11 px-5
-            rounded-2xl
-            border border-[#e7dfd8]
-            bg-white
-            font-medium
-        `,
-    },
-    {
-        label: "حفظ اللوحة",
-        icon: FiSave,
-        onClick: submit,
-        className: `
-            h-11 px-6
-            rounded-2xl
-            bg-[var(--primary)]
-            text-white
-            font-medium
-            flex items-center gap-2
-        `,
-        disabled: processing,
-    },
-]}
-/>
+            
+                <AdminPageHeader
+                    title="تعديل لوحة"
+                    description="قم بتعديل بيانات اللوحة والمتغيرات"
+                    icon={IoColorPaletteOutline}
+                    actions={[
+                        {
+                            label: "إلغاء",
+                            type: "button",
+                            onClick: () => router.get(route("products.index")),
+                            className: `
+								h-11 px-5
+								rounded-2xl
+								border border-[#e7dfd8]
+								bg-white
+								font-medium
+							`,
+                        },
+                        {
+                            label: "حفظ التعديلات",
+                            type: "submit",
+							onClick: submit,
+							icon: FiSave,
+                            disabled: { processing },
+                            className: `
+								h-11 px-6
+								rounded-2xl
+								bg-[var(--primary)]
+								text-white
+								font-medium
+								flex items-center gap-2
+							`,
+                        },
+                    ]}
+                />
 
                 {/* GRID */}
                 <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
@@ -534,6 +644,8 @@ actions={[
 
                         {/* IMAGES */}
 
+                        {/* IMAGES */}
+
                         <div className="bg-white rounded-[28px] border border-[#ece6df] p-6 shadow-sm">
                             <h2 className="text-lg font-bold mb-6">الصور</h2>
 
@@ -560,9 +672,14 @@ actions={[
                                     {data.main_image ? (
                                         <div className="relative w-full">
                                             <img
-                                                src={URL.createObjectURL(
-                                                    data.main_image,
-                                                )}
+                                                src={
+                                                    data.main_image instanceof
+                                                    File
+                                                        ? URL.createObjectURL(
+                                                              data.main_image,
+                                                          )
+                                                        : `/storage/${data.main_image}`
+                                                }
                                                 alt="preview"
                                                 className="
                             w-full h-[320px]
@@ -575,6 +692,7 @@ actions={[
                                                 type="button"
                                                 onClick={(e) => {
                                                     e.preventDefault();
+
                                                     setData("main_image", null);
                                                 }}
                                                 className="
@@ -614,6 +732,7 @@ actions={[
                                                 "main_image",
                                                 e.target.files[0],
                                             );
+
                                             setFrontendErrors((prev) => ({
                                                 ...prev,
                                                 main_image: null,
@@ -621,6 +740,7 @@ actions={[
                                         }}
                                     />
                                 </label>
+
                                 {errors.main_image && (
                                     <p className="text-red-500 text-sm mt-1">
                                         {errors.main_image}
@@ -656,10 +776,18 @@ actions={[
                                             onChange={(e) => {
                                                 setData("images", [
                                                     ...data.images,
+
                                                     ...Array.from(
                                                         e.target.files,
-                                                    ),
+                                                    ).map((file) => ({
+                                                        file,
+                                                        image: URL.createObjectURL(
+                                                            file,
+                                                        ),
+                                                        is_old: false,
+                                                    })),
                                                 ]);
+
                                                 setFrontendErrors((prev) => ({
                                                     ...prev,
                                                     images: null,
@@ -683,9 +811,11 @@ actions={[
                         "
                                             >
                                                 <img
-                                                    src={URL.createObjectURL(
-                                                        image,
-                                                    )}
+                                                    src={
+                                                        image.is_old
+                                                            ? `/storage/${image.image}`
+                                                            : image.image
+                                                    }
                                                     alt=""
                                                     className="
                                 w-full h-40
@@ -695,15 +825,30 @@ actions={[
 
                                                 <button
                                                     type="button"
-                                                    onClick={() =>
+                                                    onClick={() => {
+                                                        const imageToDelete =
+                                                            data.images[index];
+
+                                                        if (
+                                                            imageToDelete.is_old
+                                                        ) {
+                                                            setData(
+                                                                "deleted_images",
+                                                                [
+                                                                    ...data.deleted_images,
+                                                                    imageToDelete.id,
+                                                                ],
+                                                            );
+                                                        }
+
                                                         setData(
                                                             "images",
                                                             data.images.filter(
                                                                 (_, i) =>
                                                                     i !== index,
                                                             ),
-                                                        )
-                                                    }
+                                                        );
+                                                    }}
                                                     className="
                                 absolute top-2 left-2
                                 w-8 h-8
@@ -733,6 +878,7 @@ actions={[
                                         لا توجد صور إضافية
                                     </div>
                                 )}
+
                                 {Object.keys(errors).some((key) =>
                                     key.startsWith("images."),
                                 ) && (
@@ -1058,7 +1204,7 @@ actions={[
                                 >
                                     <option value="">اختر تصنيف</option>
 
-                                    {tags
+                                    {(tags || [])
                                         .filter(
                                             (tag) =>
                                                 !data.tags.includes(
@@ -1076,7 +1222,9 @@ actions={[
                                 {/* {data.tags.length > 0 && (
                                     <div className="flex flex-wrap gap-2">
                                         {data.tags.map((tagId) => {
-                                            const selectedTag = tags.find(
+                                            const selectedTag = (
+                                                tags || []
+                                            ).find(
                                                 (tag) =>
                                                     String(tag.id) ===
                                                     String(tagId),
@@ -1086,15 +1234,15 @@ actions={[
                                                 <div
                                                     key={tagId}
                                                     className="
-                            h-9 px-4
-                            rounded-full
-                            bg-[var(--hover-accent)]
-                            border border-[rgba(0,0,0,0.05)]
-                            text-[var(--primary)]
-                            text-sm font-medium
-                            flex items-center gap-2
-                            shadow-sm
-                        "
+                        h-9 px-4
+                        rounded-full
+                        bg-[var(--hover-accent)]
+                        border border-[rgba(0,0,0,0.05)]
+                        text-[var(--primary)]
+                        text-sm font-medium
+                        flex items-center gap-2
+                        shadow-sm
+                    "
                                                 >
                                                     {selectedTag?.name}
 
@@ -1115,14 +1263,14 @@ actions={[
                                                             );
                                                         }}
                                                         className="
-                                w-5 h-5
-                                rounded-full
-                                bg-white
-                                text-gray-500
-                                flex items-center justify-center
-                                hover:text-red-500
-                                transition-all
-                            "
+                            w-5 h-5
+                            rounded-full
+                            bg-white
+                            text-gray-500
+                            flex items-center justify-center
+                            hover:text-red-500
+                            transition-all
+                        "
                                                     >
                                                         ×
                                                     </button>
@@ -1256,12 +1404,8 @@ actions={[
                                                     const existingTag =
                                                         tags.find(
                                                             (tag) =>
-                                                                String(
-                                                                    tag.id,
-                                                                ) ===
-                                                                String(
-                                                                    tagValue,
-                                                                ),
+                                                                tag.id ===
+                                                                tagValue,
                                                         );
 
                                                     return (
@@ -1280,7 +1424,10 @@ actions={[
                                                             {/* Existing tag name OR new typed tag */}
                                                             {existingTag
                                                                 ? existingTag.name
-                                                                : tagValue}
+                                                                : typeof tagValue ===
+                                                                    "object"
+                                                                  ? tagValue.name
+                                                                  : tagValue}
 
                                                             <button
                                                                 type="button"
