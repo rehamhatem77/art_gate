@@ -26,43 +26,57 @@ class ProductsController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function index(Request $request)
-    {
-        $products = Product::with([
+   public function index(Request $request)
+{
+    $search = $request->search;
+
+    $products = Product::with([
             'category',
             'shape',
             'images',
             'variants.size',
             'variants.frameType',
-        ])->latest()->get();
+        ])
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('code', 'like', "%{$search}%");
+            });
+        })
+        ->latest()
+        ->paginate(6)
+        ->withQueryString();
 
-        return Inertia::render('Admin/Products/Index', [
-            'products' => $products,
-        ]);
-    }
-
-public function show(Product $product)
-{
-    $product->load([
-        'category',
-        'shape',
-        'images',
-        'variants.size',
-        'variants.frameType',
-    ]);
-
-    $product->tag_objects = Tag::whereIn(
-    'id',
-    collect($product->tags)
-        ->flatten()
-        ->filter()
-        ->toArray()
-)->get();
-
-    return Inertia::render('Admin/Products/Show', [
-        'product' => $product,
+    return Inertia::render('Admin/Products/Index', [
+        'products' => $products,
+        'filters' => [
+            'search' => $search,
+        ],
     ]);
 }
+
+    public function show(Product $product)
+    {
+        $product->load([
+            'category',
+            'shape',
+            'images',
+            'variants.size',
+            'variants.frameType',
+        ]);
+
+        $product->tag_objects = Tag::whereIn(
+            'id',
+            collect($product->tags)
+                ->flatten()
+                ->filter()
+                ->toArray()
+        )->get();
+
+        return Inertia::render('Admin/Products/Show', [
+            'product' => $product,
+        ]);
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -377,7 +391,7 @@ public function show(Product $product)
                     ->file('main_image')
                     ->store('products/main', 'public');
             }
-            
+
 
             if ($request->filled('deleted_images')) {
 
@@ -519,76 +533,76 @@ public function show(Product $product)
     */
 
     public function destroy(Product $product)
-{
-    $product->delete();
+    {
+        $product->delete();
 
-    return back()->with(
-        'success',
-        'تم نقل اللوحة إلى سلة المحذوفات'
-    );
-}
-public function trash()
-{
-    $products = Product::onlyTrashed()
-        ->with([
-            'category',
-            'shape',
-            'images',
-            'variants.size',
-            'variants.frameType',
-        ])
-        ->latest('deleted_at')
-        ->get();
+        return back()->with(
+            'success',
+            'تم نقل اللوحة إلى سلة المحذوفات'
+        );
+    }
+    public function trash()
+    {
+        $products = Product::onlyTrashed()
+            ->with([
+                'category',
+                'shape',
+                'images',
+                'variants.size',
+                'variants.frameType',
+            ])
+            ->latest('deleted_at')
+            ->get();
 
-    return Inertia::render('Admin/Products/Trash', [
-        'products' => $products,
-    ]);
-}
-public function restore($id)
-{
-    $product = Product::withTrashed()->findOrFail($id);
+        return Inertia::render('Admin/Products/Trash', [
+            'products' => $products,
+        ]);
+    }
+    public function restore($id)
+    {
+        $product = Product::withTrashed()->findOrFail($id);
 
-    $product->restore();
+        $product->restore();
 
-    return back()->with(
-        'success',
-        'تم استعادة اللوحة'
-    );
-}
-public function forceDelete($id)
-{
-    $product = Product::withTrashed()->findOrFail($id);
+        return back()->with(
+            'success',
+            'تم استعادة اللوحة'
+        );
+    }
+    public function forceDelete($id)
+    {
+        $product = Product::withTrashed()->findOrFail($id);
 
-    /*
+        /*
     Delete Main Image
     */
-    if (
-        $product->main_image &&
-        Storage::disk('public')->exists($product->main_image)
-    ) {
-        Storage::disk('public')->delete($product->main_image);
-    }
+        if (
+            $product->main_image &&
+            Storage::disk('public')->exists($product->main_image)
+        ) {
+            Storage::disk('public')->delete($product->main_image);
+        }
 
-    /*
+        /*
     Delete Gallery Images
     */
-    foreach ($product->images as $image) {
+        foreach ($product->images as $image) {
 
-        if (
-            $image->image &&
-            Storage::disk('public')->exists($image->image)
-        ) {
-            Storage::disk('public')->delete($image->image);
+            if (
+                $image->image &&
+                Storage::disk('public')->exists($image->image)
+            ) {
+                Storage::disk('public')->delete($image->image);
+            }
         }
+
+        $product->forceDelete();
+
+        return back()->with(
+            'success',
+            'تم حذف اللوحة نهائياً'
+        );
     }
-
-    $product->forceDelete();
-
-    return back()->with(
-        'success',
-        'تم حذف اللوحة نهائياً'
-    );
-}
 
     /*
     |--------------------------------------------------------------------------

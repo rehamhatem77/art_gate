@@ -1,6 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router, useForm } from "@inertiajs/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Modal from "@/Components/Modal";
 
 import {
@@ -16,8 +16,8 @@ import { MdOutlineCategory } from "react-icons/md";
 import Breadcrumb from "@/Components/Breadcrumb";
 import AdminPageHeader from "@/Components/AdminPageHeader";
 
-export default function Index({ frameTypes }) {
-    const [search, setSearch] = useState("");
+export default function Index({ frameTypes ,filters }) {
+   const [search, setSearch] = useState(filters?.search || "");
     const [showModal, setShowModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
     const [selected, setSelected] = useState(null);
@@ -55,11 +55,20 @@ export default function Index({ frameTypes }) {
     };
 
     // ---------------- filter ----------------
-    const filtered = useMemo(() => {
-        return frameTypes.filter((t) =>
-            t.type.toLowerCase().includes(search.toLowerCase()),
+    useEffect(() => {
+    const delay = setTimeout(() => {
+        router.get(
+            route("frame-types.index"),
+            { search },
+            {
+                preserveState: true,
+                replace: true,
+            }
         );
-    }, [frameTypes, search]);
+    }, 400);
+
+    return () => clearTimeout(delay);
+}, [search]);
 
     // ---------------- colors helpers ----------------
     const addColor = () => {
@@ -202,9 +211,9 @@ export default function Index({ frameTypes }) {
                 </div>
 
                 {/* Grid */}
-                {filtered.length ? (
+                {frameTypes.length ? (
                     <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 items-start ">
-                        {filtered.map((item) => (
+                        {frameTypes.map((item) => (
                             <div
                                 key={item.id}
                                 className="

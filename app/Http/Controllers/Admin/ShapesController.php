@@ -11,10 +11,20 @@ class ShapesController extends Controller
 {
     public function index(Request $request)
     {
-        $shapes = Shape::latest()->get();
+        $query = Shape::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->where('shape', 'like', "%{$search}%");
+        }
+        $shapes = $query->latest()->get();
 
         return Inertia::render('Admin/Shapes/Index', [
             'shapes' => $shapes,
+            'filters' => [
+                'search' => $request->search,
+            ],
         ]);
     }
 

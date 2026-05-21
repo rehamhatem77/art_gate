@@ -1,6 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router, useForm } from "@inertiajs/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import Modal from "@/Components/Modal";
 
@@ -18,8 +18,8 @@ import { SlSizeFullscreen } from "react-icons/sl";
 import Breadcrumb from "@/Components/Breadcrumb";
 import AdminPageHeader from "@/Components/AdminPageHeader";
 
-export default function Index({ sizes }) {
-    const [search, setSearch] = useState("");
+export default function Index({ sizes, filters }) {
+    const [search, setSearch] = useState(filters?.search || "");
     const [showModal, setShowModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
     const [selectedSize, setSelectedSize] = useState(null);
@@ -58,13 +58,20 @@ export default function Index({ sizes }) {
     };
 
     // filter
-    const filteredSizes = useMemo(() => {
-        return sizes.filter((size) =>
-            `${size.width} × ${size.height}`
-                .toLowerCase()
-                .includes(search.toLowerCase()),
-        );
-    }, [sizes, search]);
+    useEffect(() => {
+        const delay = setTimeout(() => {
+            router.get(
+                route("sizes.index"),
+                { search },
+                {
+                    preserveState: true,
+                    replace: true,
+                },
+            );
+        }, 400);
+
+        return () => clearTimeout(delay);
+    }, [search]);
 
     // create
     const openCreate = () => {
@@ -162,22 +169,24 @@ export default function Index({ sizes }) {
             <main className="space-y-4">
                 {/* Breadcrumb */}
 
-                    <Breadcrumb items={[
+                <Breadcrumb
+                    items={[
                         { name: "لوحة التحكم", link: route("dashboard") },
-                        { name: "المقاسات" }
-                    ]} />
+                        { name: "المقاسات" },
+                    ]}
+                />
 
                 {/* Header */}
-<AdminPageHeader
-    title="إدارة المقاسات"
-    description="ادارة جميع مقاسات اللوحات"
-    icon={SlSizeFullscreen}
-    actions={[
-        {
-            label: "إضافة مقاس",
-            icon: FiPlus,
-            onClick: openCreate,
-            className: `
+                <AdminPageHeader
+                    title="إدارة المقاسات"
+                    description="ادارة جميع مقاسات اللوحات"
+                    icon={SlSizeFullscreen}
+                    actions={[
+                        {
+                            label: "إضافة مقاس",
+                            icon: FiPlus,
+                            onClick: openCreate,
+                            className: `
                 flex items-center justify-center gap-2
                 px-5 py-2
                 rounded-xl
@@ -188,9 +197,9 @@ export default function Index({ sizes }) {
                 hover:opacity-90
                 transition-all
             `,
-        },
-    ]}
-/>
+                        },
+                    ]}
+                />
 
                 {/* Search */}
 
@@ -220,7 +229,7 @@ export default function Index({ sizes }) {
 
                 {/* Sizes */}
 
-                {filteredSizes.length > 0 ? (
+                {sizes.length > 0 ? (
                     <div
                         className="
                             grid
@@ -231,7 +240,7 @@ export default function Index({ sizes }) {
                             gap-3
                         "
                     >
-                        {filteredSizes.map((size) => (
+                        {sizes.map((size) => (
                             <div
                                 key={size.id}
                                 className="
@@ -283,8 +292,8 @@ export default function Index({ sizes }) {
                                     </div>
 
                                     {/* ACTIONS (smooth floating hover, no space reserved) */}
-                       <div
-    className="
+                                    <div
+                                        className="
         absolute
         bottom-6
         inset-x-0
@@ -301,8 +310,7 @@ export default function Index({ sizes }) {
 
         will-change-transform
     "
->
-                                    
+                                    >
                                         {/* edit */}
                                         <button
                                             onClick={() => openEdit(size)}

@@ -12,14 +12,25 @@ class TagsController extends Controller
 {
 
 
-    public function index(Request $request)
-    {
-        $tags = Tag::latest()->get();
+   public function index(Request $request)
+{
+    $query = Tag::query();
 
-        return Inertia::render('Admin/Tags/Index', [
-            'tags' => $tags,
-        ]);
+    if ($request->filled('search')) {
+        $search = $request->search;
+
+        $query->where('name', 'like', "%{$search}%");
     }
+
+    $tags = $query->latest()->get();
+
+    return Inertia::render('Admin/Tags/Index', [
+        'tags' => $tags,
+        'filters' => [
+            'search' => $request->search,
+        ],
+    ]);
+}
 
     public function store(Request $request)
     {

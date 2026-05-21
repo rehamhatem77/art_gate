@@ -1,6 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router, useForm } from "@inertiajs/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import Modal from "@/Components/Modal";
 
@@ -17,8 +17,8 @@ import {
 import Breadcrumb from "@/Components/Breadcrumb";
 import AdminPageHeader from "@/Components/AdminPageHeader";
 
-export default function Index({ tags }) {
-    const [search, setSearch] = useState("");
+export default function Index({ tags ,filters }) {
+    const [search, setSearch] = useState(filters?.search || "");
     const [showModal, setShowModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
     const [selectedTag, setSelectedTag] = useState(null);
@@ -43,11 +43,20 @@ export default function Index({ tags }) {
     };
 
     // filter tags
-    const filteredTags = useMemo(() => {
-        return tags.filter((tag) =>
-            tag.name.toLowerCase().includes(search.toLowerCase()),
+    useEffect(() => {
+    const delay = setTimeout(() => {
+        router.get(
+            route("tags.index"),
+            search ? { search } : {},
+            {
+                preserveState: true,
+                replace: true,
+            }
         );
-    }, [tags, search]);
+    }, 400);
+
+    return () => clearTimeout(delay);
+}, [search]);
 
     // open create
     const openCreate = () => {
@@ -177,7 +186,7 @@ export default function Index({ tags }) {
                     />
                 </div>
 
-                {filteredTags.length > 0 ? (
+                {tags.length > 0 ? (
                     <div
                         className="
                         flex flex-wrap gap-4
@@ -188,7 +197,7 @@ export default function Index({ tags }) {
                         shadow-sm
                     "
                     >
-                        {filteredTags.map((tag) => (
+                        {tags.map((tag) => (
                             <div
                                 key={tag.id}
                                 className="

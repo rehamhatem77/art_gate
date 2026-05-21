@@ -1,6 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router, useForm } from "@inertiajs/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getImage } from "@/Utils/GetImage";
 import Modal from "@/Components/Modal";
 import CategoryCard from "./Components/CategoryCard";
@@ -18,8 +18,8 @@ import { LuUngroup } from "react-icons/lu";
 import Breadcrumb from "@/Components/Breadcrumb";
 import AdminPageHeader from "@/Components/AdminPageHeader";
 
-export default function Index({ categories }) {
-    const [search, setSearch] = useState("");
+export default function Index({ categories ,filters }) {
+    const [search, setSearch] = useState(filters?.search || "");
 
     const [showModal, setShowModal] = useState(false);
 
@@ -51,11 +51,20 @@ export default function Index({ categories }) {
         return Object.keys(errors).length === 0;
     };
 
-    const filteredCategories = useMemo(() => {
-        return categories.filter((category) =>
-            category.name.toLowerCase().includes(search.toLowerCase()),
+   useEffect(() => {
+    const delay = setTimeout(() => {
+        router.get(
+            route("categories.index"),
+            { search },
+            {
+                preserveState: true,
+                replace: true,
+            }
         );
-    }, [categories, search]);
+    }, 400);
+
+    return () => clearTimeout(delay);
+}, [search]);
 
     const openCreate = () => {
         reset();
@@ -187,7 +196,7 @@ focus:ring-offset-1
 
                 {/* Grid */}
 
-                {filteredCategories.length > 0 ? (
+                {categories.length > 0 ? (
                     <div
                         className="
                             grid
@@ -198,7 +207,7 @@ focus:ring-offset-1
                             gap-6
                         "
                     >
-                        {filteredCategories.map((category) => (
+                        {categories.map((category) => (
                             <CategoryCard
                                 key={category.id}
                                 category={category}

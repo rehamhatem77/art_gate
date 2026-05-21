@@ -10,13 +10,28 @@ use Inertia\Inertia;
 class SizesController extends Controller
 {
         public function index(Request $request)
-    {
-        $sizes = Size::latest()->get();
+{
+    $query = Size::query();
 
-        return Inertia::render('Admin/Sizes/Index', [
-            'sizes' => $sizes,
-        ]);
+    if ($request->filled('search')) {
+        $search = $request->search;
+
+        $query->where(function ($q) use ($search) {
+            $q->where('width', 'like', "%{$search}%")
+              ->orWhere('height', 'like', "%{$search}%")
+              ->orWhereRaw("CONCAT(width, ' × ', height) LIKE ?", ["%{$search}%"]);
+        });
     }
+
+    $sizes = $query->latest()->get();
+
+    return Inertia::render('Admin/Sizes/Index', [
+        'sizes' => $sizes,
+        'filters' => [
+            'search' => $request->search,
+        ],
+    ]);
+}
 
     public function store(Request $request)
     {

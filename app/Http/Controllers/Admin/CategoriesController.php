@@ -13,10 +13,18 @@ class CategoriesController extends Controller
 
     public function index(Request $request)
     {
-        $categories = Category::latest()->get();
+         $categories = Category::query()
+        ->when($request->search, function ($q, $search) {
+            $q->where('name', 'like', "%{$search}%");
+        })
+        ->latest()
+        ->get();
 
         return Inertia::render('Admin/Categories/Index', [
             'categories' => $categories,
+            'filters' => [
+                'search' => $request->search,
+            ],
         ]);
     }
 
@@ -27,18 +35,17 @@ class CategoriesController extends Controller
             'image' => 'required|image|mimes:jpg,jpeg,png,webp',
         ]);
 
-try{
+        try {
 
-        $imagePath = $request->file('image')->store('categories', 'public');
+            $imagePath = $request->file('image')->store('categories', 'public');
 
-        Category::create([
-            'name' => $request->name,
-            'image' => $imagePath,
-        ]);
+            Category::create([
+                'name' => $request->name,
+                'image' => $imagePath,
+            ]);
 
-        return back()->with('success', 'تم اضافة مجموعة تصاميم جديدة بنجاح');
-}
-        catch (\Exception $e) {
+            return back()->with('success', 'تم اضافة مجموعة تصاميم جديدة بنجاح');
+        } catch (\Exception $e) {
             return back()->with('error', 'حدث خطأ أثناء إضافة المجموعة: ' . $e->getMessage());
         }
     }
@@ -51,25 +58,24 @@ try{
         ]);
 
         $imagePath = $category->image;
-try{
+        try {
 
-        if ($request->hasFile('image')) {
+            if ($request->hasFile('image')) {
 
-            if ($category->image && Storage::disk('public')->exists($category->image)) {
-                Storage::disk('public')->delete($category->image);
+                if ($category->image && Storage::disk('public')->exists($category->image)) {
+                    Storage::disk('public')->delete($category->image);
+                }
+
+                $imagePath = $request->file('image')->store('categories', 'public');
             }
 
-            $imagePath = $request->file('image')->store('categories', 'public');
-        }
+            $category->update([
+                'name' => $request->name,
+                'image' => $imagePath,
+            ]);
 
-        $category->update([
-            'name' => $request->name,
-            'image' => $imagePath,
-        ]);
-
-        return back()->with('success', 'تم تحديث المجموعة بنجاح');
-}
-        catch (\Exception $e) {
+            return back()->with('success', 'تم تحديث المجموعة بنجاح');
+        } catch (\Exception $e) {
             return back()->with('error', 'حدث خطأ أثناء تحديث المجموعة: ' . $e->getMessage());
         }
     }
@@ -77,23 +83,22 @@ try{
     public function destroy(Category $category)
     {
 
-try{
-if ($category->products()->exists()) {
+        try {
+            if ($category->products()->exists()) {
 
-            return back()->with(
-                'error',
-                'لا يمكن حذف المجموعة لأن هناك لوحات مرتبطة بها'
-            );
-        }
-        if ($category->image && Storage::disk('public')->exists($category->image)) {
-            Storage::disk('public')->delete($category->image);
-        }
+                return back()->with(
+                    'error',
+                    'لا يمكن حذف المجموعة لأن هناك لوحات مرتبطة بها'
+                );
+            }
+            if ($category->image && Storage::disk('public')->exists($category->image)) {
+                Storage::disk('public')->delete($category->image);
+            }
 
-        $category->delete();
+            $category->delete();
 
-        return back()->with('success', 'تم حذف المجموعة بنجاح');
-}
-        catch (\Exception $e) {
+            return back()->with('success', 'تم حذف المجموعة بنجاح');
+        } catch (\Exception $e) {
             return back()->with('error', 'حدث خطأ أثناء حذف المجموعة');
         }
     }

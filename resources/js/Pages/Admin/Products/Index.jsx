@@ -18,18 +18,28 @@ import ProductCard from "./Components/ProductCard";
 import Breadcrumb from "@/Components/Breadcrumb";
 import AdminPageHeader from "@/Components/AdminPageHeader";
 import Modal from "@/Components/Modal";
+import Pagination from "@/Components/Pagination";
 
-export default function Index({ products }) {
-    const [search, setSearch] = useState("");
-const [deleteModal, setDeleteModal] = useState(false);
- const [selected, setSelected] = useState(null);
+export default function Index({ products, filters }) {
+    const [search, setSearch] = useState(filters.search || "");
+    const [deleteModal, setDeleteModal] = useState(false);
+    const [selected, setSelected] = useState(null);
 
-    const filtered = useMemo(() => {
-        return products.filter((item) =>
-            item.name.toLowerCase().includes(search.toLowerCase()),
+    const handleSearch = (value) => {
+        setSearch(value);
+
+        router.get(
+            route("products.index"),
+            {
+                search: value,
+            },
+            {
+                preserveState: true,
+                replace: true,
+            },
         );
-    }, [products, search]);
- const openDelete = (item) => {
+    };
+    const openDelete = (item) => {
         setSelected(item);
         setDeleteModal(true);
     };
@@ -105,7 +115,7 @@ const [deleteModal, setDeleteModal] = useState(false);
 
                     <input
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        onChange={(e) => handleSearch(e.target.value)}
                         placeholder="ابحث باسم اللوحة..."
                         className="
                             w-full h-12
@@ -125,23 +135,29 @@ const [deleteModal, setDeleteModal] = useState(false);
                 </div>
 
                 {/* Grid */}
-                {filtered.length ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                        {filtered.map((item) => (
-                            <ProductCard
-                                key={item.id}
-                                product={item}
-                                onEdit={() =>
-                                    router.get(route("products.edit", item.id))
-                                }
-                                onDelete={() => openDelete(item)}
- 
-                                onShow={() =>
-                                    router.get(route("products.show", item.id))
-                                }
-                            />
-                        ))}
-                    </div>
+                {products.data.length ? (
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                            {products.data.map((item) => (
+                                <ProductCard
+                                    key={item.id}
+                                    product={item}
+                                    onEdit={() =>
+                                        router.get(
+                                            route("products.edit", item.id),
+                                        )
+                                    }
+                                    onDelete={() => openDelete(item)}
+                                    onShow={() =>
+                                        router.get(
+                                            route("products.show", item.id),
+                                        )
+                                    }
+                                />
+                            ))}
+                        </div>
+                        <Pagination links={products?.links} />
+                    </>
                 ) : (
                     <div
                         className="
@@ -171,35 +187,10 @@ const [deleteModal, setDeleteModal] = useState(false);
                         <p className="text-gray-500 mt-2">
                             قم بإضافة أول منتج الآن
                         </p>
-
-                        <button
-                            onClick={() =>
-                                router.get(route("admin.products.create"))
-                            }
-                            className="
-                            mt-6
-                            inline-flex items-center gap-2
-                            px-5 py-3
-                            rounded-2xl
-                            bg-[var(--primary)]
-                            text-white
-                            font-medium
-                            hover:opacity-90
-                            transition
-                        "
-                        >
-                            <FiPlus />
-                            إضافة منتج
-                        </button>
                     </div>
-
-
-
                 )}
 
-
-
-<Modal
+                <Modal
                     show={deleteModal}
                     onClose={() => setDeleteModal(false)}
                     maxWidth="md"
@@ -221,7 +212,6 @@ const [deleteModal, setDeleteModal] = useState(false);
 
                         <p className="text-gray-500 mt-3 leading-7">
                             هل أنت متأكد من حذف اللوحة ؟
-                           
                         </p>
 
                         <div className="flex gap-3 mt-8">

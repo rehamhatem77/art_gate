@@ -9,14 +9,25 @@ use Inertia\Inertia;
 
 class FrameTypesController extends Controller
 {
-            public function index(Request $request)
-    {
-        $frameTypes = FrameType::latest()->get();
+public function index(Request $request)
+{
+    $query = FrameType::query();
 
-        return Inertia::render('Admin/FrameTypes/Index', [
-            'frameTypes' => $frameTypes,
-        ]);
+    if ($request->filled('search')) {
+        $search = $request->search;
+
+        $query->where('type', 'like', "%{$search}%");
     }
+
+    $frameTypes = $query->latest()->get();
+
+    return Inertia::render('Admin/FrameTypes/Index', [
+        'frameTypes' => $frameTypes,
+        'filters' => [
+            'search' => $request->search,
+        ],
+    ]);
+}
 
     public function store(Request $request)
     {

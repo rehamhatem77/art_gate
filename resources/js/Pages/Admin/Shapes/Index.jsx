@@ -1,6 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router, useForm } from "@inertiajs/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import Modal from "@/Components/Modal";
 
@@ -18,8 +18,8 @@ import Breadcrumb from "@/Components/Breadcrumb";
 import AdminPageHeader from "@/Components/AdminPageHeader";
 
 
-export default function Index({ shapes }) {
-    const [search, setSearch] = useState("");
+export default function Index({ shapes , filters }) {
+    const [search, setSearch] = useState(filters?.search || "");
     const [showModal, setShowModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
     const [selectedShape, setSelectedShape] = useState(null);
@@ -44,11 +44,20 @@ export default function Index({ shapes }) {
     };
 
     // filter
-    const filteredShapes = useMemo(() => {
-        return shapes.filter((shape) =>
-            shape.shape.toLowerCase().includes(search.toLowerCase()),
-        );
-    }, [shapes, search]);
+       useEffect(() => {
+        const delay = setTimeout(() => {
+            router.get(
+                route("shapes.index"),
+                  { search } ,
+                {
+                    preserveState: true,
+                    replace: true,
+                }
+            );
+        }, 400);
+    
+        return () => clearTimeout(delay);
+    }, [search]);
 
     // open create
     const openCreate = () => {
@@ -174,7 +183,7 @@ export default function Index({ shapes }) {
                 </div>
 
                 {/* Shapes Grid */}
-                {filteredShapes.length > 0 ? (
+                {shapes.length > 0 ? (
                     <div
                         className="
                             grid
@@ -184,7 +193,7 @@ export default function Index({ shapes }) {
                             gap-5
                         "
                     >
-                        {filteredShapes.map((shape) => (
+                        {shapes.map((shape) => (
                           <div
     key={shape.id}
     className="
