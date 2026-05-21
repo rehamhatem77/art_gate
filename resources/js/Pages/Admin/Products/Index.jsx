@@ -11,25 +11,36 @@ import {
     FiPackage,
     FiGrid,
     FiLayers,
+    FiAlertTriangle,
 } from "react-icons/fi";
 import { IoColorPaletteOutline } from "react-icons/io5";
 import ProductCard from "./Components/ProductCard";
 import Breadcrumb from "@/Components/Breadcrumb";
 import AdminPageHeader from "@/Components/AdminPageHeader";
+import Modal from "@/Components/Modal";
 
 export default function Index({ products }) {
     const [search, setSearch] = useState("");
+const [deleteModal, setDeleteModal] = useState(false);
+ const [selected, setSelected] = useState(null);
 
     const filtered = useMemo(() => {
         return products.filter((item) =>
             item.name.toLowerCase().includes(search.toLowerCase()),
         );
     }, [products, search]);
+ const openDelete = (item) => {
+        setSelected(item);
+        setDeleteModal(true);
+    };
 
-    const destroy = (id) => {
-        if (!confirm("هل أنت متأكد من حذف اللوحة ؟")) return;
-
-        router.delete(route("admin.products.destroy", id));
+    const destroy = () => {
+        router.delete(route("products.destroy", selected.id), {
+            onSuccess: () => {
+                setDeleteModal(false);
+                setSelected(null);
+            },
+        });
     };
 
     return (
@@ -38,23 +49,42 @@ export default function Index({ products }) {
 
             <main className="space-y-4">
                 {/* Breadcrumb */}
-                <Breadcrumb items={[
-                    { name: "لوحة التحكم", link: route("dashboard") },
-                    { name: "اللوحات" }
-                ]} />
+                <Breadcrumb
+                    items={[
+                        { name: "لوحة التحكم", link: route("dashboard") },
+                        { name: "اللوحات" },
+                    ]}
+                />
 
                 {/* Header */}
-                
-<AdminPageHeader
-    title="إدارة اللوحات"
-    description="إدارة جميع اللوحات والتصاميم والمتغيرات الخاصة بها"
-    icon={IoColorPaletteOutline}
-    actions={[
-        {
-            label: "إضافة لوحة",
-            icon: FiPlus,
-            onClick: () => router.get(route("products.create")),
-            className: `
+
+                <AdminPageHeader
+                    title="إدارة اللوحات"
+                    description="إدارة جميع اللوحات والتصاميم والمتغيرات الخاصة بها"
+                    icon={IoColorPaletteOutline}
+                    actions={[
+                        {
+                            label: "سلة المحذوفات",
+                            type: "button",
+                            icon: FiTrash2,
+                            onClick: () => router.get(route("products.trash")),
+                            className: `
+                flex items-center justify-center gap-2
+                px-5 py-2
+                rounded-xl
+                bg-red-700
+                text-white
+                font-medium
+                shadow-sm
+                hover:opacity-90
+                transition-all
+            `,
+                        },
+                        {
+                            label: "إضافة لوحة",
+                            icon: FiPlus,
+                            onClick: () => router.get(route("products.create")),
+                            className: `
                 flex items-center justify-center gap-2
                 px-5 py-2
                 rounded-xl
@@ -65,9 +95,9 @@ export default function Index({ products }) {
                 hover:opacity-90
                 transition-all
             `,
-        },
-    ]}
-/>
+                        },
+                    ]}
+                />
 
                 {/* Search */}
                 <div className="relative">
@@ -102,13 +132,13 @@ export default function Index({ products }) {
                                 key={item.id}
                                 product={item}
                                 onEdit={() =>
-                                    router.get(
-                                        route("products.edit", item.id),
-                                    )
+                                    router.get(route("products.edit", item.id))
                                 }
-                                onDelete={() => destroy(item.id)}
-                                onShow={() => router.get(route("products.show", item.id))}
-        
+                                onDelete={() => openDelete(item)}
+ 
+                                onShow={() =>
+                                    router.get(route("products.show", item.id))
+                                }
                             />
                         ))}
                     </div>
@@ -162,7 +192,67 @@ export default function Index({ products }) {
                             إضافة منتج
                         </button>
                     </div>
+
+
+
                 )}
+
+
+
+<Modal
+                    show={deleteModal}
+                    onClose={() => setDeleteModal(false)}
+                    maxWidth="md"
+                >
+                    <div className="p-8 text-center">
+                        <div
+                            className="
+                                w-20 h-20
+                                rounded-full
+                                bg-red-100
+                                flex items-center justify-center
+                                mx-auto
+                            "
+                        >
+                            <FiAlertTriangle className="text-4xl text-red-500" />
+                        </div>
+
+                        <h2 className="text-2xl font-bold mt-5">حذف اللوحة</h2>
+
+                        <p className="text-gray-500 mt-3 leading-7">
+                            هل أنت متأكد من حذف اللوحة ؟
+                           
+                        </p>
+
+                        <div className="flex gap-3 mt-8">
+                            <button
+                                onClick={() => setDeleteModal(false)}
+                                className="
+                                    flex-1 h-12
+                                    rounded-2xl
+                                    border
+                                    hover:bg-gray-50
+                                "
+                            >
+                                إلغاء
+                            </button>
+
+                            <button
+                                onClick={destroy}
+                                className="
+                                    flex-1 h-12
+                                    rounded-2xl
+                                    bg-red-500
+                                    text-white
+                                    hover:bg-red-600
+                                    transition
+                                "
+                            >
+                                حذف اللوحة
+                            </button>
+                        </div>
+                    </div>
+                </Modal>
             </main>
         </AuthenticatedLayout>
     );

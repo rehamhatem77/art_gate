@@ -519,52 +519,76 @@ public function show(Product $product)
     */
 
     public function destroy(Product $product)
-    {
-        DB::beginTransaction();
+{
+    $product->delete();
 
-        try {
+    return back()->with(
+        'success',
+        'تم نقل اللوحة إلى سلة المحذوفات'
+    );
+}
+public function trash()
+{
+    $products = Product::onlyTrashed()
+        ->with([
+            'category',
+            'shape',
+            'images',
+            'variants.size',
+            'variants.frameType',
+        ])
+        ->latest('deleted_at')
+        ->get();
 
-            /*
-            Delete Main Image
-            */
-            if (
-                $product->main_image &&
-                Storage::disk('public')->exists($product->main_image)
-            ) {
-                Storage::disk('public')->delete($product->main_image);
-            }
+    return Inertia::render('Admin/Products/Trash', [
+        'products' => $products,
+    ]);
+}
+public function restore($id)
+{
+    $product = Product::withTrashed()->findOrFail($id);
 
-            /*
-            Delete Gallery Images
-            */
-            foreach ($product->images as $image) {
+    $product->restore();
 
-                if (
-                    $image->image &&
-                    Storage::disk('public')->exists($image->image)
-                ) {
-                    Storage::disk('public')->delete($image->image);
-                }
-            }
+    return back()->with(
+        'success',
+        'تم استعادة اللوحة'
+    );
+}
+public function forceDelete($id)
+{
+    $product = Product::withTrashed()->findOrFail($id);
 
-            $product->delete();
+    /*
+    Delete Main Image
+    */
+    if (
+        $product->main_image &&
+        Storage::disk('public')->exists($product->main_image)
+    ) {
+        Storage::disk('public')->delete($product->main_image);
+    }
 
-            DB::commit();
+    /*
+    Delete Gallery Images
+    */
+    foreach ($product->images as $image) {
 
-            return back()->with(
-                'success',
-                'تم حذف اللوحة بنجاح'
-            );
-        } catch (\Exception $e) {
-
-            DB::rollBack();
-
-            return back()->with(
-                'error',
-                'حدث خطأ أثناء حذف اللوحة: ' . $e->getMessage()
-            );
+        if (
+            $image->image &&
+            Storage::disk('public')->exists($image->image)
+        ) {
+            Storage::disk('public')->delete($image->image);
         }
     }
+
+    $product->forceDelete();
+
+    return back()->with(
+        'success',
+        'تم حذف اللوحة نهائياً'
+    );
+}
 
     /*
     |--------------------------------------------------------------------------

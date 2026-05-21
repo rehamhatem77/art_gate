@@ -13,59 +13,60 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-             $table->string('name');
+            $table->string('name');
 
-    $table->string('code')->unique();
+            $table->string('code')->unique();
 
-    $table->text('description')->nullable();
+            $table->text('description')->nullable();
 
-    $table->foreignId('category_id')
-        ->nullable()
-        ->constrained()
-        ->nullOnDelete();
+            $table->foreignId('category_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
 
-        $table->string('main_image')->nullable();
+            $table->string('main_image')->nullable();
 
-        $table->string('slug')->unique();
+            $table->string('slug')->unique();
 
-        $table->foreignId('shape_id')
-        ->nullable()
-        ->constrained()
-        ->nullOnDelete();
+            $table->foreignId('shape_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
 
-        $table->json('tags')->nullable();
+            $table->json('tags')->nullable();
 
-        $table->json('design_colors')->nullable();
-
-
+            $table->json('design_colors')->nullable();
 
 
-         $table->enum('artistic_type', [
-        'مودرن',
-        'كلاسيك',
-        'إسلامي',
-        'فاخر',
-        'مينيمال',
-        'تجريدي',
-    ])->nullable();
 
-     $table->json('place')->nullable();
 
-     $table->enum('pieces_count', [
-        'تابلوه واحد',
-        '2 تابلوه',
-        '3 تابلوه',
-        '4 تابلوه',
-        '5 تابلوه',
-    ])->default('تابلوه واحد');
+            $table->enum('artistic_type', [
+                'مودرن',
+                'كلاسيك',
+                'إسلامي',
+                'فاخر',
+                'مينيمال',
+                'تجريدي',
+            ])->nullable();
 
-     $table->boolean('is_active')->default(true);
+            $table->json('place')->nullable();
 
-    $table->boolean('featured')->default(false);
+            $table->enum('pieces_count', [
+                'تابلوه واحد',
+                '2 تابلوه',
+                '3 تابلوه',
+                '4 تابلوه',
+                '5 تابلوه',
+            ])->default('تابلوه واحد');
 
+            $table->boolean('is_active')->default(true);
+
+            $table->boolean('featured')->default(false);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.
