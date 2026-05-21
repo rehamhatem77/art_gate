@@ -59,6 +59,13 @@ try{
     public function destroy(TableauNumber $tableauNumber)
     {
 try{
+if ($tableauNumber->products()->exists()) {
+
+            return back()->with(
+                'error',
+                'لا يمكن حذف عدد القطع لأن هناك لوحات مرتبطة به'
+            );
+        }
         
 
         $tableauNumber->delete();

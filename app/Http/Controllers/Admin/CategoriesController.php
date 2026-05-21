@@ -76,7 +76,15 @@ try{
 
     public function destroy(Category $category)
     {
+
 try{
+if ($category->products()->exists()) {
+
+            return back()->with(
+                'error',
+                'لا يمكن حذف المجموعة لأن هناك لوحات مرتبطة بها'
+            );
+        }
         if ($category->image && Storage::disk('public')->exists($category->image)) {
             Storage::disk('public')->delete($category->image);
         }
@@ -86,7 +94,7 @@ try{
         return back()->with('success', 'تم حذف المجموعة بنجاح');
 }
         catch (\Exception $e) {
-            return back()->with('error', 'حدث خطأ أثناء حذف المجموعة: ' . $e->getMessage());
+            return back()->with('error', 'حدث خطأ أثناء حذف المجموعة');
         }
     }
 }

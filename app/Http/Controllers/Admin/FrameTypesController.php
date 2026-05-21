@@ -63,14 +63,20 @@ try{
     public function destroy(FrameType $frameType)
     {
 try{
-        
+        if ($frameType->productVariants()->exists()) {
+
+            return back()->with(
+                'error',
+                'لا يمكن حذف نوع الإطار لأن هناك لوحات مرتبطة به'
+            );
+        }
 
         $frameType->delete();
 
         return back()->with('success', 'تم حذف نوع الإطار بنجاح');
 }
         catch (\Exception $e) {
-            return back()->with('error', 'حدث خطأ أثناء حذف نوع الإطار: ' . $e->getMessage());
+            return back()->with('error', 'حدث خطأ أثناء حذف نوع الإطار' );
         }
     }
 }

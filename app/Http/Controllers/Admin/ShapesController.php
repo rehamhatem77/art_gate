@@ -9,7 +9,7 @@ use Inertia\Inertia;
 
 class ShapesController extends Controller
 {
-        public function index(Request $request)
+    public function index(Request $request)
     {
         $shapes = Shape::latest()->get();
 
@@ -21,17 +21,16 @@ class ShapesController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'shape' => 'required|string|max:255',     
+            'shape' => 'required|string|max:255',
         ]);
 
-try{
-        Shape::create([
-            'shape' => $request->shape,
-        ]);
+        try {
+            Shape::create([
+                'shape' => $request->shape,
+            ]);
 
-        return back()->with('success', 'تم اضافة شكل تابلوه جديد بنجاح');
-}
-        catch (\Exception $e) {
+            return back()->with('success', 'تم اضافة شكل تابلوه جديد بنجاح');
+        } catch (\Exception $e) {
             return back()->with('error', 'حدث خطأ أثناء إضافة الشكل: ' . $e->getMessage());
         }
     }
@@ -42,31 +41,36 @@ try{
             'shape' => 'required|string|max:255',
         ]);
 
-       
-try{
 
-        $shape->update([
-            'shape' => $request->shape,
-        ]);
+        try {
 
-        return back()->with('success', 'تم تحديث الشكل بنجاح');
-}
-        catch (\Exception $e) {
+            $shape->update([
+                'shape' => $request->shape,
+            ]);
+
+            return back()->with('success', 'تم تحديث الشكل بنجاح');
+        } catch (\Exception $e) {
             return back()->with('error', 'حدث خطأ أثناء تحديث الشكل: ' . $e->getMessage());
         }
     }
 
     public function destroy(Shape $shape)
     {
-try{
-        
+        try {
 
-        $shape->delete();
+            if ($shape->products()->exists()) {
 
-        return back()->with('success', 'تم حذف الشكل بنجاح');
-}
-        catch (\Exception $e) {
-            return back()->with('error', 'حدث خطأ أثناء حذف الشكل: ' . $e->getMessage());
+                return back()->with(
+                    'error',
+                    'لا يمكن حذف الشكل لأن هناك لوحات مرتبطة به'
+                );
+            }
+
+            $shape->delete();
+
+            return back()->with('success', 'تم حذف الشكل بنجاح');
+        } catch (\Exception $e) {
+            return back()->with('error', 'حدث خطأ أثناء حذف الشكل');
         }
     }
 }

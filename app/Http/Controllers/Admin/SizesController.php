@@ -63,14 +63,20 @@ try{
     public function destroy(Size $size)
     {
 try{
-        
+        if ($size->productVariants()->exists()) {
+
+            return back()->with(
+                'error',
+                'لا يمكن حذف المقاس لأن هناك لوحات مرتبطة به'
+            );
+        }
 
         $size->delete();
 
         return back()->with('success', 'تم حذف المقاس بنجاح');
 }
         catch (\Exception $e) {
-            return back()->with('error', 'حدث خطأ أثناء حذف المقاس: ' . $e->getMessage());
+            return back()->with('error', 'حدث خطأ أثناء حذف المقاس');
         }
     }
 }
