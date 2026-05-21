@@ -41,6 +41,29 @@ class ProductsController extends Controller
         ]);
     }
 
+public function show(Product $product)
+{
+    $product->load([
+        'category',
+        'shape',
+        'images',
+        'variants.size',
+        'variants.frameType',
+    ]);
+
+    $product->tag_objects = Tag::whereIn(
+    'id',
+    collect($product->tags)
+        ->flatten()
+        ->filter()
+        ->toArray()
+)->get();
+
+    return Inertia::render('Admin/Products/Show', [
+        'product' => $product,
+    ]);
+}
+
     /*
     |--------------------------------------------------------------------------
     | Create

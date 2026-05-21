@@ -107,6 +107,8 @@ export default function Index({ products }) {
                                     )
                                 }
                                 onDelete={() => destroy(item.id)}
+                                onShow={() => router.get(route("products.show", item.id))}
+        
                             />
                         ))}
                     </div>

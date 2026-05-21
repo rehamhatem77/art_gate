@@ -1,6 +1,7 @@
+import { BsEye } from "react-icons/bs";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 
-export default function ProductCard({ product, onEdit, onDelete }) {
+export default function ProductCard({ product, onEdit, onDelete,onShow }) {
     const variants = product.variants || [];
 
     /*
@@ -247,9 +248,27 @@ max-h-[600px]
                             transition-all duration-300
                         "
                     >
+<button
+                            onClick={onShow}
+                            title="عرض المنتج"
+                            className="
+                                w-8 h-8
+                                rounded-xl
+                                bg-green-50
+                                text-green-600
+                                hover:bg-green-600
+                                hover:text-white
+                                flex items-center justify-center
+                                transition-all
+                            "
+                        >
+                            <BsEye size={17} />
+                        </button>
                         {/* EDIT */}
                         <button
                             onClick={onEdit}
+                             title="تعديل المنتج"
+
                             className="
                                 w-8 h-8
                                 rounded-xl
@@ -267,6 +286,7 @@ max-h-[600px]
                         {/* DELETE */}
                         <button
                             onClick={onDelete}
+                            title='حذف المنتج'
                             className="
                                 w-8 h-8
                                 rounded-xl

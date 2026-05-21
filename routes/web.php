@@ -90,6 +90,8 @@ Route::get('/products/create', [ProductsController::class, 'create'])
         ->name('products.create');
 Route::get('/products/{product}/edit', [ProductsController::class, 'edit'])
         ->name('products.edit');
+Route::get('/products/{product}', [ProductsController::class, 'show'])
+        ->name('products.show');
     Route::post('/products', [ProductsController::class, 'store'])
         ->name('products.store');
     Route::put('/products/{product}', [ProductsController::class, 'update'])
@@ -97,8 +99,8 @@ Route::get('/products/{product}/edit', [ProductsController::class, 'edit'])
     Route::delete('/products/{product}', [ProductsController::class, 'destroy'])
         ->name('products.destroy');
 
-    Route::delete('/frame-types/{frameType}', [FrameTypesController::class, 'destroy'])
-        ->name('frame-types.destroy');
+
+
 
 
 
