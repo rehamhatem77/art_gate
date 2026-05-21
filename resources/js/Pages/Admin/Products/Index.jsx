@@ -19,11 +19,26 @@ import Breadcrumb from "@/Components/Breadcrumb";
 import AdminPageHeader from "@/Components/AdminPageHeader";
 import Modal from "@/Components/Modal";
 import Pagination from "@/Components/Pagination";
+import FilterPill from "@/Components/FilterPill";
 
-export default function Index({ products, filters }) {
+export default function Index({ products, filters, categories }) {
     const [search, setSearch] = useState(filters.search || "");
     const [deleteModal, setDeleteModal] = useState(false);
     const [selected, setSelected] = useState(null);
+    const statusOptions = [
+        { label: "كل اللوحات", value: "all" },
+        { label: "النشطة", value: "active" },
+    ];
+
+    const featuredOptions = [
+        { label: "المميزة", value: "1" },
+        { label: "الغير مميزة", value: "0" },
+    ];
+    const [filterState, setFiltersState] = useState({
+        status: filters.status || "all",
+        featured: filters.featured || "all",
+        category_id: filters.category_id || "",
+    });
 
     const handleSearch = (value) => {
         setSearch(value);
@@ -39,6 +54,21 @@ export default function Index({ products, filters }) {
             },
         );
     };
+    const applyFilters = (newFilters) => {
+        const merged = {
+            search,
+            ...filterState,
+            ...newFilters,
+        };
+
+        setFiltersState(merged);
+
+        router.get(route("products.index"), merged, {
+            preserveState: true,
+            replace: true,
+        });
+    };
+
     const openDelete = (item) => {
         setSelected(item);
         setDeleteModal(true);
@@ -132,6 +162,66 @@ export default function Index({ products, filters }) {
                             focus:border-[var(--primary)]
                         "
                     />
+                </div>
+                <div className="flex gap-2 overflow-x-auto pb-2">
+                    {statusOptions.map((opt) => (
+                        <FilterPill
+                            key={opt.value}
+                            label={opt.label}
+                            active={filterState.status === opt.value}
+                            onClick={() => {
+                                const newValue =
+                                    filterState.status === opt.value
+                                        ? "all"
+                                        : opt.value;
+
+                                applyFilters({ status: newValue });
+                            }}
+                        />
+                    ))}
+
+                    {featuredOptions.map((opt) => (
+                        <FilterPill
+                            key={opt.value}
+                            label={opt.label}
+                            active={filterState.featured === opt.value}
+                            onClick={() => {
+                                const newValue =
+                                    filterState.featured === opt.value
+                                        ? "all"
+                                        : opt.value;
+
+                                applyFilters({ featured: newValue });
+                            }}
+                        />
+                    ))}
+
+                    <select
+                        value={filterState.category_id}
+                        onChange={(e) => {
+                            const value = e.target.value;
+
+                            applyFilters({
+                                category_id:
+                                    value === filterState.category_id
+                                        ? ""
+                                        : value,
+                            });
+                        }}
+                        className="h-10 rounded-2xl border border-[var(--primary)]outline-none
+                           
+                            focus:ring-1
+                            focus:ring-[var(--primary)]
+                            focus:border-[var(--primary)] "
+                    >
+                        <option value="">كل المجموعات </option>
+
+                        {categories.map((cat) => (
+                            <option key={cat.id} value={cat.id}>
+                                {cat.name}
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
                 {/* Grid */}

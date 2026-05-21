@@ -26,35 +26,57 @@ class ProductsController extends Controller
     |--------------------------------------------------------------------------
     */
 
-   public function index(Request $request)
-{
-    $search = $request->search;
+    public function index(Request $request)
+    {
+        $search = $request->search;
+        $status = $request->status; // active | inactive | all
+        $featured = $request->featured; // 1 | 0 | all
+        $categoryId = $request->category_id;
 
-    $products = Product::with([
+        $products = Product::with([
             'category',
             'shape',
             'images',
             'variants.size',
             'variants.frameType',
         ])
-        ->when($search, function ($query) use ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('code', 'like', "%{$search}%");
-            });
-        })
-        ->latest()
-        ->paginate(6)
-        ->withQueryString();
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('code', 'like', "%{$search}%");
+                });
+            })
 
-    return Inertia::render('Admin/Products/Index', [
-        'products' => $products,
-        'filters' => [
-            'search' => $search,
-        ],
-    ]);
-}
+            // STATUS FILTER
+            ->when($status && $status !== 'all', function ($q) use ($status) {
+                $q->where('is_active', $status === 'active');
+            })
 
+            // FEATURED FILTER
+            ->when($featured !== null && $featured !== 'all', function ($q) use ($featured) {
+                $q->where('featured', $featured === '1');
+            })
+
+            // CATEGORY FILTER
+            ->when($categoryId, function ($q) use ($categoryId) {
+                $q->where('category_id', $categoryId);
+            })
+
+            ->latest()
+            ->paginate(6)
+            ->withQueryString();
+
+        return Inertia::render('Admin/Products/Index', [
+            'products' => $products,
+            'filters' => [
+                'search' => $search,
+                'status' => $status,
+                'featured' => $featured,
+                'category_id' => $categoryId,
+            ],
+            'categories' => Category::latest()->get(),
+        ]);
+    }
     public function show(Product $product)
     {
         $product->load([
