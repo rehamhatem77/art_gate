@@ -3,81 +3,79 @@ import { Head, router } from "@inertiajs/react";
 
 import {
     FiArrowUpRight,
-    FiBox,
-    FiDollarSign,
-    FiGrid,
     FiLayers,
     FiPackage,
     FiShoppingBag,
     FiStar,
     FiTrendingUp,
-    FiUsers,
     FiEye,
     FiPlus,
+    FiAlertTriangle,
 } from "react-icons/fi";
 
 import { IoColorPaletteOutline } from "react-icons/io5";
 
 import Breadcrumb from "@/Components/Breadcrumb";
+import { LuUngroup } from "react-icons/lu";
+import { AiOutlineTags } from "react-icons/ai";
 
 export default function Dashboard({
-    stats = {},
-    recentProducts = [],
-    recentOrders = [],
-    activities = [],
+    stats,
+    latestProducts,
+    lowStockProducts,
+    categoryAnalytics,
+    chartData,
+    recentActivities,
 }) {
     const cards = [
         {
             title: "إجمالي اللوحات",
-            value: stats.products || 0,
+            value: stats?.productsCount || 0,
             icon: IoColorPaletteOutline,
             bg: "bg-orange-100",
             color: "text-orange-600",
         },
 
         {
-            title: "إجمالي الطلبات",
-            value: stats.orders || 0,
+            title: "اللوحات النشطة",
+            value: stats.activeProducts || 0,
             icon: FiShoppingBag,
             bg: "bg-blue-100",
             color: "text-blue-600",
         },
 
         {
-            title: "إجمالي العملاء",
-            value: stats.customers || 0,
-            icon: FiUsers,
-            bg: "bg-emerald-100",
-            color: "text-emerald-600",
-        },
-
-        {
-            title: "التصنيفات",
-            value: stats.categories || 0,
-            icon: FiGrid,
-            bg: "bg-violet-100",
-            color: "text-violet-600",
-        },
-
-        {
             title: "المنتجات المميزة",
-            value: stats.featured || 0,
+            value: stats.featuredProducts || 0,
             icon: FiStar,
             bg: "bg-yellow-100",
             color: "text-yellow-600",
         },
 
         {
-            title: "الأرباح الشهرية",
-            value: `${stats.revenue || 0} ج.م`,
-            icon: FiDollarSign,
+            title: "المجموعات",
+            value: stats.categoriesCount || 0,
+            icon: LuUngroup,
+            bg: "bg-violet-100",
+            color: "text-violet-600",
+        },
+
+        {
+            title: "التصنيفات",
+            value: stats.tagsCount || 0,
+            icon: AiOutlineTags,
+            bg: "bg-pink-100",
+            color: "text-pink-600",
+        },
+
+        {
+            title: "المتغيرات",
+            value: stats.variantsCount || 0,
+            icon: FiPackage,
             bg: "bg-green-100",
             color: "text-green-600",
-            trend: "+12%",
         },
     ];
-
-    const chartData = [35, 55, 40, 75, 60, 90];
 
     return (
         <AuthenticatedLayout>
@@ -97,26 +95,41 @@ export default function Dashboard({
                 <section
                     className="
                         relative overflow-hidden
-                        rounded-3xl
-                        border border-white/40
-                        bg-gradient-to-l from-[#8B5E3C] to-[#C08B5C]
+                        rounded-[32px]
+                        border border-white/20
+                        bg-gradient-to-l from-[#7F5539] via-[#9C6644] to-[#D4A373]
                         p-8 lg:p-10
                         text-white
                         shadow-xl
                     "
                 >
-                    <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
-                        <div>
-                            <h1 className="text-3xl lg:text-4xl font-black">
-                                مرحباً بك في لوحة التحكم
+                    <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-10">
+                        <div className="max-w-3xl">
+                            <div
+                                className="
+                                    inline-flex items-center gap-2
+                                    rounded-full
+                                    bg-white/10
+                                    backdrop-blur
+                                    px-4 py-2
+                                    text-sm
+                                    border border-white/10
+                                "
+                            >
+                                <FiTrendingUp />
+                                لوحة تحكم Art Gate
+                            </div>
+
+                            <h1 className="mt-5 text-3xl lg:text-5xl font-black leading-tight">
+                                إدارة متكاملة لمعرضك الفني
                             </h1>
 
-                            <p className="mt-3 text-white/80 leading-8 max-w-2xl">
-                                متابعة شاملة للإحصائيات والطلبات واللوحات
-                                والنشاطات الخاصة بالمتجر الفني الخاص بك.
+                            <p className="mt-5 text-white/80 leading-8 text-lg">
+                                متابعة المنتجات والتصنيفات والمخزون والنشاطات
+                                الأخيرة من مكان واحد بتصميم عصري وتجربة سلسة.
                             </p>
 
-                            <div className="flex flex-wrap gap-3 mt-6">
+                            <div className="flex flex-wrap gap-4 mt-8">
                                 <button
                                     onClick={() =>
                                         router.get(route("products.create"))
@@ -126,10 +139,10 @@ export default function Dashboard({
                                         rounded-2xl
                                         bg-white
                                         text-[#8B5E3C]
-                                        font-bold
+                                        font-black
                                         flex items-center gap-2
-                                        hover:scale-105
-                                        transition
+                                        hover:opacity-80
+                                        transition-all
                                     "
                                 >
                                     <FiPlus />
@@ -143,15 +156,14 @@ export default function Dashboard({
                                     className="
                                         h-12 px-6
                                         rounded-2xl
-                                        border border-white/30
+                                        border border-white/20
                                         bg-white/10
-                                        backdrop-blur
-                                        font-medium
+                                        backdrop-blur-xl
                                         hover:bg-white/20
                                         transition
                                     "
                                 >
-                                    عرض المنتجات
+                                    عرض اللوحات
                                 </button>
                             </div>
                         </div>
@@ -159,32 +171,33 @@ export default function Dashboard({
                         <div
                             className="
                                 hidden lg:flex
-                                w-40 h-40
+                                w-48 h-48
                                 rounded-full
                                 bg-white/10
-                                items-center justify-center
                                 backdrop-blur-xl
+                                items-center justify-center
+                                border border-white/10
                             "
                         >
-                            <IoColorPaletteOutline className="text-7xl text-white" />
+                            <IoColorPaletteOutline className="text-8xl text-white" />
                         </div>
                     </div>
 
                     <div
                         className="
-                            absolute -top-10 -left-10
-                            w-40 h-40
+                            absolute top-0 left-0
+                            w-72 h-72
                             rounded-full
-                            bg-white/10
+                            bg-white/10 blur-3xl
                         "
                     />
 
                     <div
                         className="
                             absolute bottom-0 right-0
-                            w-72 h-72
+                            w-96 h-96
                             rounded-full
-                            bg-white/5
+                            bg-black/10 blur-3xl
                         "
                     />
                 </section>
@@ -199,15 +212,16 @@ export default function Dashboard({
                                 key={index}
                                 className="
                                     relative overflow-hidden
-                                    rounded-3xl
+                                    rounded-[28px]
+                                    border border-gray-100
                                     bg-white/80
                                     backdrop-blur-xl
-                                    border border-gray-100
                                     p-6
                                     shadow-sm
                                     hover:shadow-xl
                                     hover:-translate-y-1
                                     transition-all
+duration-300
                                 "
                             >
                                 <div className="flex items-start justify-between">
@@ -216,27 +230,9 @@ export default function Dashboard({
                                             {card.title}
                                         </p>
 
-                                        <h3 className="mt-3 text-3xl font-black text-gray-800">
+                                        <h3 className="mt-4 text-4xl font-black text-gray-800">
                                             {card.value}
                                         </h3>
-
-                                        {card.trend && (
-                                            <div
-                                                className="
-                                                    mt-4 inline-flex
-                                                    items-center gap-1
-                                                    rounded-full
-                                                    bg-green-50
-                                                    px-3 py-1
-                                                    text-sm
-                                                    font-bold
-                                                    text-green-600
-                                                "
-                                            >
-                                                <FiTrendingUp />
-                                                {card.trend}
-                                            </div>
-                                        )}
                                     </div>
 
                                     <div
@@ -254,8 +250,8 @@ export default function Dashboard({
 
                                 <div
                                     className="
-                                        absolute -bottom-6 -left-6
-                                        w-24 h-24
+                                        absolute -bottom-8 -left-8
+                                        w-28 h-28
                                         rounded-full
                                         bg-black/[0.03]
                                     "
@@ -265,27 +261,27 @@ export default function Dashboard({
                     })}
                 </section>
 
-                {/* Charts + Activity */}
+                {/* Chart + Activities */}
                 <section className="grid grid-cols-1 xl:grid-cols-3 gap-5">
                     {/* Chart */}
                     <div
                         className="
                             xl:col-span-2
-                            rounded-3xl
-                            bg-white
+                            rounded-[30px]
                             border border-gray-100
+                            bg-white
                             p-6
                             shadow-sm
                         "
                     >
-                        <div className="flex items-center justify-between mb-8">
+                        <div className="flex items-center justify-between mb-10">
                             <div>
                                 <h2 className="text-2xl font-black text-gray-800">
-                                    إحصائيات المبيعات
+                                    المنتجات المضافة شهرياً
                                 </h2>
 
                                 <p className="text-sm text-gray-500 mt-1">
-                                    آخر 6 أشهر
+                                    إحصائيات السنة الحالية
                                 </p>
                             </div>
 
@@ -293,18 +289,18 @@ export default function Dashboard({
                                 className="
                                     px-4 py-2
                                     rounded-2xl
-                                    bg-green-50
-                                    text-green-600
+                                    bg-[#F4ECE5]
+                                    text-[#8B5E3C]
                                     font-bold
                                     flex items-center gap-2
                                 "
                             >
                                 <FiArrowUpRight />
-                                نمو 18%
+                                نمو مستمر
                             </div>
                         </div>
 
-                        <div className="h-72 flex items-end justify-between gap-4">
+                        <div className="h-80 flex items-end justify-between gap-3">
                             {chartData.map((item, index) => (
                                 <div
                                     key={index}
@@ -314,28 +310,22 @@ export default function Dashboard({
                                         className="
                                             w-full rounded-t-[24px]
                                             bg-gradient-to-t
-                                            from-[#8B5E3C]
+                                            from-[#7F5539]
                                             to-[#D4A373]
                                             hover:opacity-90
                                             transition-all
                                         "
                                         style={{
-                                            height: `${item}%`,
+                                            height: `${Math.max(
+                                                item.total * 12,
+                                                20,
+                                            )}%`,
                                             minHeight: "40px",
                                         }}
                                     />
 
                                     <span className="text-sm text-gray-500">
-                                        {
-                                            [
-                                                "يناير",
-                                                "فبراير",
-                                                "مارس",
-                                                "أبريل",
-                                                "مايو",
-                                                "يونيو",
-                                            ][index]
-                                        }
+                                        {item.month}
                                     </span>
                                 </div>
                             ))}
@@ -345,9 +335,9 @@ export default function Dashboard({
                     {/* Activity */}
                     <div
                         className="
-                            rounded-3xl
-                            bg-white
+                            rounded-[30px]
                             border border-gray-100
+                            bg-white
                             p-6
                             shadow-sm
                         "
@@ -359,7 +349,7 @@ export default function Dashboard({
 
                             <div
                                 className="
-                                    w-10 h-10
+                                    w-11 h-11
                                     rounded-2xl
                                     bg-gray-100
                                     flex items-center justify-center
@@ -370,8 +360,8 @@ export default function Dashboard({
                         </div>
 
                         <div className="mt-8 space-y-6">
-                            {activities.length ? (
-                                activities.map((activity, index) => (
+                            {recentActivities?.length ? (
+                                recentActivities.map((activity, index) => (
                                     <div
                                         key={index}
                                         className="flex items-start gap-4"
@@ -389,7 +379,7 @@ export default function Dashboard({
                                         </div>
 
                                         <div className="flex-1">
-                                            <h3 className="font-bold text-gray-800">
+                                            <h3 className="font-black text-gray-800">
                                                 {activity.title}
                                             </h3>
 
@@ -398,19 +388,13 @@ export default function Dashboard({
                                             </p>
 
                                             <span className="text-xs text-gray-400 mt-2 inline-block">
-                                                {activity.time}
+                                                {activity.date}
                                             </span>
                                         </div>
                                     </div>
                                 ))
                             ) : (
-                                <div
-                                    className="
-                                        h-72
-                                        flex flex-col items-center justify-center
-                                        text-center
-                                    "
-                                >
+                                <div className="h-72 flex flex-col items-center justify-center text-center">
                                     <FiLayers className="text-5xl text-gray-300" />
 
                                     <p className="mt-4 text-gray-500">
@@ -422,12 +406,12 @@ export default function Dashboard({
                     </div>
                 </section>
 
-                {/* Products */}
+                {/* Latest Products */}
                 <section
                     className="
-                        rounded-3xl
-                        bg-white
+                        rounded-[30px]
                         border border-gray-100
+                        bg-white
                         p-6
                         shadow-sm
                     "
@@ -439,7 +423,7 @@ export default function Dashboard({
                             </h2>
 
                             <p className="text-sm text-gray-500 mt-1">
-                                أحدث المنتجات التي تمت إضافتها
+                                أحدث المنتجات المضافة
                             </p>
                         </div>
 
@@ -461,14 +445,14 @@ export default function Dashboard({
                         </button>
                     </div>
 
-                    {recentProducts.length ? (
+                    {latestProducts?.length ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
-                            {recentProducts.map((product) => (
+                            {latestProducts.map((product) => (
                                 <div
                                     key={product.id}
                                     className="
                                         overflow-hidden
-                                        rounded-3xl
+                                        rounded-[28px]
                                         border border-gray-100
                                         bg-white
                                         group
@@ -476,34 +460,36 @@ export default function Dashboard({
                                         transition-all
                                     "
                                 >
-                                    <div className="h-60 overflow-hidden">
+                                    <div className="h-64 overflow-hidden bg-gray-100">
                                         <img
                                             src={
-                                                product.main_image_url ||
-                                                "/placeholder.png"
+                                                product.main_image
+                                                    ? `/storage/${product.main_image}`
+                                                    : "/placeholder.png"
                                             }
                                             alt={product.name}
                                             className="
                                                 w-full h-full object-cover
-                                                group-hover:scale-110
+                                                group-hover:scale-105
                                                 transition duration-500
                                             "
                                         />
                                     </div>
 
                                     <div className="p-5">
-                                        <h3 className="font-black text-lg text-gray-800">
+                                        <h3 className="font-black text-lg text-gray-800 line-clamp-1">
                                             {product.name}
                                         </h3>
 
                                         <div className="flex items-center justify-between mt-4">
                                             <span className="text-sm text-gray-500">
                                                 {product.category?.name ||
-                                                    "بدون تصنيف"}
+                                                    "بدون مجموعة"}
                                             </span>
 
                                             <span className="font-black text-[var(--primary)]">
-                                                {product.price || 0} ج.م
+                                                #
+                                                {product.code}
                                             </span>
                                         </div>
 
@@ -534,13 +520,7 @@ export default function Dashboard({
                             ))}
                         </div>
                     ) : (
-                        <div
-                            className="
-                                h-72
-                                flex flex-col items-center justify-center
-                                text-center
-                            "
-                        >
+                        <div className="h-72 flex flex-col items-center justify-center text-center">
                             <FiPackage className="text-6xl text-gray-300" />
 
                             <h3 className="mt-5 text-xl font-black">
@@ -554,110 +534,126 @@ export default function Dashboard({
                     )}
                 </section>
 
-                {/* Orders */}
-                <section
-                    className="
-                        rounded-3xl
-                        bg-white
-                        border border-gray-100
-                        p-6
-                        shadow-sm
-                    "
-                >
-                    <div className="flex items-center justify-between mb-8">
-                        <div>
-                            <h2 className="text-2xl font-black text-gray-800">
-                                أحدث الطلبات
-                            </h2>
+                {/* Analytics + Low stock */}
+                <section className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+                    {/* Categories */}
+                    <div
+                        className="
+                            rounded-[30px]
+                            border border-gray-100
+                            bg-white
+                            p-6
+                            shadow-sm
+                        "
+                    >
+                        <h2 className="text-2xl font-black text-gray-800 mb-8">
+                            أكثر المجموعات استخداماً
+                        </h2>
 
-                            <p className="text-sm text-gray-500 mt-1">
-                                آخر الطلبات الموجودة في المتجر
-                            </p>
+                        <div className="space-y-5">
+                            {categoryAnalytics?.map((item, index) => (
+                                <div key={index}>
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="font-bold text-gray-700">
+                                            {item.name}
+                                        </span>
+
+                                        <span className="text-sm text-gray-500">
+                                            {item.count} لوحة
+                                        </span>
+                                    </div>
+
+                                    <div className="h-3 rounded-full bg-gray-100 overflow-hidden">
+                                        <div
+                                            className="
+                                                h-full rounded-full
+                                                bg-gradient-to-r
+                                                from-[#7F5539]
+                                                to-[#D4A373]
+                                            "
+                                            style={{
+                                                width: `${Math.min(
+                                                    item.count * 10,
+                                                    100,
+                                                )}%`,
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
 
-                    <div className="overflow-x-auto">
-                        <table className="w-full min-w-[700px]">
-                            <thead>
-                                <tr className="border-b border-gray-100 text-right">
-                                    <th className="pb-4 text-sm font-medium text-gray-500">
-                                        المنتج
-                                    </th>
+                    {/* Low stock */}
+                    <div
+                        className="
+                            rounded-[30px]
+                            border border-gray-100
+                            bg-white
+                            p-6
+                            shadow-sm
+                        "
+                    >
+                        <div className="flex items-center justify-between mb-8">
+                            <h2 className="text-2xl font-black text-gray-800">
+                                المنتجات قليلة المخزون
+                            </h2>
 
-                                    <th className="pb-4 text-sm font-medium text-gray-500">
-                                        العميل
-                                    </th>
+                            <div
+                                className="
+                                    w-11 h-11
+                                    rounded-2xl
+                                    bg-red-100
+                                    text-red-600
+                                    flex items-center justify-center
+                                "
+                            >
+                                <FiAlertTriangle />
+                            </div>
+                        </div>
 
-                                    <th className="pb-4 text-sm font-medium text-gray-500">
-                                        التاريخ
-                                    </th>
+                        <div className="space-y-4">
+                            {lowStockProducts?.length ? (
+                                lowStockProducts.map((variant) => (
+                                    <div
+                                        key={variant.id}
+                                        className="
+                                            flex items-center justify-between
+                                            rounded-2xl
+                                            border border-gray-100
+                                            p-4
+                                        "
+                                    >
+                                        <div>
+                                            <h3 className="font-black text-gray-800">
+                                                {variant.product?.name}
+                                            </h3>
 
-                                    <th className="pb-4 text-sm font-medium text-gray-500">
-                                        الحالة
-                                    </th>
+                                            <p className="text-sm text-gray-500 mt-1">
+                                                {variant.size?.height}x{variant.size?.width} /{" "}
+                                                {variant.frame_type?.type}
+                                            </p>
+                                        </div>
 
-                                    <th className="pb-4 text-sm font-medium text-gray-500">
-                                        الإجمالي
-                                    </th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {recentOrders.length ? (
-                                    recentOrders.map((order) => (
-                                        <tr
-                                            key={order.id}
+                                        <div
                                             className="
-                                                border-b border-gray-50
-                                                hover:bg-gray-50
-                                                transition
+                                                px-4 py-2
+                                                rounded-full
+                                                bg-red-100
+                                                text-red-700
+                                                font-black
                                             "
                                         >
-                                            <td className="py-5 font-bold">
-                                                {order.product_name}
-                                            </td>
-
-                                            <td className="py-5 text-gray-600">
-                                                {order.customer_name}
-                                            </td>
-
-                                            <td className="py-5 text-gray-500">
-                                                {order.date}
-                                            </td>
-
-                                            <td className="py-5">
-                                                <span
-                                                    className={`
-                                                        px-4 py-2 rounded-full text-sm font-bold
-                                                        ${
-                                                            order.status ===
-                                                            "completed"
-                                                                ? "bg-green-100 text-green-700"
-                                                                : "bg-orange-100 text-orange-700"
-                                                        }
-                                                    `}
-                                                >
-                                                    {order.status_label}
-                                                </span>
-                                            </td>
-
-                                            <td className="py-5 font-black text-[var(--primary)]">
-                                                {order.total} ج.م
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td
-                                            colSpan="5"
-                                            className="py-20 text-center text-gray-500"
-                                        >
-                                            لا توجد طلبات حالياً
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
+                                            {variant.stock} متبقي
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="h-64 flex items-center justify-center text-gray-500">
+                                    لا توجد منتجات منخفضة المخزون
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </section>
             </main>

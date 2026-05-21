@@ -59,7 +59,7 @@ class DashboardController extends Controller
                 'images',
             ])
             ->latest()
-            ->take(6)
+            ->take(4)
             ->get();
 
         /*
