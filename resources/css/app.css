@@ -11,6 +11,7 @@
     --bg-lighter: #f8f8f8;
     --text-dark: #28282b;
     --hover-accent: rgba(109, 108, 107, 0.03);
+    --border: #dacabb;
 }
 
 body {
@@ -209,4 +210,21 @@ body {
 .animate-bell {
     animation: bellRing 5s ease-in-out infinite;
     transform-origin: top center;
+}
+.hero-swiper .swiper-pagination {
+    bottom: 18px !important;
+}
+
+.hero-swiper .swiper-pagination-bullet {
+    width: 10px;
+    height: 10px;
+    background: var(--border);
+    opacity: 1;
+    transition: all 0.3s ease;
+}
+
+.hero-swiper .swiper-pagination-bullet-active {
+    width: 40px;
+    border-radius: 999px;
+    background: var(--accent);
 }
