@@ -1,3 +1,4 @@
+import { iconsMap } from "@/Components/IconPicker";
 import { motion } from "framer-motion";
 import {
     FiTruck,
@@ -6,23 +7,7 @@ import {
     FiPlay,
 } from "react-icons/fi";
 
-const services = [
-    {
-        title: "شحن مجاني",
-        description: "شحن مجاني للطلبات فوق 999 جنيه. احصل على خصمك الآن",
-        icon: FiTruck,
-    },
-    {
-        title: "خدمة 24 ساعة",
-        description: "خدمة عملاء 24 ساعة. تواصل معنا في أي وقت",
-        icon: FiPhoneCall,
-    },
-    {
-        title: "سهولة الدفع",
-        description: "دفع آمن وخيارات دفع متعددة لسهولة الشراء",
-        icon: FiCreditCard,
-    },
-];
+
 
 const containerVariants = {
     hidden: {},
@@ -48,7 +33,9 @@ const itemVariants = {
     },
 };
 
-export default function AboutSection() {
+export default function AboutSection({ services }) {
+
+    
     return (
         <section className="py-12 lg:py-20 overflow-hidden">
             <div className="max-w-8xl mx-auto px-8 sm:px-12 md:px-12 lg:px-18 xl:px-28">
@@ -206,51 +193,62 @@ export default function AboutSection() {
                                 lg:gap-8
                             "
                         >
+                            
                             {services.map((service, index) => {
-                                const Icon = service.icon;
+    const isImageIcon = service.icon && !iconsMap[service.icon];
 
-                                return (
-                                    <motion.div
-                                        key={index}
-                                        variants={itemVariants}
-                                       
-                                        className="text-center"
-                                    >
-                                        <div className="flex justify-center mb-4">
-                                            <motion.div
-                                              
-                                            >
-                                                <Icon
-                                                    size={52}
-                                                    className="text-[var(--secondary)]"
-                                                />
-                                            </motion.div>
-                                        </div>
+    const IconComponent = !isImageIcon ? iconsMap[service.icon] : null;
 
-                                        <h3
-                                            className="
-                                                text-xl
-                                                font-semibold
-                                                text-[var(--secondary)]
-                                                mb-3
-                                            "
-                                        >
-                                            {service.title}
-                                        </h3>
+    return (
+        <motion.div
+            key={service.id || index}
+            variants={itemVariants}
+            className="text-center"
+        >
+            <div className="flex justify-center mb-4">
+                <motion.div>
+                    {/* ICON RENDER FIX */}
+                    {IconComponent ? (
+                        <IconComponent
+                            size={52}
+                            className="text-[var(--secondary)]"
+                        />
+                    ) : isImageIcon ? (
+                        <img
+                            src={getImage(service.icon)}
+                            alt={service.name}
+                            className="w-14 h-14 object-contain"
+                        />
+                    ) : (
+                        <div className="w-14 h-14 rounded-full bg-gray-200" />
+                    )}
+                </motion.div>
+            </div>
 
-                                        <p
-                                            className="
-                                                text-[var(--text-dark)]
-                                                leading-7
-                                                text-sm
-                                                md:text-base
-                                            "
-                                        >
-                                            {service.description}
-                                        </p>
-                                    </motion.div>
-                                );
-                            })}
+            <h3
+                className="
+                    text-xl
+                    font-semibold
+                    text-[var(--secondary)]
+                    mb-3
+                "
+            >
+                {service.name}
+            </h3>
+
+            <p
+                className="
+                    text-[var(--text-dark)]
+                    leading-7
+                    text-sm
+                    md:text-base
+                "
+            >
+                {service.description}
+            </p>
+        </motion.div>
+    );
+})}
                         </motion.div>
                     </motion.div>
 

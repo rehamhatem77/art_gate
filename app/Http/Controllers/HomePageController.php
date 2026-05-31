@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin\Category;
+use App\Models\Admin\Service;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
@@ -18,13 +19,16 @@ class HomePageController extends Controller
             ->withCount('products')
             ->latest()
             ->get();
-        
+            $services = Service::query()->select('id', 'name', 'description', 'icon', 'flag')->where('flag', false)->latest()->get();
+        $featuredServices = Service::query()->select('id', 'name', 'description', 'icon', 'flag')->where('flag', true)->latest()->get();
         return Inertia::render('Welcome', [
             'canLogin'       => Route::has('login'),
             'canRegister'    => Route::has('register'),
             'laravelVersion' => Application::VERSION,
             'phpVersion'     => PHP_VERSION,
             'categories'     => $categories,
+            'services'       => $services,
+            'featuredServices' => $featuredServices,
         ]);
     }
 }

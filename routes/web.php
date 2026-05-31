@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FrameTypesController;
 use App\Http\Controllers\Admin\ProductsController;
+use App\Http\Controllers\Admin\ServicesController;
 use App\Http\Controllers\Admin\ShapesController;
 use App\Http\Controllers\Admin\SizesController;
 use App\Http\Controllers\Admin\TableauNumbersController;
@@ -81,6 +82,17 @@ Route::middleware('auth')->group(function () {
                 ->name('shapes.update');
             Route::delete('/shapes/{shape}', [ShapesController::class, 'destroy'])
                 ->name('shapes.destroy');
+
+
+
+                Route::get('/services', [ServicesController::class, 'index'])
+                ->name('services.index');
+            Route::post('/services', [ServicesController::class, 'store'])
+                ->name('services.store');
+            Route::put('/services/{service}', [ServicesController::class, 'update'])
+                ->name('services.update');
+            Route::delete('/services/{service}', [ServicesController::class, 'destroy'])
+                ->name('services.destroy');
 
 
 
