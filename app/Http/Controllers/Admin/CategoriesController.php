@@ -13,12 +13,12 @@ class CategoriesController extends Controller
 
     public function index(Request $request)
     {
-         $categories = Category::query()
-        ->when($request->search, function ($q, $search) {
-            $q->where('name', 'like', "%{$search}%");
-        })
-        ->latest()
-        ->get();
+        $categories = Category::query()
+            ->when($request->search, function ($q, $search) {
+                $q->where('name', 'like', "%{$search}%");
+            })
+            ->latest()
+            ->get();
 
         return Inertia::render('Admin/Categories/Index', [
             'categories' => $categories,
@@ -33,15 +33,29 @@ class CategoriesController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'image' => 'required|image|mimes:jpg,jpeg,png,webp',
+            'icon' => 'nullable|string',
+            'icon_file' => 'nullable|image|mimes:jpg,jpeg,png,webp,svg',
         ]);
 
         try {
 
             $imagePath = $request->file('image')->store('categories', 'public');
+            if (!$request->icon && !$request->hasFile('icon_file')) {
+                return back()->withErrors([
+                    'icon' => 'اختر أيقونة أو قم برفع صورة'
+                ]);
+            }
+            if ($request->hasFile('icon_file')) {
+                $icon = $request->file('icon_file')
+                    ->store('category-icons', 'public');
+            } else {
+                $icon = $request->icon;
+            }
 
             Category::create([
                 'name' => $request->name,
                 'image' => $imagePath,
+                'icon' => $icon,
             ]);
 
             return back()->with('success', 'تم اضافة مجموعة تصاميم جديدة بنجاح');
@@ -55,10 +69,14 @@ class CategoriesController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp',
+            'icon' => 'nullable|string',
+            'icon_file' => 'nullable|image|mimes:jpg,jpeg,png,webp,svg',
         ]);
 
         $imagePath = $category->image;
+        $icon = $category->icon;
         try {
+
 
             if ($request->hasFile('image')) {
 
@@ -69,9 +87,34 @@ class CategoriesController extends Controller
                 $imagePath = $request->file('image')->store('categories', 'public');
             }
 
+
+            if (!$request->icon && !$request->hasFile('icon_file') && !$category->icon) {
+                return back()->withErrors([
+                    'icon' => 'اختر أيقونة أو قم برفع صورة'
+                ]);
+            }
+            if ($request->hasFile('icon_file')) {
+
+                // delete old uploaded icon if it was a file
+                if (
+                    $category->icon &&
+                    !str_contains($category->icon, 'Fi') &&
+                    Storage::disk('public')->exists($category->icon)
+                ) {
+                    Storage::disk('public')->delete($category->icon);
+                }
+
+                $icon = $request->file('icon_file')
+                    ->store('category-icons', 'public');
+            } elseif ($request->filled('icon')) {
+
+                $icon = $request->icon;
+            }
+
             $category->update([
                 'name' => $request->name,
                 'image' => $imagePath,
+                'icon' => $icon,
             ]);
 
             return back()->with('success', 'تم تحديث المجموعة بنجاح');

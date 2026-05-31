@@ -1,7 +1,23 @@
+import { iconsMap } from "@/Components/IconPicker";
 import { getImage } from "@/Utils/GetImage";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 
 export default function CategoryCard({ category, onEdit, onDelete }) {
+    const isImageIcon =
+        category.icon &&
+        (
+            category.icon.includes("category-icons/") ||
+            category.icon.endsWith(".png") ||
+            category.icon.endsWith(".jpg") ||
+            category.icon.endsWith(".jpeg") ||
+            category.icon.endsWith(".webp") ||
+            category.icon.endsWith(".svg")
+        );
+
+    const IconComponent =
+        !isImageIcon && category.icon
+            ? iconsMap[category.icon]
+            : null;
     return (
         <div
             className="
@@ -11,7 +27,7 @@ export default function CategoryCard({ category, onEdit, onDelete }) {
                 transition-all duration-500
             "
         >
-           
+
             <div
                 className="
                     absolute inset-0
@@ -41,9 +57,9 @@ export default function CategoryCard({ category, onEdit, onDelete }) {
                     group-hover:shadow-[0_10px_30px_rgba(0,0,0,0.22)]
                 "
             >
-                
+
                 <img
-                     src={getImage(category.image)}
+                    src={getImage(category.image)}
                     alt={category.name}
                     className="
                         w-full h-full
@@ -67,6 +83,40 @@ export default function CategoryCard({ category, onEdit, onDelete }) {
                         group-hover:opacity-90
                     "
                 />
+                {category.icon && (
+                    <div
+                        className="
+            absolute
+            top-5
+            right-5
+            p-2
+            rounded-full
+            bg-white/90
+            backdrop-blur-lg
+            shadow-xl
+            z-20
+            transition-all
+            duration-500
+            group-hover:-translate-y-1
+            group-hover:scale-105
+        "
+                    >
+                        {isImageIcon ? (
+                            <img
+                                src={getImage(category.icon)}
+                                alt={category.name}
+                                className="w-5 h-5 object-contain"
+                            />
+                        ) : (
+                            IconComponent && (
+                                <IconComponent
+                                    size={20}
+                                    className="text-[var(--primary)]"
+                                />
+                            )
+                        )}
+                    </div>
+                )}
 
                 {/* CONTENT */}
                 <div
@@ -78,6 +128,7 @@ export default function CategoryCard({ category, onEdit, onDelete }) {
                         pb-8
                     "
                 >
+
                     {/* CATEGORY NAME */}
                     <div
                         className="
@@ -96,7 +147,7 @@ export default function CategoryCard({ category, onEdit, onDelete }) {
                         {category.name}
                     </div>
 
-                   
+
                     <div
                         className="
                             mt-3
@@ -110,7 +161,7 @@ export default function CategoryCard({ category, onEdit, onDelete }) {
                             group-hover:translate-y-0
                         "
                     >
-                        
+
                         <button
                             onClick={() => onEdit(category)}
                             className="
@@ -133,7 +184,7 @@ export default function CategoryCard({ category, onEdit, onDelete }) {
                             <FiEdit2 size={14} />
                         </button>
 
-                        
+
                         <button
                             onClick={() => onDelete(category)}
                             className="

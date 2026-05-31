@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getImage } from "@/Utils/GetImage";
 import Modal from "@/Components/Modal";
 import CategoryCard from "./Components/CategoryCard";
+import { Listbox, Transition } from "@headlessui/react";
 
 import {
     FiPlus,
@@ -17,13 +18,19 @@ import {
 import { LuUngroup } from "react-icons/lu";
 import Breadcrumb from "@/Components/Breadcrumb";
 import AdminPageHeader from "@/Components/AdminPageHeader";
+import Select from "react-select";
+import { FiChevronDown, FiCheck } from "react-icons/fi";
+import { artworkIcons, iconsMap } from "@/Components/IconPicker";
 
-export default function Index({ categories ,filters }) {
+
+export default function Index({ categories, filters }) {
     const [search, setSearch] = useState(filters?.search || "");
 
     const [showModal, setShowModal] = useState(false);
 
+
     const [deleteModal, setDeleteModal] = useState(false);
+
 
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [frontendErrors, setFrontendErrors] = useState({});
@@ -31,9 +38,31 @@ export default function Index({ categories ,filters }) {
     const { data, setData, post, processing, reset, errors } = useForm({
         name: "",
         image: null,
+        icon: "",
+        icon_file: null,
         _method: "POST",
     });
 
+    const iconOptions = artworkIcons.map(({ icon: Icon, label }) => {
+        const iconName =
+            Object.keys(iconsMap).find(
+                (k) => iconsMap[k] === Icon
+            ) || "";
+
+        return {
+            value: iconName,
+            label,
+            Icon,
+        };
+    });
+    const isStoredImageIcon =
+        selectedCategory?.icon &&
+        !iconsMap[selectedCategory.icon];
+
+    const SelectedIcon =
+        data.icon && iconsMap[data.icon]
+            ? iconsMap[data.icon]
+            : null;
     const validate = () => {
         const errors = {};
 
@@ -45,26 +74,36 @@ export default function Index({ categories ,filters }) {
         if (!selectedCategory && !data.image) {
             errors.image = "صورة المجموعة مطلوبة";
         }
+        const hasExistingIcon =
+            selectedCategory?.icon;
+
+        if (
+            !data.icon &&
+            !data.icon_file &&
+            !hasExistingIcon
+        ) {
+            errors.icon = "يرجى اختيار أيقونة أو رفع صورة";
+        }
 
         setFrontendErrors(errors);
 
         return Object.keys(errors).length === 0;
     };
 
-   useEffect(() => {
-    const delay = setTimeout(() => {
-        router.get(
-            route("categories.index"),
-            { search },
-            {
-                preserveState: true,
-                replace: true,
-            }
-        );
-    }, 400);
+    useEffect(() => {
+        const delay = setTimeout(() => {
+            router.get(
+                route("categories.index"),
+                { search },
+                {
+                    preserveState: true,
+                    replace: true,
+                }
+            );
+        }, 400);
 
-    return () => clearTimeout(delay);
-}, [search]);
+        return () => clearTimeout(delay);
+    }, [search]);
 
     const openCreate = () => {
         reset();
@@ -74,6 +113,8 @@ export default function Index({ categories ,filters }) {
         setData({
             name: "",
             image: null,
+            icon: "",
+            icon_file: null,
             _method: "POST",
         });
 
@@ -86,6 +127,8 @@ export default function Index({ categories ,filters }) {
         setData({
             name: category.name,
             image: null,
+            icon: iconsMap[category.icon] ? category.icon : "",
+            icon_file: null,
             _method: "PUT",
         });
 
@@ -357,11 +400,11 @@ focus:ring-offset-1
                                             src={
                                                 data.image
                                                     ? URL.createObjectURL(
-                                                          data.image,
-                                                      )
+                                                        data.image,
+                                                    )
                                                     : getImage(
-                                                          selectedCategory.image,
-                                                      )
+                                                        selectedCategory.image,
+                                                    )
                                             }
                                             className="w-full h-full object-cover"
                                         />
@@ -405,6 +448,135 @@ focus:ring-offset-1
                                 </p>
                             )}
                         </div>
+                        <div>
+                            <label className="block mb-2 font-medium">
+                                اختر أو ارفع صورة لأيقونة المجموعة
+                            </label>
+
+                            <Select
+                                menuPortalTarget={document.body}
+                                menuPosition="fixed"
+                                menuPlacement="top"
+                                value={
+                                    iconOptions.find(
+                                        (option) => option.value === data.icon
+                                    ) || null
+                                }
+                                onChange={(option) => {
+                                    setData((prev) => ({
+                                        ...prev,
+                                        icon: option?.value || "",
+                                        icon_file: null,
+                                    }));
+                                }}
+                                options={iconOptions}
+                                placeholder="اختر أيقونة المجموعة"
+                                isSearchable
+                                formatOptionLabel={(option) => (
+                                    <div className="flex items-center gap-3">
+                                        <option.Icon
+                                            className="text-[var(--primary)]"
+                                        />
+                                        <span>{option.label}</span>
+                                    </div>
+                                )}
+                                styles={{
+                                    menuPortal: (base) => ({
+                                        ...base,
+                                        zIndex: 99999,
+                                    }),
+                                    control: (base, state) => ({
+                                        ...base,
+                                        minHeight: 48,
+                                        borderRadius: 12,
+                                        borderColor: state.isFocused
+                                            ? "var(--primary)"
+                                            : "#e5e7eb",
+                                        boxShadow: "none",
+
+                                        "&:hover": {
+                                            borderColor: "var(--primary)",
+                                        },
+                                    }),
+                                }}
+                            />
+                            <div>
+
+                                <div
+                                    className="
+            flex items-center gap-4
+            rounded-xl
+            border border-gray-200
+            p-3
+            bg-gray-50
+        "
+                                >
+                                    <div
+                                        className="
+                w-14 h-14
+                rounded-lg
+                overflow-hidden
+                bg-white
+                border
+                flex items-center justify-center
+            "
+                                    >
+                                        {data.icon_file ? (
+                                            <img
+                                                src={URL.createObjectURL(data.icon_file)}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : SelectedIcon ? (
+                                            <SelectedIcon
+                                                size={24}
+                                                className="text-[var(--primary)]"
+                                            />
+                                        ) : isStoredImageIcon ? (
+                                            <img
+                                                src={getImage(selectedCategory.icon)}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <FiUploadCloud className="text-gray-400 text-xl" />
+                                        )}
+                                    </div>
+
+                                    <label
+                                        className="
+                px-4 py-2
+                rounded-lg
+                bg-[var(--primary)]
+                text-white
+                text-sm
+                cursor-pointer
+            "
+                                    >
+                                        رفع أيقونة
+
+                                        <input
+                                            hidden
+                                            type="file"
+                                            accept="image/png,image/svg+xml,image/webp,image/jpeg"
+                                            onChange={(e) => {
+                                                const file = e.target.files[0];
+
+                                                setData((prev) => ({
+                                                    ...prev,
+                                                    icon_file: file,
+                                                    icon: "",
+                                                }));
+                                            }}
+                                        />
+                                    </label>
+                                </div>
+                            </div>
+
+                            {frontendErrors.icon && (
+                                <p className="text-red-500 text-sm mt-2">
+                                    {frontendErrors.icon}
+                                </p>
+                            )}
+                        </div>
 
                         {/* Actions */}
 
@@ -436,12 +608,14 @@ focus:ring-offset-1
                                 {processing
                                     ? "جاري الحفظ..."
                                     : selectedCategory
-                                      ? "حفظ التعديلات"
-                                      : "إضافة المجموعة"}
+                                        ? "حفظ التعديلات"
+                                        : "إضافة المجموعة"}
                             </button>
                         </div>
                     </form>
                 </Modal>
+
+
 
                 {/* Delete Modal */}
 

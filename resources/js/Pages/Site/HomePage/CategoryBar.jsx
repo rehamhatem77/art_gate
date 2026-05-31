@@ -13,39 +13,11 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 import "swiper/css";
 import "swiper/css/navigation";
+import { iconsMap } from "@/Components/IconPicker";
+import { getImage } from "@/Utils/GetImage";
 
-const categories = [
-    {
-        name: "تابلوهات عيادات",
-        icon: FiHome,
-    },
-    {
-        name: "تابلوهات اسلامية",
-        icon: FiMoon,
-    },
-    {
-        name: "تابلوهات طبيعة",
-        icon: FiImage,
-    },
-    {
-        name: "تابلوهات الفنون",
-        icon: FiFeather,
-    },
-    {
-        name: "تابلوهات حيوانات",
-        icon: FiHeart,
-    },
-    {
-        name: "تابلوهات مودرن",
-        icon: FiImage,
-    },
-    {
-        name: "تابلوهات كلاسيك",
-        icon: FiFeather,
-    },
-];
 
-export default function CategoryBar() {
+export default function CategoryBar({ categories }) {
     return (
         <div className="py-4 group relative">
             <div className="container mx-auto px-8 sm:px-12 md:px-12 lg:px-18 xl:px-28">
@@ -131,7 +103,21 @@ export default function CategoryBar() {
                     }}
                 >
                     {categories.map((category) => {
-                        const Icon = category.icon;
+                        const isImageIcon =
+                            category.icon &&
+                            (
+                                category.icon.includes("category-icons/") ||
+                                category.icon.endsWith(".png") ||
+                                category.icon.endsWith(".jpg") ||
+                                category.icon.endsWith(".jpeg") ||
+                                category.icon.endsWith(".webp") ||
+                                category.icon.endsWith(".svg")
+                            );
+
+                        const Icon =
+                            !isImageIcon
+                                ? iconsMap[category.icon]
+                                : null;
 
                         return (
                             <SwiperSlide key={category.name}>
@@ -148,7 +134,17 @@ export default function CategoryBar() {
     "
                                 >
                                     <div className="border-2 border-[var(--border)] p-2 md:p-3 rounded-md">
-                                        <Icon className="w-5 h-5 md:w-7 md:h-7 " />
+                                        {isImageIcon ? (
+                                            <img
+                                                src={getImage(category.icon)}
+                                                alt={category.name}
+                                                className="w-5 h-5 md:w-7 md:h-7 object-contain"
+                                            />
+                                        ) : Icon ? (
+                                            <Icon className="w-5 h-5 md:w-7 md:h-7" />
+                                        ) : (
+                                            <FiImage className="w-7 h-7 md:w-9 md:h-9" />
+                                        )}
                                     </div>
 
                                     <span className="text-sm md:text-base font-medium whitespace-nowrap">

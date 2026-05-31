@@ -1,67 +1,6 @@
 import { motion } from "framer-motion";
 
-const categories = [
-    {
-        name: "تابلوهات الطبيعة",
-        count: 42,
-        image:
-            "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=1200",
-    },
-    {
-        name: "تابلوهات الفن",
-        count: 31,
-        image:
-            "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=1200",
-    },
-    {
-        name: "تابلوهات المأكولات والمشروبات",
-        count: 18,
-        image:
-            "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200",
-    },
-    {
-        name: "تابلوهات الهوايات",
-        count: 27,
-        image:
-            "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?q=80&w=1200",
-    },
-    {
-        name: "تابلوهات عيادات طبية",
-        count: 55,
-        image:
-            "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1200",
-    },
-    {
-        name: "تابلوهات إسلامية",
-        count: 89,
-        image:
-            "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=1200",
-    },
-    {
-        name: "تابلوهات الأعمال",
-        count: 24,
-        image:
-            "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200",
-    },
-    {
-        name: "تابلوهات الحيوانات",
-        count: 33,
-        image:
-            "https://images.unsplash.com/photo-1444464666168-49d633b86797?q=80&w=1200",
-    },
-    {
-        name: "تابلوهات السفر",
-        count: 17,
-        image:
-            "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200",
-    },
-    {
-        name: "تابلوهات الشخصيات",
-        count: 29,
-        image:
-            "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1200",
-    },
-];
+
 
 const containerVariants = {
     hidden: {},
@@ -87,7 +26,7 @@ const itemVariants = {
     },
 };
 
-export default function CategoriesSection() {
+export default function CategoriesSection({ categories }) {
     return (
         <section className="py-8 lg:py-12 bg-[#faf8f5] overflow-hidden">
             <div className="max-w-8xl mx-auto px-4 sm:px-8 md:px-12 lg:px-18 xl:px-28">
@@ -175,7 +114,7 @@ export default function CategoriesSection() {
                                     "
                                 >
                                     <img
-                                        src={category.image}
+                                        src={`storage/${category.image}`}
                                         alt={category.name}
                                         className="
                                             w-full
@@ -264,7 +203,7 @@ export default function CategoriesSection() {
             duration-500
         "
                                     >
-                                        {category.count} منتج
+                                        {category.products_count} منتج
                                     </div>
                                 </div>
                             </button>
