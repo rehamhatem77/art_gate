@@ -1,9 +1,29 @@
-import {
-    FiChevronLeft,
-    FiChevronRight,
-} from "react-icons/fi";
+import { useState } from "react";
+import { FiChevronLeft, FiChevronRight, FiHeart } from "react-icons/fi";
 
-export default function ProductCard({ product ,onQuickView}) {
+export default function ProductCard({ product, onQuickView }) {
+    const allImages = [
+        product.main_image,
+        ...(product.images || []).map((img) => img.image),
+    ].filter(Boolean);
+
+    const [currentImage, setCurrentImage] = useState(0);
+
+    const nextImage = (e) => {
+        e.stopPropagation();
+
+        setCurrentImage((prev) =>
+            prev === allImages.length - 1 ? 0 : prev + 1,
+        );
+    };
+
+    const prevImage = (e) => {
+        e.stopPropagation();
+
+        setCurrentImage((prev) =>
+            prev === 0 ? allImages.length - 1 : prev - 1,
+        );
+    };
     return (
         <div
             className="
@@ -16,6 +36,7 @@ export default function ProductCard({ product ,onQuickView}) {
             {/* Image */}
             <div className="relative overflow-hidden rounded-2xl bg-white">
                 {/* Product Code */}
+
                 <div
                     className="
                         absolute
@@ -36,24 +57,37 @@ export default function ProductCard({ product ,onQuickView}) {
                 >
                     كود المنتج: is{product.id}
                 </div>
+                <div
+                    className="
+                        absolute
+                        top-3
+                        right-3
+                        z-30
+                        text-white
+                        px-3
+                        py-2
+                        hover:text-[var(--border)]
+                    "
+                >
+                    <FiHeart size={24} />
+                </div>
 
                 {/* Product Image */}
                 <img
-                    src={product.image}
+                    src={`/storage/${allImages[currentImage]}`}
                     alt={product.name}
                     className="
-                        w-full
-                        h-[180px]
-                        sm:h-[220px]
-                        md:h-[250px]
-                        lg:h-[280px]
-                        object-cover
-                        transition-all
-                        duration-500
-
-                        lg:group-hover:h-[240px]
-                        lg:group-hover:scale-105
-                    "
+        w-full
+        h-[180px]
+        sm:h-[220px]
+        md:h-[250px]
+        lg:h-[280px]
+        object-cover
+        transition-all
+        duration-500
+        lg:group-hover:h-[240px]
+        lg:group-hover:scale-105
+    "
                 />
 
                 {/* Overlay */}
@@ -70,8 +104,11 @@ export default function ProductCard({ product ,onQuickView}) {
                 />
 
                 {/* Arrows - Desktop Only */}
-                <button
-                    className="
+                {product.images?.length > 0 && (
+                    <>
+                        <button
+                            onClick={prevImage}
+                            className="
                         hidden lg:flex
                         absolute
                         left-3
@@ -91,12 +128,13 @@ export default function ProductCard({ product ,onQuickView}) {
                         transition-all
                         duration-300
                     "
-                >
-                    <FiChevronLeft size={18} />
-                </button>
+                        >
+                            <FiChevronLeft size={18} />
+                        </button>
 
-                <button
-                    className="
+                        <button
+                            onClick={nextImage}
+                            className="
                         hidden lg:flex
                         absolute
                         right-3
@@ -116,9 +154,11 @@ export default function ProductCard({ product ,onQuickView}) {
                         transition-all
                         duration-300
                     "
-                >
-                    <FiChevronRight size={18} />
-                </button>
+                        >
+                            <FiChevronRight size={18} />
+                        </button>
+                    </>
+                )}
             </div>
 
             {/* Content */}
@@ -137,15 +177,14 @@ export default function ProductCard({ product ,onQuickView}) {
                     {product.name}
                 </h3>
 
-                <p
-                    className="
-                        text-sm
-                        text-[var(--accent)]
-                        line-clamp-1
-                        mb-2
-                    "
-                >
-                    {product.category}
+                <p className="text-sm text-[var(--accent)] mb-2 line-clamp-1">
+                    {[
+                        product.category?.name,
+                        ...(product.tags?.slice(0, 2).map((tag) => tag.name) ||
+                            []),
+                    ]
+                        .filter(Boolean)
+                        .join(" , ")}
                 </p>
 
                 <div
@@ -157,15 +196,13 @@ export default function ProductCard({ product ,onQuickView}) {
                     "
                 >
                     {product.price}
-                    <span className="mr-1 text-base">
-                        جنيه
-                    </span>
+                    <span className="mr-1 text-base">جنيه</span>
                 </div>
 
                 {/* Fixed Button Area */}
                 <div className="h-14 mt-3 overflow-hidden">
                     <button
-                    onClick={() => onQuickView(product)}
+                        onClick={() => onQuickView(product)}
                         className="
                             w-full
                             h-11

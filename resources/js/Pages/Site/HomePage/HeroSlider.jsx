@@ -42,8 +42,7 @@ const sliders = [
 
 export default function HeroSlider({ slides }) {
     const slidesData = slides ? slides : sliders;
-console.log(slides);
-console.log(slidesData);
+
 
 
 

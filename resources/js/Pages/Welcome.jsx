@@ -7,7 +7,7 @@ import FeaturesSection from "./Site/Components/FeaturesSection";
 import RecentlyViewedSection from "./Site/Components/RecentlyViewedSection";
 
 
-export default function Welcome({ auth , categories, services,featuredServices ,homePageData}) {
+export default function Welcome({ auth , categories, services,featuredServices ,homePageData , latestProducts ,topCategories ,categoryProducts }) {
     const handleImageError = () => {
         document
             .getElementById('screenshot-container')
@@ -24,7 +24,7 @@ export default function Welcome({ auth , categories, services,featuredServices ,
           <SiteLayout title="الصفحة الرئيسية" announcement={homePageData.announcement}>
             <HeroSection categories={categories} slides={homePageData.slider}/>
             <AboutSection services={featuredServices } aboutSection={homePageData.aboutSection}/>
-            <SpecialProducts specialSection={homePageData.specialSection}/>
+            <SpecialProducts specialSection={homePageData.specialSection} latestProducts={latestProducts} topCategories={topCategories} categoryProducts={categoryProducts}/>
             <CategoriesSection categories={categories} categoriesSection={homePageData.categorySection}/>
             <FeaturesSection services={services}/>
             <RecentlyViewedSection/>
