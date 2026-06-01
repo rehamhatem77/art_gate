@@ -39,7 +39,7 @@ const products = [
     },
 ];
 
-export default function SpecialProducts() {
+export default function SpecialProducts({ specialSection }) {
     const [activeTab, setActiveTab] = useState(tabs[0]);
     const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -57,15 +57,15 @@ export default function SpecialProducts() {
                 >
                
                     <span className="text-[#b4a79a] text-xl font-medium block mb-2">
-                        تشكيل حصري
+                       {specialSection.special_section_subtitle? specialSection.special_section_subtitle : " تشكيل حصري"}
                     </span>
 
                     <h2 className="text-4xl md:text-5xl font-bold text-[var(--primary)] mb-4">
-                        تابلوهات مميزة
+                       {specialSection.special_section_title? specialSection.special_section_title : " تابلوهات مميزة"} 
                     </h2>
 
                     <p className="text-[var(--text-dark)] text-lg">
-                        تجربة تمنح مساحة ومرونة لا مثيل لها
+                       {specialSection.special_section_description? specialSection.special_section_description : " تجربة تمنح مساحة ومرونة لا مثيل لها"}
                     </p>
                 </motion.div>
 

@@ -1,11 +1,11 @@
 import CategoryBar from "./CategoryBar";
 import HeroSlider from "./HeroSlider";
 
-export default function HeroSection({ categories }) {
+export default function HeroSection({ categories, slides }) {
     return (
         <>
             <CategoryBar categories={categories} />
-            <HeroSlider />
+            <HeroSlider slides={slides} />
         </>
     );
 }

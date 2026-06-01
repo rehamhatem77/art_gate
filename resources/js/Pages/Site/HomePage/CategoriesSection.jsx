@@ -26,7 +26,7 @@ const itemVariants = {
     },
 };
 
-export default function CategoriesSection({ categories }) {
+export default function CategoriesSection({ categories, categoriesSection }) {
     return (
         <section className="py-8 lg:py-12 bg-[#faf8f5] overflow-hidden">
             <div className="max-w-8xl mx-auto px-4 sm:px-8 md:px-12 lg:px-18 xl:px-28">
@@ -40,16 +40,15 @@ export default function CategoriesSection({ categories }) {
                     className="text-center mb-14"
                 >
                     <span className="block text-[#b4a79a] text-sm md:text-lg font-medium mb-3">
-                        استمتع بتصفح مرن لاستكشاف أقسام موقعنا بسهولة
+                        {categoriesSection.category_section_subtitle? categoriesSection.category_section_subtitle : " استمتع بتصفح مرن لاستكشاف أقسام موقعنا بسهولة"}
                     </span>
 
                     <h2 className="text-3xl md:text-5xl font-bold text-[var(--primary)] mb-5">
-                        استعرض فهرس معرضنا
+                        {categoriesSection.category_section_title ? categoriesSection.category_section_title : " استعرض فهرس معرضنا"}
                     </h2>
 
                     <p className="text-[var(--text-dark)] max-w-3xl mx-auto leading-8">
-                        هناك حقيقة مثبتة منذ زمن طويل وهي أن المحتوى المقروء
-                        لصفحة ما سيلهي القارئ.
+                        {categoriesSection.category_section_description ? categoriesSection.category_section_description : " هناك حقيقة مثبتة منذ زمن طويل وهي أن المحتوى المقروء لصفحة ما سيلهي القارئ."}
                     </p>
                 </motion.div>
 

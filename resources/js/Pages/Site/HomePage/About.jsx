@@ -1,13 +1,6 @@
 import { iconsMap } from "@/Components/IconPicker";
 import { motion } from "framer-motion";
-import {
-    FiTruck,
-    FiPhoneCall,
-    FiCreditCard,
-    FiPlay,
-} from "react-icons/fi";
-
-
+import { FiTruck, FiPhoneCall, FiCreditCard, FiPlay } from "react-icons/fi";
 
 const containerVariants = {
     hidden: {},
@@ -33,14 +26,11 @@ const itemVariants = {
     },
 };
 
-export default function AboutSection({ services }) {
-
-    
+export default function AboutSection({ services, aboutSection }) {
     return (
         <section className="py-12 lg:py-20 overflow-hidden">
             <div className="max-w-8xl mx-auto px-8 sm:px-12 md:px-12 lg:px-18 xl:px-28">
                 <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-
                     {/* Image / Video */}
                     <motion.div
                         className="order-1"
@@ -54,7 +44,13 @@ export default function AboutSection({ services }) {
                     >
                         <div className="relative h-[280px] sm:h-[320px] md:h-[380px] lg:h-[420px] overflow-hidden rounded-[24px] shadow-lg group">
                             <img
-                                src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=2000"
+                                src={
+                                    aboutSection?.about_section_image
+                                        ? `/storage/${aboutSection.about_section_image}`
+                                        : aboutSection?.about_section_video
+                                          ? `/storage/${aboutSection.about_section_video}`
+                                          : "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=2000"
+                                }
                                 alt="Art Collection"
                                 className="
                                     w-full
@@ -70,14 +66,15 @@ export default function AboutSection({ services }) {
                             <div className="absolute inset-0 bg-black/20" />
 
                             {/* Play Button */}
-                            <motion.button
-                                whileHover={{
-                                    scale: 1.1,
-                                }}
-                                whileTap={{
-                                    scale: 0.95,
-                                }}
-                                className="
+                            {aboutSection.about_section_video && (
+                                <motion.button
+                                    whileHover={{
+                                        scale: 1.1,
+                                    }}
+                                    whileTap={{
+                                        scale: 0.95,
+                                    }}
+                                    className="
                                     absolute
                                     inset-0
                                     m-auto
@@ -92,12 +89,13 @@ export default function AboutSection({ services }) {
                                     items-center
                                     justify-center
                                 "
-                            >
-                                <FiPlay
-                                    size={34}
-                                    className="text-white ml-1"
-                                />
-                            </motion.button>
+                                >
+                                    <FiPlay
+                                        size={34}
+                                        className="text-white ml-1"
+                                    />
+                                </motion.button>
+                            )}
                         </div>
                     </motion.div>
 
@@ -128,7 +126,8 @@ export default function AboutSection({ services }) {
                             transition={{ duration: 0.5 }}
                             className="text-[var(--text-dark)] text-2xl font-medium mb-3"
                         >
-                            فن ينبض على جدرانك
+                            {aboutSection?.about_section_subtitle ||
+                                "فن ينبض على جدرانك"}
                         </motion.span>
 
                         <motion.h2
@@ -149,7 +148,8 @@ export default function AboutSection({ services }) {
                                 mb-6
                             "
                         >
-                            مرحباً بكم في أرض الإبداع!
+                            {aboutSection?.about_section_title ||
+                                "مرحباً بكم في أرض الإبداع!"}
                         </motion.h2>
 
                         <motion.p
@@ -168,12 +168,13 @@ export default function AboutSection({ services }) {
                                 mb-10
                             "
                         >
-                            مرحباً بكم في عالم الإبداع والتميز، نحن نفخر بتقديم
+                            {aboutSection?.about_section_description ||
+                                `مرحباً بكم في عالم الإبداع والتميز، نحن نفخر بتقديم
                             مجموعة فريدة من الأعمال الفنية والتصميمات الراقية
                             التي ستجعل منزلك أكثر جمالاً وأناقة. سواء كنت تبحث
                             عن تحفة فنية لتزيين جدران منزلك أو تصميمات تابلوهات
                             مميزة، فإننا هنا لتحقيق طموحاتك. استمتع بتجربة تسوق
-                            فريدة واستمتع بجمال الفن في كل قطعة نقدمها.
+                            فريدة واستمتع بجمال الفن في كل قطعة نقدمها.`}
                         </motion.p>
 
                         {/* Services */}
@@ -193,65 +194,68 @@ export default function AboutSection({ services }) {
                                 lg:gap-8
                             "
                         >
-                            
                             {services.map((service, index) => {
-    const isImageIcon = service.icon && !iconsMap[service.icon];
+                                const isImageIcon =
+                                    service.icon && !iconsMap[service.icon];
 
-    const IconComponent = !isImageIcon ? iconsMap[service.icon] : null;
+                                const IconComponent = !isImageIcon
+                                    ? iconsMap[service.icon]
+                                    : null;
 
-    return (
-        <motion.div
-            key={service.id || index}
-            variants={itemVariants}
-            className="text-center"
-        >
-            <div className="flex justify-center mb-4">
-                <motion.div>
-                    {/* ICON RENDER FIX */}
-                    {IconComponent ? (
-                        <IconComponent
-                            size={52}
-                            className="text-[var(--secondary)]"
-                        />
-                    ) : isImageIcon ? (
-                        <img
-                            src={getImage(service.icon)}
-                            alt={service.name}
-                            className="w-14 h-14 object-contain"
-                        />
-                    ) : (
-                        <div className="w-14 h-14 rounded-full bg-gray-200" />
-                    )}
-                </motion.div>
-            </div>
+                                return (
+                                    <motion.div
+                                        key={service.id || index}
+                                        variants={itemVariants}
+                                        className="text-center"
+                                    >
+                                        <div className="flex justify-center mb-4">
+                                            <motion.div>
+                                                {/* ICON RENDER FIX */}
+                                                {IconComponent ? (
+                                                    <IconComponent
+                                                        size={52}
+                                                        className="text-[var(--secondary)]"
+                                                    />
+                                                ) : isImageIcon ? (
+                                                    <img
+                                                        src={getImage(
+                                                            service.icon,
+                                                        )}
+                                                        alt={service.name}
+                                                        className="w-14 h-14 object-contain"
+                                                    />
+                                                ) : (
+                                                    <div className="w-14 h-14 rounded-full bg-gray-200" />
+                                                )}
+                                            </motion.div>
+                                        </div>
 
-            <h3
-                className="
+                                        <h3
+                                            className="
                     text-xl
                     font-semibold
                     text-[var(--secondary)]
                     mb-3
                 "
-            >
-                {service.name}
-            </h3>
+                                        >
+                                            {service.name}
+                                        </h3>
 
-            <p
-                className="
+                                        <p
+                                            className="
                     text-[var(--text-dark)]
                     leading-7
                     text-sm
                     md:text-base
                 "
-            >
-                {service.description}
-            </p>
-        </motion.div>
-    );
-})}
+                                        >
+                                            {service.description}
+                                        </p>
+                                    </motion.div>
+                                );
+                            })}
                         </motion.div>
                     </motion.div>
-
                 </div>
             </div>
         </section>

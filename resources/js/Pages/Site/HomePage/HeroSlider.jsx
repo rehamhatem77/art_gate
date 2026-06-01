@@ -7,9 +7,9 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-const slides = [
+const sliders = [
     {
-        title: "أقوى التشكيلات الإسلامية",
+        name: "أقوى التشكيلات الإسلامية",
 
         price: "250.00 ج.م",
         number: "01",
@@ -40,17 +40,19 @@ const slides = [
     },
 ];
 
-export default function HeroSlider() {
+export default function HeroSlider({ slides }) {
+    const slidesData = slides ? slides : sliders;
+console.log(slides);
+console.log(slidesData);
+
+
+
     return (
         <section className="relative py-3 lg:py-4">
             <div className="w-full mx-auto px-4 sm:px-8 md:px-12 lg:px-18 xl:px-24 2xl:px-32">
                 <div className="relative group">
                     <Swiper
-                        modules={[
-                            Navigation,
-                            Pagination,
-                            Autoplay,
-                        ]}
+                        modules={[Navigation, Pagination, Autoplay]}
                         navigation={{
                             prevEl: ".hero-prev",
                             nextEl: ".hero-next",
@@ -63,10 +65,10 @@ export default function HeroSlider() {
                             pauseOnMouseEnter: true,
                             disableOnInteraction: false,
                         }}
-                        loop
+                        loop={slidesData.length > 1}
                         className="hero-swiper rounded-3xl overflow-hidden "
                     >
-                        {slides.map((slide, index) => (
+                        {slidesData.map((slide, index) => (
                             <SwiperSlide key={index}>
                                 <div
                                     className="
@@ -114,10 +116,10 @@ xl:h-[600px]
                                                 select-none
                                             "
                                         >
-                                            {slide.number}
+                                            {slide.order
+                                                ? slide.order
+                                                : slide.number}
                                         </div>
-
-
 
                                         {/* Title */}
                                         <h2
@@ -132,7 +134,9 @@ lg:text-4xl
                                                 mb-6
                                             "
                                         >
-                                            {slide.title}
+                                            {slide.title
+                                                ? slide.title
+                                                : slide.name}
                                         </h2>
 
                                         {/* Product Image */}
@@ -140,8 +144,15 @@ lg:text-4xl
                                             <div className="absolute inset-0 bg-black/10 blur-3xl rounded-full" />
 
                                             <img
-                                                src={slide.productImage}
-                                                alt={slide.title}
+                                                src={
+                                                    slide.product?.main_image
+                                                        ? `/storage/${slide.product.main_image}`
+                                                        : slide.productImage
+                                                }
+                                                alt={
+                                                    slide.product?.name ||
+                                                    slide.name
+                                                }
                                                 className="
                                                     relative
                                                     h-20
@@ -166,7 +177,9 @@ lg:h-52
                                                 mb-6
                                             "
                                         >
-                                            {slide.price}
+                                            {slide.product?.price
+                                                ? `${slide.product.price} ج.م`
+                                                : slide.price}
                                         </p>
 
                                         {/* Button */}
@@ -190,7 +203,11 @@ lg:h-52
                                     {/* Room Image */}
                                     <div className="relative h-full overflow-hidden">
                                         <img
-                                            src={slide.roomImage}
+                                            src={
+                                                slide.image
+                                                    ? `/storage/${slide.image}`
+                                                    : slide.roomImage
+                                            }
                                             alt={slide.title}
                                             className="
                                                 w-full

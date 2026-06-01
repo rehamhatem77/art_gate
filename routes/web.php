@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminHomePageController;
 use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FrameTypesController;
@@ -123,7 +124,23 @@ Route::middleware('auth')->group(function () {
 
 
 
+ Route::get('/homepage', [AdminHomePageController::class, 'index'])
+        ->name('homepage.index');
 
+    Route::post('/announcement', [AdminHomePageController::class, 'updateAnnouncement'])
+        ->name('homepage.announcement.update');
+
+    Route::post('/slider', [AdminHomePageController::class, 'updateSlider'])
+        ->name('homepage.slider.update');
+
+    Route::post('/about', [AdminHomePageController::class, 'updateAbout'])
+        ->name('homepage.about.update');
+
+    Route::post('/special', [AdminHomePageController::class, 'updateSpecial'])
+        ->name('homepage.special.update');
+
+    Route::post('/category', [AdminHomePageController::class, 'updateCategory'])
+        ->name('homepage.category.update');
 
 
 

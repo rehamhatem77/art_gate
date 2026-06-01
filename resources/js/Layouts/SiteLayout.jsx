@@ -3,7 +3,7 @@ import Footer from "@/Components/Footer";
 import Navbar from "@/Components/Navbar";
 import { Head, usePage } from "@inertiajs/react";
 
-export default function SiteLayout({ children, title }) {
+export default function SiteLayout({ children, title ,announcement }) {
     const auth=usePage().props.auth; 
 
   return (
@@ -13,7 +13,7 @@ export default function SiteLayout({ children, title }) {
       <div
         dir="rtl"
       >
-        <AnnouncementBar />
+        <AnnouncementBar announcement={announcement} />
         
         <Navbar auth={auth}/>
 
