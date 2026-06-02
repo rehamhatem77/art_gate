@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\TableauNumbersController;
 use App\Http\Controllers\Admin\TagsController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ShopPageController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -25,6 +26,7 @@ use Inertia\Inertia;
 //     ]);
 // });
 Route::get('/', [HomePageController::class, 'index'])->name('home');
+Route::get('/shop', [ShopPageController::class, 'index'])->name('shop');
 
 
 // Route::get('/dashboard', function () {
