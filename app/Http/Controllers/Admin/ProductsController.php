@@ -139,17 +139,11 @@ class ProductsController extends Controller
             'tags' => 'nullable|array',
             'tags.*' => 'nullable',
 
-            'design_colors' => 'nullable|array',
+            'design_colors' => 'required|array|min:1',
 
-            'design_colors.*.hex' => [
-                'required',
-                'regex:/^#[0-9A-Fa-f]{6}$/'
-            ],
-
-            'design_colors.*.name' => [
-                'nullable',
+            'design_colors.*' => [
                 'string',
-                'max:255'
+                'in:white_black,red_orange,green_yellow,blue_cyan,brown_beige,silver_gold,navy_purple,multi'
             ],
 
             'artistic_type' => 'nullable|string|max:255',
@@ -376,7 +370,12 @@ class ProductsController extends Controller
 
             'tags' => 'nullable|array',
 
-            'design_colors' => 'nullable|array',
+            'design_colors' => 'required|array|min:1',
+
+            'design_colors.*' => [
+                'string',
+                'in:white_black,red_orange,green_yellow,blue_cyan,brown_beige,silver_gold,navy_purple,multi'
+            ],
 
             'artistic_type' => 'nullable|string|max:255',
 

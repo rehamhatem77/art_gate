@@ -8,6 +8,7 @@ import AdminPageHeader from "@/Components/AdminPageHeader";
 import DisplayField from "./Components/DisplyField";
 import { BsBackpack, BsBackpack2 } from "react-icons/bs";
 import { BiArrowBack } from "react-icons/bi";
+import { DESIGN_PALETTES } from "@/Constants/DesignPalletes";
 
 export default function Show({ product }) {
     return (
@@ -350,68 +351,73 @@ gap-2
                         </div>
 
                         {/* DESIGN COLORS */}
-                        <div className="bg-white rounded-[28px] border border-[#ece6df] p-6 shadow-sm">
-                            <h2 className="text-lg font-bold mb-6">
-                                ألوان اللوحة
-                            </h2>
 
-                            {!product.design_colors?.length ? (
-                                <div
-                                    className="
-                    border border-dashed border-[#e6ddd4]
-                    rounded-2xl
-                    p-6
-                    text-center
-                    bg-[#fcfbfa]
-                    text-gray-400
-                "
-                                >
-                                    لا توجد ألوان مضافة
-                                </div>
-                            ) : (
-                                <div className="flex flex-wrap gap-3">
-                                    {product.design_colors.map(
-                                        (color, index) => (
-                                            <div
-                                                key={index}
-                                                className="
-                            min-w-[160px]
-                            flex items-center gap-3
-                            px-4 py-3
+<div className="bg-white rounded-[28px] border border-[#ece6df] p-6 shadow-sm">
+    <h2 className="text-lg font-bold mb-6">ألوان اللوحة</h2>
+
+    {!product.design_colors?.length ? (
+        <div
+            className="
+                border border-dashed border-[#e6ddd4]
+                rounded-2xl
+                p-6
+                text-center
+                bg-[#fcfbfa]
+                text-gray-400
+            "
+        >
+            لا توجد ألوان مضافة
+        </div>
+    ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {product.design_colors.map((paletteKey) => {
+                const palette = DESIGN_PALETTES.find(
+                    (p) => p.value === paletteKey,
+                );
+
+                if (!palette) return null;
+
+                return (
+                    <div
+                        key={palette.value}
+                        className="
                             rounded-2xl
                             border border-[#ebe4dd]
                             bg-[#fcfbfa]
+                            p-4
                         "
-                                            >
-                                                <div
-                                                    className="
-                                w-7 h-7
-                                rounded-full
-                                border border-white
-                                shadow-sm
-                            "
-                                                    style={{
-                                                        backgroundColor:
-                                                            color.hex,
-                                                    }}
-                                                />
+                    >
+                        <div className="flex items-center justify-between">
+                            <span className="font-medium text-[#2d2926]">
+                                {palette.label}
+                            </span>
 
-                                                <div>
-                                                    <p className="text-sm font-medium text-[#2d2926]">
-                                                        {color.name ||
-                                                            "بدون اسم"}
-                                                    </p>
-
-                                                    <p className="text-xs text-gray-500 uppercase">
-                                                        {color.hex}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        ),
-                                    )}
-                                </div>
-                            )}
+                            <span className="text-xs text-gray-500">
+                                {palette.colors.length} ألوان
+                            </span>
                         </div>
+
+                        <div className="flex items-center gap-0 mt-4">
+                            {palette.colors.map((color, index) => (
+                                <div
+                                    key={index}
+                                    className="
+                                        h-8 flex-1
+                                        first:rounded-r-xl
+                                        last:rounded-l-xl
+                                    "
+                                    style={{
+                                        backgroundColor: color,
+                                    }}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
+    )}
+</div>
 
                         {/* STATUS */}
                         <div className="bg-white rounded-[28px] border border-[#ece6df] p-6 shadow-sm">

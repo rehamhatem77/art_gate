@@ -18,6 +18,7 @@ import { IoColorPaletteOutline } from "react-icons/io5";
 import ProductCard from "./Components/ProductCard";
 import Breadcrumb from "@/Components/Breadcrumb";
 import AdminPageHeader from "@/Components/AdminPageHeader";
+import DesignPalettePicker from "./Components/DesignPalettePicker";
 
 export default function Edit({
     product,
@@ -56,11 +57,7 @@ export default function Edit({
             typeof tag === "object" ? tag.id : tag,
         ),
 
-        design_colors:
-            product?.design_colors?.map((color) => ({
-                hex: color.hex,
-                name: color.name,
-            })) || [],
+        design_colors: product?.design_colors || [],
 
         main_image: product?.main_image || null,
 
@@ -241,29 +238,8 @@ export default function Edit({
 |--------------------------------------------------------------------------
 */
 
-        if (data.design_colors.length) {
-            data.design_colors.forEach((color, index) => {
-                if (!color.hex?.trim()) {
-                    newErrors[`design_colors.${index}.hex`] = "كود اللون مطلوب";
-                }
-
-                const hexRegex = /^#([0-9A-F]{3}){1,2}$/i;
-
-                if (color.hex && !hexRegex.test(color.hex)) {
-                    newErrors[`design_colors.${index}.hex`] =
-                        "كود HEX غير صحيح";
-                }
-
-                if (!color.name?.trim()) {
-                    newErrors[`design_colors.${index}.name`] =
-                        "اسم اللون مطلوب";
-                }
-
-                if (color.name && color.name.length > 30) {
-                    newErrors[`design_colors.${index}.name`] =
-                        "اسم اللون طويل جدًا";
-                }
-            });
+        if (!data.design_colors.length) {
+            newErrors.design_colors = "اختر باليت واحدة على الأقل";
         }
 
         /*
@@ -353,9 +329,7 @@ export default function Edit({
     */
 
         data.design_colors.forEach((color, index) => {
-            formData.append(`design_colors[${index}][hex]`, color.hex);
-
-            formData.append(`design_colors[${index}][name]`, color.name);
+            formData.append(`design_colors[${index}]`, color);
         });
 
         /*
@@ -487,7 +461,7 @@ export default function Edit({
                 />
 
                 {/* Header */}
-            
+
                 <AdminPageHeader
                     title="تعديل لوحة"
                     description="قم بتعديل بيانات اللوحة والمتغيرات"
@@ -508,8 +482,8 @@ export default function Edit({
                         {
                             label: "حفظ التعديلات",
                             type: "submit",
-							onClick: submit,
-							icon: FiSave,
+                            onClick: submit,
+                            icon: FiSave,
                             disabled: { processing },
                             className: `
 								h-11 px-6
@@ -1676,291 +1650,23 @@ export default function Edit({
                         </div>
                         {/* DESIGN COLORS */}
                         <div className="bg-white rounded-[28px] border border-[#ece6df] p-6 shadow-sm">
-                            <div className="flex items-center justify-between mb-6">
-                                <div>
-                                    <h2 className="text-lg font-bold text-[var(--text-dark)]">
-                                        ألوان اللوحة
-                                    </h2>
+                            <div className="mb-6">
+                                <h2 className="text-lg font-bold text-[var(--text-dark)]">
+                                    ألوان اللوحة
+                                </h2>
 
-                                    <p className="text-sm text-gray-500 mt-1">
-                                        اختر الألوان أو أضف كود واسم اللون
-                                    </p>
-                                </div>
-
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setData("design_colors", [
-                                            ...data.design_colors,
-                                            {
-                                                hex: "#d4af37",
-                                                name: "",
-                                            },
-                                        ])
-                                    }
-                                    className="
-                h-8 px-3
-                rounded-xl
-                bg-[var(--hover-accent)]
-                text-[var(--primary)]
-                flex items-center gap-2
-                text-sm font-medium
-                hover:opacity-90
-                transition
-            "
-                                >
-                                    <FiPlus />
-                                    إضافة لون
-                                </button>
+                                <p className="text-sm text-gray-500 mt-1">
+                                    اختر الألوان المناسبة للتصميم
+                                </p>
                             </div>
 
-                            {!data.design_colors.length ? (
-                                <div
-                                    className="
-                border border-dashed border-[#e6ddd4]
-                rounded-2xl
-                p-5
-                text-center
-                bg-[#fcfbfa]
-                text-gray-400
-            "
-                                >
-                                    لا توجد ألوان مضافة
-                                </div>
-                            ) : (
-                                <div className="space-y-4">
-                                    {data.design_colors.map((color, index) => (
-                                        <div
-                                            key={index}
-                                            className="
-                        rounded-2xl
-                        border border-[#ebe4dd]
-                        bg-[#fcfbfa]
-                        p-4
-                    "
-                                        >
-                                            <div className="flex items-end gap-2">
-                                                {/* COLOR PICKER */}
-                                                <div className="relative">
-                                                    <input
-                                                        type="color"
-                                                        value={
-                                                            /^#[0-9A-Fa-f]{6}$/.test(
-                                                                color.hex,
-                                                            )
-                                                                ? color.hex
-                                                                : "#d4af37"
-                                                        }
-                                                        onChange={(e) => {
-                                                            const updated = [
-                                                                ...data.design_colors,
-                                                            ];
-
-                                                            updated[index].hex =
-                                                                e.target.value;
-
-                                                            setData(
-                                                                "design_colors",
-                                                                updated,
-                                                            );
-                                                        }}
-                                                        className="
-                                    w-9 h-9
-                                    rounded-2xl
-                                    overflow-hidden
-                                    border-0
-                                    cursor-pointer
-                                    bg-transparent
-                                "
-                                                    />
-
-                                                    <div
-                                                        className="
-                                    absolute inset-0
-                                    rounded-2xl
-                                    border border-[#e7dfd8]
-                                    pointer-events-none
-                                "
-                                                    />
-                                                </div>
-
-                                                {/* INPUTS */}
-                                                <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-1">
-                                                    <div>
-                                                        <label className="text-xs text-gray-500 mb-1 block">
-                                                            كود اللون
-                                                        </label>
-
-                                                        <input
-                                                            value={color.hex}
-                                                            onChange={(e) => {
-                                                                const updated =
-                                                                    [
-                                                                        ...data.design_colors,
-                                                                    ];
-
-                                                                let value =
-                                                                    e.target.value
-                                                                        .replace(
-                                                                            /[^a-fA-F0-9]/g,
-                                                                            "",
-                                                                        )
-                                                                        .slice(
-                                                                            0,
-                                                                            6,
-                                                                        );
-
-                                                                updated[
-                                                                    index
-                                                                ].hex = value
-                                                                    ? `#${value}`
-                                                                    : "";
-
-                                                                setData(
-                                                                    "design_colors",
-                                                                    updated,
-                                                                );
-                                                            }}
-                                                            placeholder="#D4AF37"
-                                                            className="
-                                        w-full h-8
-                                        rounded-xl
-                                        border border-[#e7dfd8]
-                                        bg-white
-                                        px-2
-                                        text-xs
-                                        outline-none
-                                        focus:ring-1
-                                        focus:ring-[var(--primary)]
-                                        focus:border-[var(--primary)]
-                                    "
-                                                        />
-                                                    </div>
-
-                                                    {/* NAME */}
-                                                    <div>
-                                                        <label className="text-xs text-gray-500 mb-1 block">
-                                                            اسم اللون
-                                                        </label>
-
-                                                        <input
-                                                            value={color.name}
-                                                            onChange={(e) => {
-                                                                const updated =
-                                                                    [
-                                                                        ...data.design_colors,
-                                                                    ];
-
-                                                                updated[
-                                                                    index
-                                                                ].name =
-                                                                    e.target.value;
-
-                                                                setData(
-                                                                    "design_colors",
-                                                                    updated,
-                                                                );
-                                                            }}
-                                                            placeholder="ذهبي"
-                                                            className="
-                                        w-full h-8
-                                        rounded-xl
-                                        border border-[#e7dfd8]
-                                        bg-white
-                                        px-2
-                                        text-xs
-                                        outline-none
-                                        focus:ring-1
-                                        focus:ring-[var(--primary)]
-                                        focus:border-[var(--primary)]
-                                    "
-                                                        />
-                                                    </div>
-                                                </div>
-
-                                                {/* DELETE */}
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        setData(
-                                                            "design_colors",
-                                                            data.design_colors.filter(
-                                                                (_, i) =>
-                                                                    i !== index,
-                                                            ),
-                                                        );
-                                                    }}
-                                                    className="
-                                w-11 h-8
-                                rounded-xl
-                                bg-red-50
-                                text-red-500
-                                flex items-center justify-center
-                                hover:bg-red-100
-                                transition
-                            "
-                                                >
-                                                    <FiTrash2 />
-                                                </button>
-                                            </div>
-
-                                            {/* PREVIEW */}
-                                            {/* <div className="mt-4 flex items-center gap-3">
-                                                <div
-                                                    className="
-                                w-10 h-10
-                                rounded-full
-                                border border-[#e7dfd8]
-                                shadow-sm
-                            "
-                                                    style={{
-                                                        background: color.hex,
-                                                    }}
-                                                />
-
-                                                <div>
-                                                    <p className="text-sm font-medium text-[var(--text-dark)]">
-                                                        {color.name ||
-                                                            "بدون اسم"}
-                                                    </p>
-
-                                                    <p className="text-xs text-gray-500 uppercase">
-                                                        {color.hex}
-                                                    </p>
-                                                </div>
-                                            </div> */}
-                                            {errors[
-                                                `design_colors.${index}.name`
-                                            ] && (
-                                                <p className="text-red-500 text-xs mt-1">
-                                                    {
-                                                        errors[
-                                                            `design_colors.${index}.name`
-                                                        ]
-                                                    }
-                                                </p>
-                                            )}
-                                            {errors[
-                                                `design_colors.${index}.hex`
-                                            ] && (
-                                                <p className="text-red-500 text-xs mt-1">
-                                                    {
-                                                        errors[
-                                                            `design_colors.${index}.hex`
-                                                        ]
-                                                    }
-                                                </p>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-
-                            {errors.design_colors && (
-                                <p className="text-red-500 text-sm mt-3">
-                                    {errors.design_colors}
-                                </p>
-                            )}
+                            <DesignPalettePicker
+                                value={data.design_colors}
+                                error={errors.design_colors}
+                                onChange={(colors) =>
+                                    setData("design_colors", colors)
+                                }
+                            />
                         </div>
 
                         {/* STATUS */}

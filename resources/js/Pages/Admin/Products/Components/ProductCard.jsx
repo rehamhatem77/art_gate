@@ -1,7 +1,8 @@
+import { DESIGN_PALETTES } from "@/Constants/DesignPalletes";
 import { BsEye } from "react-icons/bs";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 
-export default function ProductCard({ product, onEdit, onDelete,onShow }) {
+export default function ProductCard({ product, onEdit, onDelete, onShow }) {
     const variants = product.variants || [];
 
     /*
@@ -102,26 +103,41 @@ max-h-[600px]
 
                 {/* COLORS */}
                 {product.design_colors?.length > 0 && (
-                    <div className="absolute bottom-3 right-3 flex items-center">
-                        {product.design_colors
-                            ?.slice(0, 9)
-                            .map((color, index) => (
+                    <div className="absolute bottom-3 right-3 flex flex-col gap-2">
+                        {product.design_colors?.map((paletteKey) => {
+                            const palette = DESIGN_PALETTES.find(
+                                (p) => p.value === paletteKey,
+                            );
+
+                            if (!palette) return null;
+
+                            return (
                                 <div
-                                    key={index}
-                                    className="
-                            w-7 h-7
-                            rounded-full
-                            border-2 border-white
-                            shadow-md
-                            -mr-2
-                            first:mr-0
-                        "
-                                    style={{
-                                        backgroundColor: color.hex,
-                                        zIndex: 10 - index,
-                                    }}
-                                />
-                            ))}
+                                    key={paletteKey}
+                                    className="flex items-center"
+                                >
+                                    {palette.colors.map((color, index) => (
+                                        <div
+                                            key={index}
+                                            className="
+                        w-4 h-4
+                        rotate-45
+                        border border-white
+                        -mr-1
+                        first:mr-0
+                        shadow
+                    "
+                                            style={{
+                                                backgroundColor: color,
+                                                zIndex:
+                                                    palette.colors.length -
+                                                    index,
+                                            }}
+                                        />
+                                    ))}
+                                </div>
+                            );
+                        })}
                     </div>
                 )}
             </div>
@@ -248,7 +264,7 @@ max-h-[600px]
                             transition-all duration-300
                         "
                     >
-<button
+                        <button
                             onClick={onShow}
                             title="عرض المنتج"
                             className="
@@ -267,8 +283,7 @@ max-h-[600px]
                         {/* EDIT */}
                         <button
                             onClick={onEdit}
-                             title="تعديل المنتج"
-
+                            title="تعديل المنتج"
                             className="
                                 w-8 h-8
                                 rounded-xl
@@ -286,7 +301,7 @@ max-h-[600px]
                         {/* DELETE */}
                         <button
                             onClick={onDelete}
-                            title='حذف المنتج'
+                            title="حذف المنتج"
                             className="
                                 w-8 h-8
                                 rounded-xl
