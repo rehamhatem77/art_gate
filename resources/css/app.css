@@ -211,6 +211,7 @@ body {
     animation: bellRing 5s ease-in-out infinite;
     transform-origin: top center;
 }
+
 .hero-swiper .swiper-pagination {
     bottom: 18px !important;
 }
@@ -227,4 +228,13 @@ body {
     width: 40px;
     border-radius: 999px;
     background: var(--accent);
+}
+
+
+/* shop */
+
+.custom-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #d7d7d7 transparent;
+    scrollbar-gutter: stable;
 }

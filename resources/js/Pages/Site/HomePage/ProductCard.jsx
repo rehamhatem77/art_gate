@@ -27,11 +27,12 @@ export default function ProductCard({ product, onQuickView }) {
     return (
         <div
             className="
-                group
-                rounded-2xl
-                transition-all
-                duration-300
-            "
+    group
+    rounded-2xl
+    transition-all
+    duration-500
+    ease-out
+"
         >
             {/* Image */}
             <div className="relative overflow-hidden rounded-2xl bg-white">
@@ -58,19 +59,28 @@ export default function ProductCard({ product, onQuickView }) {
                     كود المنتج: is{product.id}
                 </div>
                 <div
-                    className="
-                        absolute
-                        top-3
-                        right-3
-                        z-30
-                        text-white
-                        px-3
-                        py-2
-                        hover:text-[var(--border)]
-                    "
-                >
-                    <FiHeart size={24} />
-                </div>
+    className="
+        absolute
+        top-3
+        right-3
+        z-30
+
+        text-white
+        px-3
+        py-2
+
+        hover:text-[var(--border)]
+
+        opacity-100
+        lg:opacity-0
+        lg:group-hover:opacity-100
+
+        transition-all
+        duration-300
+    "
+>
+    <FiHeart size={24} />
+</div>
 
                 {/* Product Image */}
                 <img
@@ -107,58 +117,110 @@ export default function ProductCard({ product, onQuickView }) {
                 {product.images?.length > 0 && (
                     <>
                         <button
-                            onClick={prevImage}
-                            className="
-                        hidden lg:flex
-                        absolute
-                        left-3
-                        top-1/2
-                        -translate-y-1/2
-                        z-20
-                        w-9 h-9
-                        rounded-full
-                        bg-white/90
-                        items-center
-                        justify-center
-                        shadow-md
-                        opacity-0
-                        -translate-x-3
-                        group-hover:opacity-100
-                        group-hover:translate-x-0
-                        transition-all
-                        duration-300
-                    "
-                        >
-                            <FiChevronLeft size={18} />
-                        </button>
+    onClick={prevImage}
+    className="
+        absolute
+        left-3
+        top-1/2
+        -translate-y-1/2
+        z-20
 
-                        <button
-                            onClick={nextImage}
-                            className="
-                        hidden lg:flex
-                        absolute
-                        right-3
-                        top-1/2
-                        -translate-y-1/2
-                        z-20
-                        w-9 h-9
-                        rounded-full
-                        bg-white/90
-                        items-center
-                        justify-center
-                        shadow-md
-                        opacity-0
-                        translate-x-3
-                        group-hover:opacity-100
-                        group-hover:translate-x-0
-                        transition-all
-                        duration-300
-                    "
-                        >
-                            <FiChevronRight size={18} />
-                        </button>
+        w-9
+        h-9
+        rounded-full
+        bg-white/90
+
+        flex
+        items-center
+        justify-center
+
+        shadow-md
+
+        opacity-100
+        lg:opacity-0
+
+        lg:-translate-x-3
+        lg:group-hover:translate-x-0
+
+        lg:group-hover:opacity-100
+
+        transition-all
+        duration-300
+    "
+>
+    <FiChevronLeft size={18} />
+</button>
+
+                       <button
+    onClick={nextImage}
+    className="
+        absolute
+        right-3
+        top-1/2
+        -translate-y-1/2
+        z-20
+
+        w-9
+        h-9
+        rounded-full
+        bg-white/90
+
+        flex
+        items-center
+        justify-center
+
+        shadow-md
+
+        opacity-100
+        lg:opacity-0
+
+        lg:translate-x-3
+        lg:group-hover:translate-x-0
+
+        lg:group-hover:opacity-100
+
+        transition-all
+        duration-300
+    "
+>
+    <FiChevronRight size={18} />
+</button>
                     </>
                 )}
+
+{allImages.length > 1 && (
+    <div
+    className="
+        absolute
+        bottom-3
+        left-1/2
+        -translate-x-1/2
+
+        flex
+        gap-1
+
+        z-20
+
+        opacity-100
+        lg:opacity-0
+        lg:group-hover:opacity-100
+
+        transition-all
+        duration-300
+    "
+>
+        {allImages.map((_, index) => (
+            <div
+                key={index}
+                className={`h-1.5 rounded-full transition-all ${
+                    currentImage === index
+                        ? "w-5 bg-white"
+                        : "w-1.5 bg-white/60"
+                }`}
+            />
+        ))}
+    </div>
+)}
             </div>
 
             {/* Content */}
