@@ -152,6 +152,7 @@ class ProductsController extends Controller
             'place' => 'nullable|array',
             'place.*' => 'string|max:255',
 
+
             'pieces_count' => 'nullable|string|max:255',
 
             'main_image' => 'nullable|image|mimes:jpg,jpeg,png,webp',

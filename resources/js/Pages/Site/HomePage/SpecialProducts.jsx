@@ -44,11 +44,12 @@ export default function SpecialProducts({
     const [activeTab, setActiveTab] = useState("latest");
     const [selectedProduct, setSelectedProduct] = useState(null);
     const tabs = [
+{ key: "latest", name: "أخر ماتم اضافته" },
         ...categoryProducts.map((cat) => ({
             key: cat.key,
             name: ` تابلوهات ${cat.name}`,
         })),
-        { key: "latest", name: "أخر ماتم اضافته" },
+        
     ];
     const getProducts = () => {
         if (activeTab === "latest") {

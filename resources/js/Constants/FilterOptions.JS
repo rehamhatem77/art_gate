@@ -12,7 +12,6 @@ export const PLACE_OPTIONS = [
     "مجلس",
 ];
 
-export const SHAPE_OPTIONS = ["طولي", "عرضي", "مربع"];
 
 export const PIECES_OPTIONS = [
     "تابلوه واحد",

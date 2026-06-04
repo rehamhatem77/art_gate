@@ -1,12 +1,12 @@
 import { DESIGN_PALETTES } from "@/Constants/DesignPalletes";
 import {
     PLACE_OPTIONS,
-    SHAPE_OPTIONS,
+   
     PIECES_OPTIONS,
 } from "@/Constants/filterOptions";
 import FilterButton from "./FilterButton";
 
-export default function FilterSidebar({ filters, setFilters, counts = {} }) {
+export default function FilterSidebar({ filters, setFilters, counts = {}, shapes = [] }) {
     const toggleArrayFilter = (field, value) => {
         const current = filters[field] || [];
 
@@ -185,7 +185,7 @@ export default function FilterSidebar({ filters, setFilters, counts = {} }) {
             custom-scroll
         "
                 >
-                    {SHAPE_OPTIONS.map((shape) => (
+                    {shapes.map((shape) => (
                         <FilterButton
                             key={shape}
                             label={shape}

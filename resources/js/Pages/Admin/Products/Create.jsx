@@ -285,15 +285,12 @@ export default function Create({
         setData("variants", updated);
     };
 
- 
-
     /*
     |--------------------------------------------------------------------------
     | Preview
     |--------------------------------------------------------------------------
     */
 
-    
     const isSizeDisabled = (sizeId, currentFrameTypeId, currentIndex) => {
         return data.variants.some((variant, index) => {
             if (index === currentIndex) return false;
@@ -1347,6 +1344,7 @@ export default function Create({
                                                 ]);
                                             }
 
+
                                             setFrontendErrors((prev) => ({
                                                 ...prev,
                                                 place: null,
@@ -1496,8 +1494,6 @@ export default function Create({
                                     setData("design_colors", colors)
                                 }
                             />
-
-                          
                         </div>
 
                         {/* STATUS */}
