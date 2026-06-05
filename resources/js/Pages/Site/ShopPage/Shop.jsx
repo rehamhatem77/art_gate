@@ -5,47 +5,65 @@ import { useState } from "react";
 import ProductsSection from "./ProductsSection";
 import { FiFilter, FiX } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
+import RecentlyViewedSection from "../Components/RecentlyViewedSection";
+import FeaturesSection from "../Components/FeaturesSection";
 
-export default function Shop({ categories, tags, products , counts,shapes,
-filters: initialFilters,
+export default function Shop({ categories, tags, products, counts, shapes,
+    filters: initialFilters,
+    total
 }) {
     const [showFilters, setShowFilters] = useState(false);
-   const [filters, setFilters] = useState(
-    initialFilters || {
-        design_colors: [],
-        place: [],
-        shape: [],
-        pieces: [],
-    }
-);
-const updateFilters = (newFilters) => {
-console.log("FILTERS", newFilters);
-    setFilters(newFilters);
+const { services } = usePage().props;
+    const {announcement} = usePage().props;
+    const normalizeArray = (value) =>
+        Array.isArray(value) ? value : [];
+    const [filters, setFilters] = useState({
+        design_colors: normalizeArray(initialFilters?.design_colors),
+        place: normalizeArray(initialFilters?.place),
+        shape: normalizeArray(initialFilters?.shape),
+        pieces: normalizeArray(initialFilters?.pieces),
+        category: initialFilters?.category || null,
+        tag: initialFilters?.tag || null,
+    });
+    const updateFilters = (newFilters) => {
 
-   router.get(
-    route("shop"),
-    {
-        place: [...newFilters.place],
-       shape: newFilters.shape,
-        pieces: newFilters.pieces,
-        design_colors: newFilters.design_colors,
-    },
-    {
-        preserveState: true,
-        preserveScroll: true,
-        replace: true,
+        setFilters(newFilters);
+
+
+        router.get(
+            route("shop"),
+            {
+                place: [...newFilters.place],
+                shape: newFilters.shape,
+                pieces: newFilters.pieces,
+                design_colors: newFilters.design_colors,
+                category: newFilters.category || null,
+                tag: newFilters.tag || null,
+                sort: newFilters.sort || null,
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            }
+        );
     }
-);
-}
 
     return (
-        <SiteLayout title="المتجر">
-            <Hero categories={categories} tags={tags} />
+        <SiteLayout title="المتجر" announcement={announcement}>
+            <Hero categories={categories} tags={tags}
+                onSelect={(item) => {
+                    updateFilters({
+                        ...filters,
+                        category: item.type === "category" ? item.id : null,
+                        tag: item.type === "tag" ? item.id : null,
+                    });
+                }} />
 
             <div className="max-w-7xl mx-auto px-4 py-8">
                 {/* Mobile Filter Button */}
-                <div className="lg:hidden mb-4">
+                {/* <div className="lg:hidden mb-4">
                     <button
                         onClick={() => setShowFilters(true)}
                         className="
@@ -61,18 +79,19 @@ console.log("FILTERS", newFilters);
                         <FiFilter />
                         الفلاتر
                     </button>
-                </div>
+                </div> */}
 
                 <div className="flex flex-col lg:flex-row gap-8">
                     {/* Desktop Sidebar */}
                     <aside className="hidden lg:block w-[280px] shrink-0">
                         <div
                             className="
-                    sticky top-6
+                     top-6
                     bg-[#f3f3f3]
                     border border-[#e1e1e1]
                     rounded-lg
                     p-4
+                 
                 "
                         >
                             <FilterSidebar
@@ -90,6 +109,8 @@ console.log("FILTERS", newFilters);
                             products={products}
                             filters={filters}
                             setFilters={updateFilters}
+                            setShowFilters={setShowFilters}
+                            total={total}
                         />
                     </main>
                 </div>
@@ -134,6 +155,7 @@ console.log("FILTERS", newFilters);
                         sticky top-0
                         bg-white
                         border-b
+                        z-50
                         px-4 py-5
                         flex items-center justify-between
                     "
@@ -168,6 +190,11 @@ console.log("FILTERS", newFilters);
                     </>
                 )}
             </AnimatePresence>
+
+
+
+            <FeaturesSection services={services} />
+            <RecentlyViewedSection />
         </SiteLayout>
     );
 }

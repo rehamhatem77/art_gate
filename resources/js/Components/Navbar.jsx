@@ -84,11 +84,11 @@ function NavLink({ active, children, onClick, mobile }) {
 function NavigationMenu({ isMobile = false, onClose }) {
 const { url } = usePage();
     const links = [
-        { href: "/", label: "الرئيسية" },
-        { href: "/shop", label: "المتجر" },
-        { href: "/blog", label: "المدونة" },
-        { href: "/about", label: "من نحن" },
-        { href: "/contact", label: "اتصل بنا" },
+        { href: "/", label: "الرئيسية" , routeName: "home"},
+        { href: "/shop", label: "المتجر" , routeName: "shop"},
+        { href: "/blog", label: "المدونة" , routeName: "blog"},
+        { href: "/about", label: "من نحن" , routeName: "about"},
+        { href: "/contact", label: "اتصل بنا" , routeName: "contact"},
     ];
 
     return (
@@ -101,7 +101,7 @@ const { url } = usePage();
             {links.map((item, i) => (
                 <NavLink
                     key={i}
-                    active={url === item.href}
+                    active={route().current(item.routeName)}
                     mobile={isMobile}
                     onClick={() => {
                         onClose?.();

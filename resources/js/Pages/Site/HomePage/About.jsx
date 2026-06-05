@@ -66,7 +66,7 @@ export default function AboutSection({ services, aboutSection }) {
                             <div className="absolute inset-0 bg-black/20" />
 
                             {/* Play Button */}
-                            {aboutSection.about_section_video && (
+                            {aboutSection?.about_section_video && (
                                 <motion.button
                                     whileHover={{
                                         scale: 1.1,

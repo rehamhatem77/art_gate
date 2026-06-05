@@ -40,15 +40,15 @@ export default function CategoriesSection({ categories, categoriesSection }) {
                     className="text-center mb-14"
                 >
                     <span className="block text-[#b4a79a] text-sm md:text-lg font-medium mb-3">
-                        {categoriesSection.category_section_subtitle? categoriesSection.category_section_subtitle : " استمتع بتصفح مرن لاستكشاف أقسام موقعنا بسهولة"}
+                        {categoriesSection?.category_section_subtitle? categoriesSection.category_section_subtitle : " استمتع بتصفح مرن لاستكشاف أقسام موقعنا بسهولة"}
                     </span>
 
                     <h2 className="text-3xl md:text-5xl font-bold text-[var(--primary)] mb-5">
-                        {categoriesSection.category_section_title ? categoriesSection.category_section_title : " استعرض فهرس معرضنا"}
+                        {categoriesSection?.category_section_title ? categoriesSection.category_section_title : " استعرض فهرس معرضنا"}
                     </h2>
 
                     <p className="text-[var(--text-dark)] max-w-3xl mx-auto leading-8">
-                        {categoriesSection.category_section_description ? categoriesSection.category_section_description : " هناك حقيقة مثبتة منذ زمن طويل وهي أن المحتوى المقروء لصفحة ما سيلهي القارئ."}
+                        {categoriesSection?.category_section_description ? categoriesSection.category_section_description : " هناك حقيقة مثبتة منذ زمن طويل وهي أن المحتوى المقروء لصفحة ما سيلهي القارئ."}
                     </p>
                 </motion.div>
 

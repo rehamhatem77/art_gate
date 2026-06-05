@@ -146,8 +146,52 @@ class ShopPageController extends Controller
                 (array) $request->pieces
             );
         }
+        /*
+|--------------------------------------------------------------------------
+| Category Filter
+|--------------------------------------------------------------------------
+*/
+        if ($request->filled('category')) {
+            $query->where('category_id', (int) $request->category);
+        }
 
-        $products = $query->get();
+        /*
+|--------------------------------------------------------------------------
+| Tag Filter
+|--------------------------------------------------------------------------
+*/
+        if ($request->filled('tag')) {
+            $query->whereJsonContains('tags', (int) $request->tag);
+        }
+        /*
+|--------------------------------------------------------------------------
+| Sorting
+|--------------------------------------------------------------------------
+*/
+        if ($request->filled('sort')) {
+
+            if ($request->sort === 'high') {
+                $query->withMin('variants', 'price')
+                    ->orderByDesc('variants_min_price');
+            }
+
+            if ($request->sort === 'low') {
+                $query->withMin('variants', 'price')
+                    ->orderBy('variants_min_price');
+            }
+
+            if ($request->sort === 'latest') {
+                $query->orderBy('created_at', 'desc');
+            }
+        }
+        $countQuery = clone $query;
+        $totalProducts = $countQuery->count();
+
+        // $products = $query->get();
+        $productsPaginated = $query->paginate(6, ['*'], 'page', $request->page);
+     
+
+
 
         /*
         |--------------------------------------------------------------------------
@@ -155,7 +199,7 @@ class ShopPageController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $products = $products->map(function ($product) {
+        $products = $productsPaginated->getCollection()->map(function ($product) {
 
             return [
                 'id' => $product->id,
@@ -181,7 +225,16 @@ class ShopPageController extends Controller
                 }),
             ];
         });
+        if ($request->header('X-Load-More') === 'true') {
 
+            return response()->json([
+                'products' => $products,
+                'pagination' => [
+                    'has_more' => $productsPaginated->hasMorePages(),
+                    'current_page' => $productsPaginated->currentPage(),
+                ],
+            ]);
+        }
         /*
         |--------------------------------------------------------------------------
         | Shapes
@@ -192,6 +245,7 @@ class ShopPageController extends Controller
             ->pluck('shape')
             ->values();
 
+
         return Inertia::render('Site/ShopPage/Shop', [
             'categories' => $categories,
             'tags' => $tags,
@@ -201,12 +255,23 @@ class ShopPageController extends Controller
             'counts' => $counts,
 
             'shapes' => $shapes,
+            'total' => $productsPaginated->total(),
+
+            'pagination' => [
+                'current_page' => $productsPaginated->currentPage(),
+                'last_page' => $productsPaginated->lastPage(),
+                'has_more' => $productsPaginated->hasMorePages(),
+            ],
+
 
             'filters' => [
-                'place' => (array) $request->place,
-                'shape' => (array) $request->shape,
-                'pieces' => (array) $request->pieces,
-                'design_colors' => (array) $request->design_colors,
+                'place' => array_values((array) $request->place),
+                'shape' => array_values((array) $request->shape),
+                'pieces' => array_values((array) $request->pieces),
+                'design_colors' => array_values((array) $request->design_colors),
+                'category' => $request->category ? (int) $request->category : null,
+                'tag' => $request->tag ? (int) $request->tag : null,
+                'sort' => $request->sort ?? null,
             ],
         ]);
     }

@@ -162,10 +162,10 @@ class HomePageController extends Controller
             'laravelVersion' => Application::VERSION,
             'phpVersion'     => PHP_VERSION,
             'categories'     => $categories,
-            'services'       => $services,
+            // 'services'       => $services,
             'featuredServices' => $featuredServices,
             'homePageData' => [
-                'announcement' => $announcementData ? $announcementData->announcement : null,
+                // 'announcement' => $announcementData ? $announcementData->announcement : null,
                 'slider' => $slider,
                 'aboutSection' => $aboutSectionData,
                 'specialSection' => $specialSectionData,

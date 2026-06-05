@@ -2,6 +2,7 @@ import { useState } from "react";
 import ProductCard from "./ProductCard";
 import QuickViewModal from "./QuickViewModal";
 import { AnimatePresence, motion } from "framer-motion";
+import { router } from "@inertiajs/react";
 const tabs = ["تابلوهات إسلامية", "تابلوهات الرقمي", "آخر طقم إضافة"];
 
 // const products = [
@@ -44,12 +45,12 @@ export default function SpecialProducts({
     const [activeTab, setActiveTab] = useState("latest");
     const [selectedProduct, setSelectedProduct] = useState(null);
     const tabs = [
-{ key: "latest", name: "أخر ماتم اضافته" },
+        { key: "latest", name: "أخر ماتم اضافته" },
         ...categoryProducts.map((cat) => ({
             key: cat.key,
             name: ` تابلوهات ${cat.name}`,
         })),
-        
+
     ];
     const getProducts = () => {
         if (activeTab === "latest") {
@@ -74,19 +75,19 @@ export default function SpecialProducts({
                     className="text-center mb-14"
                 >
                     <span className="text-[#b4a79a] text-xl font-medium block mb-2">
-                        {specialSection.special_section_subtitle
+                        {specialSection?.special_section_subtitle
                             ? specialSection.special_section_subtitle
                             : " تشكيل حصري"}
                     </span>
 
                     <h2 className="text-4xl md:text-5xl font-bold text-[var(--primary)] mb-4">
-                        {specialSection.special_section_title
+                        {specialSection?.special_section_title
                             ? specialSection.special_section_title
                             : " تابلوهات مميزة"}
                     </h2>
 
                     <p className="text-[var(--text-dark)] text-lg">
-                        {specialSection.special_section_description
+                        {specialSection?.special_section_description
                             ? specialSection.special_section_description
                             : " تجربة تمنح مساحة ومرونة لا مثيل لها"}
                     </p>
@@ -104,11 +105,10 @@ export default function SpecialProducts({
                         <button
                             key={tab.key}
                             onClick={() => setActiveTab(tab.key)}
-                            className={`relative text-xl transition pb-3 ${
-                                activeTab === tab.key
+                            className={`relative text-xl transition pb-3 ${activeTab === tab.key
                                     ? "text-[var(--secondary)] font-semibold"
                                     : "text-[var(--accent)]"
-                            }`}
+                                }`}
                         >
                             {tab.name}
 
@@ -156,6 +156,7 @@ export default function SpecialProducts({
                     className="flex justify-center mt-12"
                 >
                     <button
+                        onClick={() => router.get('/shop')}
                         className="
             px-8
             py-3

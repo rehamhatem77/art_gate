@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('home_page', function (Blueprint $table) {
             $table->id();
             $table->string('announcement')->nullable();
-            $table->json('slider')->default('[]');
+            $table->json('slider')->nullable();
 
             $table->string('about_section_title')->nullable();
             $table->string('about_section_subtitle')->nullable();

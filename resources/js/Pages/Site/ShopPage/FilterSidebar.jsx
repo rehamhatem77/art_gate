@@ -22,7 +22,8 @@ export default function FilterSidebar({ filters, setFilters, counts = {}, shapes
             });
         }
     };
-
+const isActive = (field, value) =>
+    Array.isArray(filters[field]) && filters[field].includes(value);
     return (
         <>
             {/* COLORS */}
@@ -51,7 +52,7 @@ export default function FilterSidebar({ filters, setFilters, counts = {}, shapes
                 duration-300
                 border
                 ${
-                    filters.design_colors?.includes(palette.value)
+                    isActive("design_colors", palette.value)
                         ? "border-[var(--primary)] bg-[var(--bg-lighter)] shadow-sm"
                         : "border-transparent hover:border-[#ddd]"
                 }
@@ -163,7 +164,7 @@ export default function FilterSidebar({ filters, setFilters, counts = {}, shapes
                             key={place}
                             label={place}
                             count={counts.place?.[place] || 0}
-                            active={filters.place?.includes(place)}
+                            active={isActive("place", place)}
                             onClick={() => toggleArrayFilter("place", place)}
                         />
                     ))}

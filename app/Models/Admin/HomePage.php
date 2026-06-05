@@ -31,4 +31,9 @@ protected $table = 'home_page';
     protected $casts = [
         'slider' => 'array',
     ];
+
+    public static function getValue($key)
+{
+    return self::query()->first()?->$key;
+}
 }

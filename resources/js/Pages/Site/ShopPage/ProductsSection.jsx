@@ -1,13 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProductCard from "../HomePage/ProductCard";
 import Modal from "@/Components/Modal";
 import { LuArrowUpDown } from "react-icons/lu";
+import { FiFilter } from "react-icons/fi";
+import { router } from "@inertiajs/react";
 
 export default function ProductsSection({
     products,
-    total = 580,
+    total,
     filters,
     setFilters,
+    setShowFilters,
+
 }) {
     const [sortModal, setSortModal] = useState(false);
     const [sort, setSort] = useState("default");
@@ -29,13 +33,53 @@ export default function ProductsSection({
             value: item,
             label: item,
         })),
+
     ];
+    const [items, setItems] = useState(products || []);
+    const [page, setPage] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+    const loadMore = async () => {
+        if (loading || !hasMore) return;
+
+        setLoading(true);
+
+        const nextPage = page + 1;
+
+        const res = await fetch(
+            route("shop", {
+                ...filters,
+                page: nextPage,
+            }),
+            {
+                method: "GET",
+                headers: {
+                    "X-Load-More": "true",
+                    "Accept": "application/json",
+                },
+            }
+        );
+
+        const data = await res.json();
+
+        setItems((prev) => [...prev, ...data.products]);
+
+        setPage(nextPage);
+        setHasMore(data.pagination.has_more);
+
+        setLoading(false);
+    };
+
 
     const removeFilter = (filter) => {
-        setFilters((prev) => ({
-            ...prev,
-            [filter.type]: prev[filter.type].filter((v) => v !== filter.value),
-        }));
+        const updated = {
+            ...filters,
+            [filter.type]: (filters[filter.type] || []).filter(
+                (v) => v !== filter.value
+            ),
+        };
+
+        setFilters(updated);
     };
     const clearAllFilters = () => {
         setFilters({
@@ -44,20 +88,55 @@ export default function ProductsSection({
             pieces: [],
         });
     };
+    useEffect(() => {
+        setItems(products || []);
+        setPage(1);
+        setHasMore(true);
+    }, [products]);
 
     return (
-        <div className="w-full">
+        <div className="w-full ">
+            
             {/* Toolbar */}
             <div className="flex flex-col gap-4 mb-6">
                 <div className="flex  md:flex-row items-center md:items-center justify-between gap-4">
-                    <div className="text-sm text-[#666] font-medium">
-                        عرض 1–24 من أصل {total} نتيجة
-                    </div>
+
+                    <button
+                        onClick={() => setShowFilters(true)}
+                        className="
+                                   flex items-center gap-2
+                                   px-4 py-3
+                                   text-sm font-medium
+                                   lg:hidden 
+                                   bg-white
+                                      border border-gray-200
+                                      rounded-xl
+                                      hover:shadow-sm
+                                 
+                                  
+                                   
+                               "
+                    >
+                        <FiFilter size={18} />
+                        الفلاتر
+                    </button>
+
+                    <div className="hidden md:block text-md  text-[#666] font-medium">
+                        عرض  1- {items.length} من أصل {total || 0}  نتيجة                  </div>
                     <div className="flex  items-center">
                         <div className="hidden md:block">
                             <select
                                 value={sort}
-                                onChange={(e) => setSort(e.target.value)}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    setSort(value);
+
+                                    setFilters({
+                                        ...filters,
+                                        sort: value,
+                                    });
+                                }}
+
                                 className="
            
             min-w-[180px]
@@ -87,15 +166,9 @@ h-11 rounded-xl focus:ring-1
         md:hidden
         w-11
         h-11
-        rounded-xl
-        border
-        border-[#d8d8d8]
-        bg-white
         flex
         items-center
         justify-center
-        hover:bg-gray-50
-        transition
     "
                         >
                             <LuArrowUpDown size={18} />
@@ -141,7 +214,7 @@ h-11 rounded-xl focus:ring-1
             </div>
 
             {/* Products */}
-            {products.length ? (
+            {items.length ? (
                 <div
                     className="
             grid
@@ -152,7 +225,7 @@ h-11 rounded-xl focus:ring-1
             gap-y-8
         "
                 >
-                    {products.map((product) => (
+                    {items.map((product) => (
                         <ProductCard key={product.id} product={product} />
                     ))}
                 </div>
@@ -231,6 +304,26 @@ h-11 rounded-xl focus:ring-1
                 </div>
             )}
 
+            {hasMore && items.length !== total && (
+                <div className="flex justify-center mt-8">
+                    <button
+                        onClick={loadMore}
+                        disabled={loading}
+                        className="
+                px-6 py-3
+                rounded-xl
+                bg-[var(--primary)]
+                text-white
+                disabled:opacity-50
+            "
+                    >
+                        {loading ? "جاري التحميل..." : " تحميل المزيد من المنتجات"}
+                    </button>
+                </div>
+            )}
+
+
+
             <Modal show={sortModal} onClose={() => setSortModal(false)}>
                 <div className="p-6">
                     <h3 className="text-lg font-bold mb-5">ترتيب المنتجات</h3>
@@ -267,11 +360,10 @@ h-11 rounded-xl focus:ring-1
                         py-3
                         rounded-xl
                         transition
-                        ${
-                            sort === item.value
-                                ? "bg-[var(--primary)] text-white"
-                                : "bg-gray-50 hover:bg-gray-100"
-                        }
+                        ${sort === item.value
+                                        ? "bg-[var(--primary)] text-white"
+                                        : "bg-gray-50 hover:bg-gray-100"
+                                    }
                     `}
                             >
                                 <div className="flex items-center justify-between">
