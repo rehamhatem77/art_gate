@@ -122,6 +122,9 @@ export default function CategoryBar({ categories }) {
                         return (
                             <SwiperSlide key={category.name}>
                                 <button
+                                onClick={() => {
+                                    window.location.href = `/shop?category=${category.id}`;
+                                }}
                                     className="
         w-full
         flex items-center justify-center

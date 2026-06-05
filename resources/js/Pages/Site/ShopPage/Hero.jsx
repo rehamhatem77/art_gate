@@ -1,31 +1,42 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { iconsMap } from "@/Components/IconPicker";
 import { FiGrid, FiX } from "react-icons/fi";
 
 export default function Hero({ categories, tags, onSelect }) {
     const [open, setOpen] = useState(false);
-    const [selected, setSelected] = useState(null);
+    const [selected, setSelected] = useState({
+        type: null,
+        id: null,
+    });
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialCategory = urlParams.get("category");
+    const initialTag = urlParams.get("tag");
+
+    useEffect(() => {
+        if (initialCategory) {
+            setSelected({ type: "category", id: Number(initialCategory) });
+        } else if (initialTag) {
+            setSelected({ type: "tag", id: Number(initialTag) });
+        }
+    }, [initialCategory, initialTag]);
 
     const items = [
-        ...tags.map((tag) => ({
-            ...tag,
-            type: "tag",
-        })),
-        ...categories.map((category) => ({
-            ...category,
-            type: "category",
-        })),
+        ...tags.map((tag) => ({ ...tag, type: "tag" })),
+        ...categories.map((category) => ({ ...category, type: "category" })),
     ];
 
     const handleSelect = (item) => {
-        setSelected(item.name);
+        setSelected({ type: item.type, id: item.id });
         setOpen(false);
-
-        if (onSelect) {
-            onSelect(item);
-        }
+        onSelect?.(item);
     };
-
+    const selectedItem =
+    items.find(
+        (item) =>
+            item.id === selected?.id &&
+            item.type === selected?.type
+    );
+    
     return (
         <section className="relative overflow-hidden">
             {/* Background */}
@@ -41,7 +52,7 @@ export default function Hero({ categories, tags, onSelect }) {
                 {/* TITLE */}
                 <div className="text-center mb-8">
                     <h1 className="text-white text-3xl md:text-5xl font-bold">
-                        {selected || "المتجر"}
+                        {selectedItem?.name || "المتجر"}
                     </h1>
                 </div>
 
@@ -73,7 +84,11 @@ export default function Hero({ categories, tags, onSelect }) {
                             item.type === "category"
                                 ? iconsMap[item.icon] || FiGrid
                                 : FiGrid;
-                               
+                        const isActive =
+                            selected.type === item.type &&
+                            selected.id === item.id;
+
+
 
                         return (
                             <button
@@ -87,16 +102,24 @@ export default function Hero({ categories, tags, onSelect }) {
                                 {item.type === "category" && (
                                     <Icon
                                         size={26}
-                                        className="
-                                            text-white/90 mb-2
-                                            group-hover:text-[var(--primary)]
+                                        className={`
+                                            mb-2 transition
                                             group-hover:scale-110
-                                            transition
-                                        "
+                                            ${isActive
+                                                ? "text-[var(--primary)]"
+                                                : "text-white/90 group-hover:text-[var(--primary)]"
+                                            }
+                                        `}
                                     />
                                 )}
 
-                                <h3 className="text-white font-bold group-hover:text-[var(--primary)]">
+                                <h3 className={`
+                                        font-bold transition
+                                        ${isActive
+                                            ? "text-[var(--primary)]"
+                                            : "text-white group-hover:text-[var(--primary)]"
+                                        }
+                                    `}>
                                     {item.name}
                                 </h3>
 
