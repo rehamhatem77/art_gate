@@ -4,6 +4,7 @@ import Modal from "@/Components/Modal";
 import { LuArrowUpDown } from "react-icons/lu";
 import { FiFilter } from "react-icons/fi";
 import { router } from "@inertiajs/react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function ProductsSection({
     products,
@@ -93,12 +94,53 @@ export default function ProductsSection({
         setPage(1);
         setHasMore(true);
     }, [products]);
+const containerVariants = {
+    hidden: {},
+    visible: {
+        transition: {
+            staggerChildren: 0.06,
+            delayChildren: 0.5,
+        },
+    },
+};
 
+const itemVariants = {
+    hidden: {
+        opacity: 0,
+        y: 40,
+    },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.6,
+            ease: "easeOut",
+        },
+    },
+};
     return (
         <div className="w-full ">
-            
+
             {/* Toolbar */}
-            <div className="flex flex-col gap-4 mb-6">
+            <motion.div
+                initial={{
+                    opacity: 0,
+                    y: 40,
+                }}
+                whileInView={{
+                    opacity: 1,
+                    y: 0,
+                }}
+                viewport={{
+                    once: true,
+                    amount: 0.3,
+                }}
+                transition={{
+                    duration: 0.8,
+                    ease: "easeOut",
+                }}
+
+                className="flex flex-col gap-4 mb-6">
                 <div className="flex  md:flex-row items-center md:items-center justify-between gap-4">
 
                     <button
@@ -211,11 +253,16 @@ h-11 rounded-xl focus:ring-1
                         ))}
                     </div>
                 )}
-            </div>
+            </motion.div>
 
             {/* Products */}
             {items.length ? (
-                <div
+                <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    animate="visible"
+                   
                     className="
             grid
             grid-cols-1
@@ -226,9 +273,14 @@ h-11 rounded-xl focus:ring-1
         "
                 >
                     {items.map((product) => (
+                        <motion.div
+                            key={product.id}
+                             variants={itemVariants}
+                            >
                         <ProductCard key={product.id} product={product} />
+                        </motion.div>
                     ))}
-                </div>
+                </motion.div>
             ) : (
                 <div
                     className="

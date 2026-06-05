@@ -14,8 +14,8 @@ export default function Shop({ categories, tags, products, counts, shapes,
     total
 }) {
     const [showFilters, setShowFilters] = useState(false);
-const { services } = usePage().props;
-    const {announcement} = usePage().props;
+    const { services } = usePage().props;
+    const { announcement } = usePage().props;
     const normalizeArray = (value) =>
         Array.isArray(value) ? value : [];
     const [filters, setFilters] = useState({
@@ -83,7 +83,11 @@ const { services } = usePage().props;
 
                 <div className="flex flex-col lg:flex-row gap-8">
                     {/* Desktop Sidebar */}
-                    <aside className="hidden lg:block w-[280px] shrink-0">
+                    <motion.aside
+                        initial={{ opacity: 0, y: 40 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, ease: "easeInOut" }}
+                        className="hidden lg:block w-[280px] shrink-0">
                         <div
                             className="
                      top-6
@@ -101,7 +105,7 @@ const { services } = usePage().props;
                                 shapes={shapes}
                             />
                         </div>
-                    </aside>
+                    </motion.aside>
 
                     {/* Products */}
                     <main className="flex-1">
