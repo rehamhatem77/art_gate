@@ -6,47 +6,88 @@ import {
     FiMinus,
     FiPlus,
     FiHeart,
+    FiLinkedin,
+    FiTwitter,
+    FiFacebook,
 } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
+import { getImage } from "@/Utils/GetImage";
 
-
+import { useEffect } from "react";
 export default function QuickViewModal({
     product,
     onClose,
 }) {
+  
     const [qty, setQty] = useState(1);
 
+
+    const images =
+        product.images?.length
+            ? product.images.map(img => img.image)
+            : product.main_image
+                ? [product.main_image]
+                : [];
+
     const [selectedImage, setSelectedImage] = useState(
-        product.image
+        images[0] || null
+    );
+    const firstVariant = product?.variants?.[0];
+
+    const [selectedSize, setSelectedSize] = useState(
+        firstVariant?.size?.label || ""
     );
 
-    const [selectedSize, setSelectedSize] =
-        useState("50 × 70");
-
-    const [selectedFrame, setSelectedFrame] =
-        useState("أسود");
-
-    const images = [
-        product.image,
-        product.image,
-        product.image,
-        product.image,
-    ];
+    const [selectedFrame, setSelectedFrame] = useState(
+        firstVariant?.frame?.type || ""
+    );
 
     const sizes = [
-        "30 × 40",
-        "40 × 60",
-        "50 × 70",
-        "70 × 100",
+        ...new Set(
+            product?.variants?.map(v => v.size?.label)
+        ),
     ];
 
-    const frames = [
-        "أسود",
-        "أبيض",
-        "ذهبي",
-        "بدون إطار",
-    ];
+    const availableFrames =
+        product?.variants
+            ?.filter(
+                v =>
+                    v.size?.label === selectedSize
+            )
+            .map(v => v.frame?.type) || [];
 
+    useEffect(() => {
+        const firstFrameForSize =
+            product?.variants?.find(
+                v =>
+                    v.size?.label === selectedSize
+            );
+
+        if (firstFrameForSize) {
+            setSelectedFrame(
+                firstFrameForSize.frame?.type
+            );
+        }
+    }, [selectedSize]);
+
+    const selectedVariant =
+        product?.variants?.find(
+            variant =>
+                variant.size?.label === selectedSize &&
+                variant.frame?.type === selectedFrame
+        );
+       useEffect(() => {
+    if (
+        selectedVariant &&
+        qty > selectedVariant.stock
+    ) {
+        setQty(
+            selectedVariant.stock > 0
+                ? selectedVariant.stock
+                : 1
+        );
+    }
+}, [selectedVariant]); 
     return (
         <motion.div
             initial={{ opacity: 0 }}
@@ -85,15 +126,15 @@ export default function QuickViewModal({
                     ease: [0.22, 1, 0.36, 1],
                 }}
                 className="
-        relative
-        w-full
-        max-w-5xl
-        max-h-[90vh]
-        overflow-hidden
-        bg-white
-        rounded-[32px]
-        shadow-[0_25px_80px_rgba(0,0,0,.18)]
-    "
+relative
+w-full
+max-w-4xl
+h-[85vh]
+overflow-hidden
+bg-white
+rounded-[28px]
+shadow-[0_25px_80px_rgba(0,0,0,.18)]
+"
             >
                 {/* Close */}
                 <button
@@ -131,43 +172,26 @@ export default function QuickViewModal({
                     {/* LEFT SIDE */}
                     <div
                         className="
-                            bg-[#faf8f5]
-                            p-5
-                            overflow-y-auto
-                        "
+bg-[#faf8f5]
+p-4
+h-full
+"
                     >
                         <div className="grid grid-cols-[60px_1fr] gap-4">
                             {/* Thumbs */}
-                            <div className="space-y-3">
-                                {images.map(
-                                    (image, index) => (
-                                        <button
-                                            key={index}
-                                            onClick={() =>
-                                                setSelectedImage(
-                                                    image
-                                                )
-                                            }
-                                            className="
-                                                w-14
-                                                h-14
-                                                overflow-hidden
-                                                rounded-2xl
-                                                border
-                                            "
-                                        >
-                                            <img
-                                                src={image}
-                                                alt=""
-                                                className="
-                                                    w-full
-                                                    h-full
-                                                    object-cover
-                                                "
-                                            />
-                                        </button>
-                                    )
-                                )}
+                            <div className="space-y-3 overflow-y-auto pr-1">
+                                {images.map((image, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => setSelectedImage(image)}
+                                        className="w-14 h-14 overflow-hidden rounded-2xl border"
+                                    >
+                                        <img
+                                            src={getImage(image)}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </button>
+                                ))}
                             </div>
 
                             {/* Main Image */}
@@ -191,12 +215,12 @@ export default function QuickViewModal({
                                     transition={{
                                         duration: 0.3,
                                     }}
-                                    src={selectedImage}
+                                    src={getImage(selectedImage)}
                                     alt={product.name}
                                     className="
                                         w-full
-                                        h-[260px]
-lg:h-[480px]
+                                        h-[360px]
+lg:h-[520px]
                                         object-cover
 
                                         transition-all
@@ -211,33 +235,27 @@ lg:h-[480px]
                     {/* RIGHT SIDE */}
                     <div
                         className="
-                            flex
-                            flex-col
-                            overflow-y-auto
-                        "
+flex
+flex-col
+h-full
+overflow-hidden
+"
                     >
-                        <div className="p-5 lg:p-7">
-                            {/* Badge */}
-                            <div
-                                className="
-                                    inline-flex
-                                    px-4
-                                    py-1
-                                    rounded-full
-                                    bg-[var(--accent)]
-                                    text-white
-                                    text-sm
-                                    mb-2
-                                "
-                            >
-                                كود المنتج #{product.id}
-                            </div>
+                        <div
+                            className="
+        flex-1
+        overflow-y-auto
+        p-5
+        lg:p-7
+    "
+                        >
+
 
                             {/* Title */}
                             <h2
                                 className="
                                     text-xl
-                                    lg:text-3xl
+                                    lg:text-2xl
                                     font-bold
                                     text-[var(--primary)]
                                     leading-relaxed
@@ -249,17 +267,18 @@ lg:h-[480px]
                             {/* Price */}
                             <div
                                 className="
-                                    mt-4
-                                    text-xl lg:text-3xl
+                                    mt-1
+                                    text-xl lg:text-2xl
                                     font-bold
                                     text-[var(--secondary)]
                                 "
                             >
-                                {product.price}
+                                {selectedVariant?.price || product.price}
                                 <span className="mr-2 text-xl">
                                     جنيه
                                 </span>
                             </div>
+
 
                             {/* Description */}
                             <p
@@ -270,14 +289,12 @@ lg:h-[480px]
 leading-7
                                 "
                             >
-                                تصميم فني مميز بجودة طباعة
-                                عالية وخامات فاخرة تناسب
-                                جميع المساحات الداخلية.
+                                {product.description || "لا يوجد وصف متاح لهذا المنتج."}
                             </p>
 
                             {/* Size */}
                             <div className="mt-4">
-                                <h3 className="font-bold mb-2">
+                                <h3 className="font-medium text-[var(--text-dark)] mb-1">
                                     المقاس
                                 </h3>
 
@@ -291,11 +308,11 @@ leading-7
                                                 )
                                             }
                                             className={`
-                                                h-10
-px-4
+                                                h-8
+px-3
 text-sm
                                                 rounded-full
-                                                border-2
+                                                border-1
                                                 transition
 
                                                 ${selectedSize ===
@@ -313,12 +330,12 @@ text-sm
 
                             {/* Frame */}
                             <div className="mt-4">
-                                <h3 className="font-bold mb-2">
+                                <h3 className="font-medium text-[var(--text-dark)] mb-1">
                                     الإطار
                                 </h3>
 
                                 <div className="flex flex-wrap gap-3">
-                                    {frames.map((frame) => (
+                                    {availableFrames.map((frame) => (
                                         <button
                                             key={frame}
                                             onClick={() =>
@@ -327,11 +344,11 @@ text-sm
                                                 )
                                             }
                                             className={`
-                                                h-10
-px-4
+                                                h-8
+px-3
 text-sm
                                                 rounded-full
-                                                border-2
+                                                border-1
                                                 transition
 
                                                 ${selectedFrame ===
@@ -349,7 +366,7 @@ text-sm
 
                             {/* Quantity */}
                             <div className="mt-4">
-                                <h3 className="font-bold mb-2">
+                                <h3 className="font-medium text-[var(--text-dark)] mb-2">
                                     الكمية
                                 </h3>
 
@@ -359,8 +376,8 @@ text-sm
                                         items-center
                                         justify-between
 
-                                        w-32
-                                        h-10
+                                        w-24
+                                        h-8
 
                                         border
                                         rounded-full
@@ -380,35 +397,84 @@ text-sm
                                         <FiMinus />
                                     </button>
 
-                                    <span className="font-bold">
+                                    <span className="font-meduim text-[var(--text-dark)]">
                                         {qty}
                                     </span>
 
                                     <button
-                                        onClick={() =>
-                                            setQty(qty + 1)
-                                        }
-                                    >
-                                        <FiPlus />
-                                    </button>
+    disabled={
+        qty >= (selectedVariant?.stock || 0)
+    }
+    onClick={() =>
+        setQty((prev) =>
+            Math.min(
+                prev + 1,
+                selectedVariant?.stock || 1
+            )
+        )
+    }
+    className={`
+        transition
+        ${
+            qty >= (selectedVariant?.stock || 0)
+                ? "opacity-40 cursor-not-allowed"
+                : ""
+        }
+    `}
+>
+    <FiPlus />
+</button>
                                 </div>
                             </div>
+
+                            {/* Product Meta */}
+                            <div className="mt-6 pt-5 border-t border-gray-200">
+                                {/* SKU */}
+                                <div className="flex items-center gap-3 text-sm">
+                                    <span className="font-semibold text-gray-600">
+                                        رمز المنتج :
+                                    </span>
+
+                                    <span className="text-gray-500">
+                                        {product.code}
+                                    </span>
+                                </div>
+
+                                {/* Categories */}
+                                <div className="mt-2 flex items-center gap-3 text-sm">
+                                    <span className="font-semibold text-gray-600 whitespace-nowrap">
+                                        التصنيفات :
+                                    </span>
+
+                                    <span className="text-gray-500 text-left leading-6">
+                                        {product.category?.name}
+                                        {product.tags?.length
+                                            ? `، ${product.tags.map((tag) => tag.name).join("، ")}`
+                                            : ""}
+                                    </span>
+                                </div>
+
+
+                            </div>
+
+
                         </div>
 
                         {/* Sticky Footer */}
                         <div
                             className="
-                                mt-auto
-                                border-t
-                                p-6
-                                bg-white
-                            "
+shrink-0
+border-t
+p-5
+bg-white
+
+"
                         >
                             <div className="flex gap-3">
                                 <button
                                     className="
-                                        w-14
-                                        h-14
+                                        w-10
+                                        h-10
                                         rounded-full
                                         border
                                         flex
@@ -420,26 +486,38 @@ text-sm
                                 </button>
 
                                 <button
-                                    className="
-                                        flex-1
-                                        h-14
-                                        rounded-full
-                                        bg-[var(--primary)]
-                                        text-white
+    disabled={
+        !selectedVariant ||
+        selectedVariant.stock <= 0
+    }
+    className={`
+        flex-1
+        h-10
+        rounded-full
+        text-white
+        font-medium
+        text-md
+        transition
 
-                                        font-semibold
-                                        text-lg
+        ${
+            selectedVariant?.stock > 0
+                ? "bg-[var(--primary)] hover:opacity-90"
+                : "bg-gray-400 cursor-not-allowed"
+        }
+    `}
+>
+    <BiCartAdd
+        size={22}
+        className="inline-block ml-5"
+    />
 
-                                        hover:opacity-90
-                                        transition
-                                    "
-                                >
-                                    <BiCartAdd size={22} className="inline-block ml-5" />
-                                    أضف إلى السلة
-                                </button>
+    {selectedVariant?.stock > 0
+        ? "أضف إلى السلة"
+        : "نفدت الكمية"}
+</button>
                                 <button
                                     className="
-                                        h-14
+                                        h-10
                                         rounded-full
                                         text-[var(--primary)]
                                             border-2 border-[var(--border)]

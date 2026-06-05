@@ -85,6 +85,7 @@ export default function CategoriesSection({ categories, categoriesSection }) {
                             "
                         >
                             <button
+                            onClick={() => window.location.href = `/shop?category=${category.id}`}
                                 className="
                                     relative
 

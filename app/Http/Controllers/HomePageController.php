@@ -68,7 +68,8 @@ class HomePageController extends Controller
         // -----------------------------
         // Latest Products
         // -----------------------------
-        $latestProducts = Product::with('variants', 'category:id,name', 'images')
+        $latestProducts = Product::with('variants.size',
+    'variants.frameType', 'category:id,name', 'images')
 
             ->latest()
             ->take(4)
@@ -77,10 +78,34 @@ class HomePageController extends Controller
                 return [
                     'id' => $product->id,
                     'name' => $product->name,
+                    'code' => $product->code,
+                    'description' => $product->description,
                     'main_image' => $product->main_image,
                     'price' => $product->variants->min('price'),
                     'category' => $product->category,
                     'tags' => $product->tags,
+                    'variants' => $product->variants->map(function ($variant) {
+                        return [
+                            'id' => $variant->id,
+
+                            'size' => [
+                                'id' => $variant->size->id,
+                                'width' => $variant->size->width,
+                                'height' => $variant->size->height,
+                                'label' => $variant->size->width . ' × ' . $variant->size->height,
+                            ],
+
+                            'frame' => [
+                                'id' => $variant->frameType->id,
+                                'type' => $variant->frameType->type,
+                                'colors' => $variant->frameType->colors,
+                            ],
+
+                            'price' => $variant->price,
+                            'stock' => $variant->stock,
+                            'image' => $variant->image,
+                        ];
+                    }),
                     'images' => $product->images->map(function ($image) {
                         return [
                             'id' => $image->id,

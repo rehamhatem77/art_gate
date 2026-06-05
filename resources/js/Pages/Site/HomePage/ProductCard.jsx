@@ -56,7 +56,7 @@ export default function ProductCard({ product, onQuickView }) {
                         shadow-lg
                     "
                 >
-                    كود المنتج: is{product.id}
+                    كود المنتج: {product.code}
                 </div>
                 <button
                     className="

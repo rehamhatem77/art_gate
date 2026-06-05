@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
 import QuickViewModal from "./QuickViewModal";
 import { AnimatePresence, motion } from "framer-motion";
@@ -63,6 +63,17 @@ export default function SpecialProducts({
     };
 
     const products = getProducts();
+    useEffect(() => {
+    if (selectedProduct) {
+        document.body.style.overflow = "hidden";
+    } else {
+        document.body.style.overflow = "auto";
+    }
+
+    return () => {
+        document.body.style.overflow = "auto";
+    };
+}, [selectedProduct]);
     return (
         <section className="py-16 lg:py-24 bg-[#faf8f5]">
             <div className="max-w-8xl mx-auto px-8 sm:px-12 md:px-12 lg:px-18 xl:px-28">
