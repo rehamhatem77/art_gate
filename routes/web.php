@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\SizesController;
 use App\Http\Controllers\Admin\TableauNumbersController;
 use App\Http\Controllers\Admin\TagsController;
 use App\Http\Controllers\HomePageController;
+use App\Http\Controllers\ProductDetailsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShopPageController;
 use Illuminate\Foundation\Application;
@@ -27,6 +28,8 @@ use Inertia\Inertia;
 // });
 Route::get('/', [HomePageController::class, 'index'])->name('home');
 Route::get('/shop', [ShopPageController::class, 'index'])->name('shop');
+Route::get('/shop/{slug}', [ProductDetailsController::class, 'show'])
+    ->name('shop.product.show');
 
 
 // Route::get('/dashboard', function () {

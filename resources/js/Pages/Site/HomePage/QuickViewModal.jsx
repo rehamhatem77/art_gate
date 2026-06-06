@@ -14,11 +14,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { getImage } from "@/Utils/GetImage";
 
 import { useEffect } from "react";
+import { router } from "@inertiajs/react";
 export default function QuickViewModal({
     product,
     onClose,
 }) {
-  
+
     const [qty, setQty] = useState(1);
 
 
@@ -76,18 +77,18 @@ export default function QuickViewModal({
                 variant.size?.label === selectedSize &&
                 variant.frame?.type === selectedFrame
         );
-       useEffect(() => {
-    if (
-        selectedVariant &&
-        qty > selectedVariant.stock
-    ) {
-        setQty(
-            selectedVariant.stock > 0
-                ? selectedVariant.stock
-                : 1
-        );
-    }
-}, [selectedVariant]); 
+    useEffect(() => {
+        if (
+            selectedVariant &&
+            qty > selectedVariant.stock
+        ) {
+            setQty(
+                selectedVariant.stock > 0
+                    ? selectedVariant.stock
+                    : 1
+            );
+        }
+    }, [selectedVariant]);
     return (
         <motion.div
             initial={{ opacity: 0 }}
@@ -402,28 +403,27 @@ text-sm
                                     </span>
 
                                     <button
-    disabled={
-        qty >= (selectedVariant?.stock || 0)
-    }
-    onClick={() =>
-        setQty((prev) =>
-            Math.min(
-                prev + 1,
-                selectedVariant?.stock || 1
-            )
-        )
-    }
-    className={`
+                                        disabled={
+                                            qty >= (selectedVariant?.stock || 0)
+                                        }
+                                        onClick={() =>
+                                            setQty((prev) =>
+                                                Math.min(
+                                                    prev + 1,
+                                                    selectedVariant?.stock || 1
+                                                )
+                                            )
+                                        }
+                                        className={`
         transition
-        ${
-            qty >= (selectedVariant?.stock || 0)
-                ? "opacity-40 cursor-not-allowed"
-                : ""
-        }
+        ${qty >= (selectedVariant?.stock || 0)
+                                                ? "opacity-40 cursor-not-allowed"
+                                                : ""
+                                            }
     `}
->
-    <FiPlus />
-</button>
+                                    >
+                                        <FiPlus />
+                                    </button>
                                 </div>
                             </div>
 
@@ -486,11 +486,11 @@ bg-white
                                 </button>
 
                                 <button
-    disabled={
-        !selectedVariant ||
-        selectedVariant.stock <= 0
-    }
-    className={`
+                                    disabled={
+                                        !selectedVariant ||
+                                        selectedVariant.stock <= 0
+                                    }
+                                    className={`
         flex-1
         h-10
         rounded-full
@@ -499,23 +499,30 @@ bg-white
         text-md
         transition
 
-        ${
-            selectedVariant?.stock > 0
-                ? "bg-[var(--primary)] hover:opacity-90"
-                : "bg-gray-400 cursor-not-allowed"
-        }
+        ${selectedVariant?.stock > 0
+                                            ? "bg-[var(--primary)] hover:opacity-90"
+                                            : "bg-gray-400 cursor-not-allowed"
+                                        }
     `}
->
-    <BiCartAdd
-        size={22}
-        className="inline-block ml-5"
-    />
+                                >
+                                    <BiCartAdd
+                                        size={22}
+                                        className="inline-block ml-5"
+                                    />
 
-    {selectedVariant?.stock > 0
-        ? "أضف إلى السلة"
-        : "نفدت الكمية"}
-</button>
+                                    {selectedVariant?.stock > 0
+                                        ? "أضف إلى السلة"
+                                        : "نفدت الكمية"}
+                                </button>
                                 <button
+                                    onClick={() => {
+                                        router.visit(
+                                            route(
+                                                "shop.product.show",
+                                                product.slug
+                                            )
+                                        )
+                                    }}
                                     className="
                                         h-10
                                         rounded-full

@@ -206,6 +206,7 @@ class ShopPageController extends Controller
                 'name' => $product->name,
                 'code' => $product->code,
                 'main_image' => $product->main_image,
+                'slug'=>$product->slug,
 
                 'place' => $product->place ?? [],
                 'design_colors' => $product->design_colors ?? [],

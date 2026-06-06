@@ -101,7 +101,7 @@ const { url } = usePage();
             {links.map((item, i) => (
                 <NavLink
                     key={i}
-                    active={route().current(item.routeName)}
+                    active={route().current(`${item.routeName}*`)}
                     mobile={isMobile}
                     onClick={() => {
                         onClose?.();

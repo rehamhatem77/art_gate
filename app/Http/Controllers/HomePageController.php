@@ -79,6 +79,7 @@ class HomePageController extends Controller
                     'id' => $product->id,
                     'name' => $product->name,
                     'code' => $product->code,
+                    'slug' => $product->slug,
                     'description' => $product->description,
                     'main_image' => $product->main_image,
                     'price' => $product->variants->min('price'),

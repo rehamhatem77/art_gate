@@ -1,3 +1,4 @@
+import { router } from "@inertiajs/react";
 import { useState } from "react";
 import { FiChevronLeft, FiChevronRight, FiHeart } from "react-icons/fi";
 
@@ -34,6 +35,16 @@ export default function ProductCard({ product, onQuickView }) {
     ease-out
 "
         >
+            <button 
+            onClick={() => {
+                                                    router.visit(
+                                                        route(
+                                                            "shop.product.show",
+                                                            product.slug
+                                                        )
+                                                    )
+                                                }}
+            >
             {/* Image */}
             <div className="relative overflow-hidden rounded-2xl bg-white">
                 {/* Product Code */}
@@ -294,7 +305,7 @@ shadow-md
                         أضف إلى السلة
                     </button>
                 </div>
-            </div>
+            </div></button>
         </div>
     );
 }
