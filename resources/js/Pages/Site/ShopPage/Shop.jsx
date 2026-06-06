@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { router, usePage } from "@inertiajs/react";
 import RecentlyViewedSection from "../Components/RecentlyViewedSection";
 import FeaturesSection from "../Components/FeaturesSection";
+import useRecentlyViewed from "@/Hooks/useRecentlyViewed";
 
 export default function Shop({ categories, tags, products, counts, shapes,
     filters: initialFilters,
@@ -16,6 +17,8 @@ export default function Shop({ categories, tags, products, counts, shapes,
     const [showFilters, setShowFilters] = useState(false);
     const { services } = usePage().props;
     const { announcement } = usePage().props;
+    const recentProducts =
+        useRecentlyViewed();
     const normalizeArray = (value) =>
         Array.isArray(value) ? value : [];
     const [filters, setFilters] = useState({
@@ -198,7 +201,7 @@ export default function Shop({ categories, tags, products, counts, shapes,
 
 
             <FeaturesSection services={services} />
-            <RecentlyViewedSection />
+            <RecentlyViewedSection recentProducts={recentProducts} />
         </SiteLayout>
     );
 }

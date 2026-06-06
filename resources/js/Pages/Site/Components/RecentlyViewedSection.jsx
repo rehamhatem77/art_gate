@@ -1,25 +1,8 @@
+import { router } from "@inertiajs/react";
 import { motion } from "framer-motion";
+import { button } from "framer-motion/client";
 
-const viewedProducts = [
-    {
-        id: 1,
-        name: "تابلوه كلاسيك - فاتحة الكتاب",
-        price: 130,
-        code: "is78",
-        image:
-            "https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=1200",
-    },
-    {
-        id: 2,
-        name: "أضف جمالية لمكانك مع تابلوه عيادة الطبيب البيطري",
-        price: 615,
-        code: "vet42",
-        image:
-            "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200",
-    },
-];
-
-export default function RecentlyViewedSection() {
+export default function RecentlyViewedSection({recentProducts=[]}) {
     return (
         <section className="pt-18 pb-20 lg:pt-22 lg:pb-28">
             <div className="max-w-7xl mx-auto px-4">
@@ -51,6 +34,8 @@ export default function RecentlyViewedSection() {
                 </motion.div>
 
                 {/* Products */}
+                {recentProducts?.length>0 ?(
+                   
                 <div
                     className="
                         flex
@@ -58,12 +43,23 @@ export default function RecentlyViewedSection() {
                         lg:flex-row
                         justify-start
                         items-start
-                        gap-16
+                        gap-8
                         px-8
-                        lg:gap-28
+                        lg:gap-12
                     "
                 >
-                    {viewedProducts.map((product, index) => (
+                    {recentProducts?.map((product, index) => (
+                         <button
+                    
+                     onClick={() => {
+                                                            router.visit(
+                                                                route(
+                                                                    "shop.product.show",
+                                                                    product.slug
+                                                                )
+                                                            )
+                                                        }}
+                    >
                         <motion.div
                             key={product.id}
                           
@@ -118,7 +114,8 @@ export default function RecentlyViewedSection() {
                             {/* IMAGE RIGHT */}
                             <div className="relative shrink-0">
                                 <img
-                                    src={product.image}
+                                    src={`/storage/${product.image}`}
+                                    
                                     alt={product.name}
                                     className="
                                         w-[140px]
@@ -154,9 +151,14 @@ export default function RecentlyViewedSection() {
                                     كود المنتج: {product.code}
                                 </div>
                             </div>
-                        </motion.div>
+                        </motion.div></button>
                     ))}
                 </div>
+                ):(
+                    <p className=" text-gray-500 text-center">
+                    لا يوجد منتجات تم عرضها بعد
+                </p>
+                )}
             </div>
         </section>
     );
