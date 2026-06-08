@@ -86,8 +86,8 @@ const { url } = usePage();
     const links = [
         { href: "/", label: "الرئيسية" , routeName: "home"},
         { href: "/shop", label: "المتجر" , routeName: "shop"},
-        { href: "/blog", label: "المدونة" , routeName: "blog"},
-        { href: "/about", label: "من نحن" , routeName: "about"},
+        // { href: "/blog", label: "المدونة" , routeName: "blog"},
+        { href: "/about-us", label: "من نحن" , routeName: "about-us"},
         { href: "/contact", label: "اتصل بنا" , routeName: "contact"},
     ];
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AboutUsControllter;
 use App\Http\Controllers\Admin\AdminHomePageController;
 use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -30,6 +31,7 @@ Route::get('/', [HomePageController::class, 'index'])->name('home');
 Route::get('/shop', [ShopPageController::class, 'index'])->name('shop');
 Route::get('/shop/{slug}', [ProductDetailsController::class, 'show'])
     ->name('shop.product.show');
+Route::get('/about-us',[AboutUsControllter::class,'index'])->name('about-us');
 
 
 // Route::get('/dashboard', function () {

@@ -24,7 +24,7 @@ class HomePageController extends Controller
             ->unique();
 
         $products = Product::with('variants')
-            ->select('id', 'name', 'main_image')
+            ->select('id', 'name', 'main_image', 'slug')
             ->whereIn('id', $productIds)
             ->get()
             ->mapWithKeys(function ($product) {
@@ -34,6 +34,7 @@ class HomePageController extends Controller
                         'id' => $product->id,
                         'name' => $product->name,
                         'main_image' => $product->main_image,
+                        'slug' => $product->slug,
                         'price' => $product->variants->min('price'),
                     ],
                 ];
@@ -68,8 +69,12 @@ class HomePageController extends Controller
         // -----------------------------
         // Latest Products
         // -----------------------------
-        $latestProducts = Product::with('variants.size',
-    'variants.frameType', 'category:id,name', 'images')
+        $latestProducts = Product::with(
+            'variants.size',
+            'variants.frameType',
+            'category:id,name',
+            'images'
+        )
 
             ->latest()
             ->take(4)

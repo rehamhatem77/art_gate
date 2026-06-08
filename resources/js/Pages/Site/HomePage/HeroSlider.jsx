@@ -6,6 +6,7 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { router } from "@inertiajs/react";
 
 const sliders = [
     {
@@ -42,9 +43,6 @@ const sliders = [
 
 export default function HeroSlider({ slides }) {
     const slidesData = slides ? slides : sliders;
-
-
-
 
     return (
         <section className="relative py-3 lg:py-4">
@@ -183,6 +181,14 @@ lg:h-52
 
                                         {/* Button */}
                                         <button
+                                            onClick={() => {
+                                                router.visit(
+                                                    route(
+                                                        "shop.product.show",
+                                                        slide.product.slug,
+                                                    ),
+                                                );
+                                            }}
                                             className="
                                                 relative z-10
                                                 px-5
