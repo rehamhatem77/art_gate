@@ -14,7 +14,10 @@ import ContactMap from "./ContactMap ";
 
 
 export default function Contact({
-    announcement, services
+    announcement, services,hero,
+    contactInfo,
+    map,
+    
 }) {
 
 
@@ -28,20 +31,20 @@ export default function Contact({
       <div className=" min-h-screen">
 
       {/* HERO */}
-      <ContactHero />
+      <ContactHero hero={hero}/>
 
       {/* CONTENT */}
       <section className="max-w-8xl mx-auto px-6 lg:px-12 py-16 grid lg:grid-cols-[1fr_1fr] items-start gap-10">
 
         {/* FORM */}
-        <ContactForm />
+        <ContactForm  />
 
         {/* INFO */}
-        <ContactInfo />
+        <ContactInfo contactInfo={contactInfo}/>
 
       </section>
     </div>
-    <ContactMap />
+    <ContactMap map={map} />
             
 
             <FeaturesSection services={services} />

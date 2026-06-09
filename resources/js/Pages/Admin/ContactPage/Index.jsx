@@ -8,6 +8,7 @@ import AdminPageHeader from "@/Components/AdminPageHeader";
 import Breadcrumb from "@/Components/Breadcrumb";
 
 import {
+    FiGlobe,
     FiMail,
 } from "react-icons/fi";
 
@@ -171,7 +172,7 @@ export default function Index({ contact }) {
                 <AdminPageHeader
                     title="إدارة صفحة التواصل"
                     description="تحكم كامل في محتوى صفحة التواصل"
-                    icon={FiMail}
+                    icon={FiGlobe}
                     actions={[]}
                 />
 
@@ -220,7 +221,7 @@ export default function Index({ contact }) {
                                                             name={field}
                                                             value={formData[field] || ""}
                                                             onChange={handleChange}
-                                                            className="w-full rounded-xl border p-3"
+                                                            className="w-full h-12 rounded-xl border px-4 outline-none focus:ring-1 focus:ring-[var(--primary)] focus:border-[var(--primary)]"
                                                         />
                                                     ) : (
                                                         <input
@@ -228,7 +229,7 @@ export default function Index({ contact }) {
                                                             name={field}
                                                             value={formData[field] || ""}
                                                             onChange={handleChange}
-                                                            className="w-full h-12 rounded-xl border px-4"
+                                                            className="w-full h-12 rounded-xl border px-4 outline-none focus:ring-1 focus:ring-[var(--primary)] focus:border-[var(--primary)]"
                                                         />
                                                     )}
                                                 </div>

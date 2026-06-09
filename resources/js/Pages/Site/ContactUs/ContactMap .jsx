@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { FiMapPin } from "react-icons/fi";
 
-export default function ContactMap() {
+export default function ContactMap({map}) {
     return (
         <section
             dir="rtl"
@@ -23,7 +23,7 @@ export default function ContactMap() {
                 </div>
 
                 <motion.a
-                    href="https://maps.google.com"
+                    href={map?.link || "https://maps.google.com"}
                     target="_blank"
                     rel="noopener noreferrer"
                     whileHover={{
@@ -38,7 +38,7 @@ export default function ContactMap() {
                     "
                 >
                     <img
-                        src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2070&auto=format&fit=crop"
+                        src={map?.image || "https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2070&auto=format&fit=crop"}
                         alt=""
                         className="
                             w-full

@@ -41,6 +41,23 @@ class AppServiceProvider extends ServiceProvider
                     ->select('id', 'name', 'description', 'icon', 'flag')
                     ->get();
             }),
+            'footer' => fn() => cache()->remember('global_footer', 3600, function () {
+            $contact = \App\Models\Admin\ContactPage::first();
+
+            return [
+                'description' => $contact?->footer_description,
+                'facebook'    => $contact?->facebook,
+                'instagram'   => $contact?->instagram,
+                'pinterest'   => $contact?->pinterest,
+                'tiktok'      => $contact?->tiktok,
+                'x'            => $contact?->x,
+                'phone'       => $contact?->phone,
+                'email'       => $contact?->email,
+                'whatsapp'    => $contact?->whatsapp,
+                'address'     => $contact?->address,
+            ];
+        }),
         ]);
+        
     }
 }

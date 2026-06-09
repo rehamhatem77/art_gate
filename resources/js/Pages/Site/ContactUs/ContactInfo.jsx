@@ -11,10 +11,24 @@ import {
     FaPinterestP,
     FaTiktok,
 } from "react-icons/fa";
-
+import { FaXTwitter } from "react-icons/fa6";
 import { motion } from "framer-motion";
 
-export default function ContactInfo() {
+export default function ContactInfo({ contactInfo }) {
+    const socialConfig = {
+        instagram: FaInstagram,
+        facebook: FaFacebookF,
+        pinterest: FaPinterestP,
+        tiktok: FaTiktok,
+        x: FaXTwitter, 
+    };
+
+    const socialLinks = Object.entries(socialConfig)
+        .map(([key, Icon]) => ({
+            icon: Icon,
+            link: contactInfo?.[key],
+        }))
+        .filter(item => item.link);
     return (
         <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -47,13 +61,13 @@ export default function ContactInfo() {
                 </span> */}
 
                 <h3 className="mt-3 text-3xl font-bold leading-tight">
-                    دعنا نتواصل
+                    {contactInfo?.title || " دعنا نتواصل"}
                 </h3>
 
                 <p className="mt-4 text-white/70 leading-8 text-sm">
-                    يمكنك التواصل معنا عبر أي من القنوات التالية،
+                    {contactInfo?.description || ` يمكنك التواصل معنا عبر أي من القنوات التالية،
                     وسنكون سعداء بالإجابة على استفساراتك ومساعدتك
-                    في اختيار العمل الفني المناسب لمساحتك.
+                    في اختيار العمل الفني المناسب لمساحتك.`}
                 </p>
 
                 {/* Divider */}
@@ -65,28 +79,28 @@ export default function ContactInfo() {
                     <ContactInfoItem
                         icon={FiPhone}
                         title="الهاتف"
-                        value="+20 100 000 0000"
-                        href="tel:+201000000000"
+                        value={contactInfo?.phone || "+20 100 000 0000"}
+                        href={`tel:${contactInfo?.phone || "+201000000000"}`}
                     />
 
                     <ContactInfoItem
                         icon={FiMail}
                         title="البريد الإلكتروني"
-                        value="info@artgate.com"
-                        href="mailto:info@artgate.com"
+                        value={contactInfo?.email || "info@artgate.com"}
+                        href={`mailto:${contactInfo?.email || "info@artgate.com"}`}
                     />
 
                     <ContactInfoItem
                         icon={FaWhatsapp}
                         title="واتساب"
-                        value="+20 100 000 0000"
-                        href="https://wa.me/201000000000"
+                        value={contactInfo?.whatsapp || "+20 100 000 0000"}
+                        href={`https://wa.me/${contactInfo?.whatsapp?.replace(/\D/g, "") || "201000000000"}`}
                     />
 
                     <ContactInfoItem
                         icon={FiMapPin}
                         title="العنوان"
-                        value="القاهرة، مصر"
+                        value={contactInfo?.address || "القاهرة، مصر"}
                     />
                 </div>
 
@@ -98,25 +112,7 @@ export default function ContactInfo() {
                     </p>
 
                     <div className="flex flex-wrap gap-3">
-
-                        {[
-                            {
-                                icon: FaInstagram,
-                                link: "#",
-                            },
-                            {
-                                icon: FaFacebookF,
-                                link: "#",
-                            },
-                            {
-                                icon: FaPinterestP,
-                                link: "#",
-                            },
-                            {
-                                icon: FaTiktok,
-                                link: "#",
-                            },
-                        ].map((social, index) => {
+                        {socialLinks.map((social, index) => {
                             const Icon = social.icon;
 
                             return (
@@ -125,27 +121,16 @@ export default function ContactInfo() {
                                     href={social.link}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    whileHover={{
-                                        y: -4,
-                                    }}
-                                    whileTap={{
-                                        scale: 0.95,
-                                    }}
+                                    whileHover={{ y: -4 }}
+                                    whileTap={{ scale: 0.95 }}
                                     className="
-                                        w-11
-                                        h-11
-                                        rounded-full
-                                        bg-white/10
-                                        border
-                                        border-white/10
-                                        flex
-                                        items-center
-                                        justify-center
-                                        hover:bg-[var(--primary)]
-                                        hover:border-[var(--primary)]
-                                        transition-all
-                                        duration-300
-                                    "
+                    w-11 h-11 rounded-full
+                    bg-white/10 border border-white/10
+                    flex items-center justify-center
+                    hover:bg-[var(--primary)]
+                    hover:border-[var(--primary)]
+                    transition-all duration-300
+                "
                                 >
                                     <Icon className="text-sm" />
                                 </motion.a>
@@ -168,7 +153,7 @@ export default function ContactInfo() {
 
 import { FiArrowUpLeft } from "react-icons/fi";
 
-  function ContactInfoItem({
+function ContactInfoItem({
     icon: Icon,
     title,
     value,

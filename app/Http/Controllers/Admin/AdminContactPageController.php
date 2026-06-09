@@ -33,6 +33,7 @@ class AdminContactPageController extends Controller
             'hero_title' => ['nullable', 'string'],
             'hero_subtitle' => ['nullable', 'string'],
             'hero_description' => ['nullable', 'string'],
+            'hero_image' => ['nullable', 'image', 'max:4096'],
         ]);
 
         $contact = $this->contact();
@@ -46,7 +47,7 @@ class AdminContactPageController extends Controller
 
             $data['hero_image'] =
                 $request->file('hero_image')
-                    ->store('contact', 'public');
+                ->store('contact', 'public');
         }
 
         $contact->update($data);
@@ -66,19 +67,35 @@ class AdminContactPageController extends Controller
             'email' => ['nullable', 'string'],
             'whatsapp' => ['nullable', 'string'],
             'address' => ['nullable', 'string'],
+        ]);
 
+        $this->contact()->update($data);
+
+        return back()->with('success', 'تم تحديث بيانات التواصل');
+    }
+    public function updateSocial(Request $request)
+    {
+        $data = $request->validate([
             'facebook' => ['nullable', 'string'],
             'instagram' => ['nullable', 'string'],
             'pinterest' => ['nullable', 'string'],
             'tiktok' => ['nullable', 'string'],
             'x' => ['nullable', 'string'],
+        ]);
 
+        $this->contact()->update($data);
+
+        return back()->with('success', 'تم تحديث روابط التواصل');
+    }
+    public function updateFooter(Request $request)
+    {
+        $data = $request->validate([
             'footer_description' => ['nullable', 'string'],
         ]);
 
         $this->contact()->update($data);
 
-        return back();
+        return back()->with('success', 'تم تحديث الفوتر');
     }
 
     // ================= MAP =================
@@ -87,6 +104,7 @@ class AdminContactPageController extends Controller
     {
         $data = $request->validate([
             'map_link' => ['nullable', 'string'],
+            'map_image' => ['nullable', 'image', 'max:4096'],
         ]);
 
         $contact = $this->contact();
@@ -98,13 +116,13 @@ class AdminContactPageController extends Controller
                     ->delete($contact->map_image);
             }
 
-            $data['map_image'] =
-                $request->file('map_image')
-                    ->store('contact', 'public');
+            $data['map_image'] = $request
+                ->file('map_image')
+                ->store('contact', 'public');
         }
 
         $contact->update($data);
 
-        return back();
+        return back()->with('success', 'تم تحديث الخريطة');
     }
 }

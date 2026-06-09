@@ -1,3 +1,4 @@
+import { FaFacebookF, FaInstagram, FaPinterestP, FaTiktok, FaXTwitter } from "react-icons/fa6";
 import ApplicationLogo from "./ApplicationLogo";
 import {
     FiInstagram,
@@ -7,8 +8,24 @@ import {
     FiPhone,
     FiMapPin,
 } from "react-icons/fi";
+import { usePage } from "@inertiajs/react";
 
 export default function Footer() {
+        const { footer } = usePage().props;
+    const socialConfig = {
+        instagram: FaInstagram,
+        facebook: FaFacebookF,
+        pinterest: FaPinterestP,
+        tiktok: FaTiktok,
+        x: FaXTwitter, // 
+    };
+const socialLinks = Object.entries(socialConfig)
+    .map(([key, Icon]) => ({
+        key,
+        icon: Icon,
+        link: footer?.[key],
+    }))
+    .filter(item => item.link && item.link.trim() !== "");
     return (
         <footer className="bg-[#1d1916] opacity-90 text-white">
             {/* Top */}
@@ -21,39 +38,37 @@ export default function Footer() {
                         <ApplicationLogo className="h-28 w-auto" />
 
                         <p className="mt-2 text-gray-400 leading-8 max-w-md">
-                            نقدم مجموعة مميزة من اللوحات الفنية والتابلوهات
+                            {footer?.description || `  نقدم مجموعة مميزة من اللوحات الفنية والتابلوهات
                             العصرية المصممة بعناية لتضيف لمسة من الأناقة
-                            والجمال إلى منزلك أو مكان عملك.
+                            والجمال إلى منزلك أو مكان عملك.`}
                         </p>
 
                         {/* Social */}
                         <div className="flex gap-4 mt-8">
-                            {[FiInstagram, FiFacebook, FiTwitter].map(
-                                (Icon, index) => (
+                            {socialLinks.map((social, index) => {
+                                const Icon = social.icon;
+
+                                return (
                                     <a
                                         key={index}
-                                        href="#"
+                                        href={social.link}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
                                         className="
-                                            w-11
-                                            h-11
-                                            rounded-full
-                                            border
-                                            border-white/10
-                                            flex
-                                            items-center
-                                            justify-center
-                                            text-gray-300
-                                            hover:bg-[var(--primary)]
-                                            hover:text-white
-                                            hover:border-[var(--primary)]
-                                            transition-all
-                                            duration-300
-                                        "
+                    w-11 h-11 rounded-full
+                    border border-white/10
+                    flex items-center justify-center
+                    text-gray-300
+                    hover:bg-[var(--primary)]
+                    hover:text-white
+                    hover:border-[var(--primary)]
+                    transition-all duration-300
+                "
                                     >
                                         <Icon size={18} />
                                     </a>
-                                )
-                            )}
+                                );
+                            })}
                         </div>
                     </div>
 
@@ -165,17 +180,17 @@ export default function Footer() {
 
                             <div className="flex items-center gap-3">
                                 <FiMail />
-                                <span>info@artgate.com</span>
+                                <span>{footer?.email || "info@artgate.com"}</span>
                             </div>
 
                             <div className="flex items-center gap-3">
                                 <FiPhone />
-                                <span>+20 100 000 0000</span>
+                                <span>{footer?.phone || "+20 100 000 0000"}</span>
                             </div>
 
                             <div className="flex items-center gap-3">
                                 <FiMapPin />
-                                <span>القاهرة، مصر</span>
+                                <span>{footer?.address || "القاهرة، مصر"}</span>
                             </div>
                         </div>
                     </div>
