@@ -1,116 +1,146 @@
+import { router } from "@inertiajs/react";
 import { motion } from "framer-motion";
 
 export default function AboutHero() {
     return (
         <section
             dir="rtl"
-            className="relative  overflow-hidden "
+            className="relative w-full lg:h-[85vh] h-auto overflow-hidden"
         >
-         
-            <div className="grid lg:grid-cols-2">
-                {/* Image Side */}
+            <div className="grid lg:grid-cols-2 h-full">
+
+                {/* IMAGE SIDE */}
                 <motion.div
-                    initial={{ opacity: 0, scale: 1.1 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 1.4 }}
-                    className="relative  lg:h-screen overflow-hidden"
+                    initial={{ opacity: 0, scale: 1.05 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: false, amount: 0.5 }}
+                    transition={{ duration: 1.2 }}
+                    className="relative w-full h-[42vh] sm:h-[50vh] lg:h-full overflow-hidden"
                 >
                     <img
                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQr0W8VsfMUJ8Euj0ApeM9A7PfaVEutdczkRiG2kFvBZmppYutaC15aSfUG_DJSQ_KQneWppB4dtf8-jvJh7JPgwZseq2lRZmhDyDb3EmDsbUoNblADCi0quPxjBjVCpuslcirKzXOKyAPWl557ss1gVujwCHNr0XPRdn-nX09XdDpe1SSS22mafRxE0rYpyh3OwUs9zcREp6yW-T2iAvfCtHCiCDntglROmFdhdeki9o7GaTMGp-_HHM1RRlgG1Lv5QBBCQI"
                         alt="Premium interior with abstract art"
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover scale-110"
                     />
 
-
-                    
+                    <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-l from-black/65 via-black/25 to-transparent" />
+                    <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-[#b89b72]/20 blur-3xl rounded-full" />
                 </motion.div>
 
+                {/* CONTENT SIDE */}
+                <div className="flex items-center justify-center px-6 sm:px-10 lg:px-24 py-10 lg:py-0 relative">
 
+                    <div className="max-w-2xl w-full">
 
-                {/* Content Side */}
-                <div className="flex items-center justify-center px-8 lg:px-20 py-8 lg:py-0 relative">
-                    <div className="max-w-xl">
+                        {/* BREADCRUMB */}
+                        <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: false, amount: 0.6 }}
+                            transition={{ duration: 0.5 }}
+                            className="flex items-center justify-between mb-5"
+                        >
+                            <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-400">
+                                <button
+                                    onClick={() => router.visit(route("home"))}
+                                    className="hover:text-[#b89b72] transition"
+                                >
+                                    الرئيسية
+                                </button>
+
+                                <span className="text-gray-300">/</span>
+
+                                <span className="text-[var(--primary)] font-medium">
+                                    من نحن
+                                </span>
+                            </div>
+                        </motion.div>
+
+                        {/* DIVIDER */}
                         <motion.div
                             initial={{ width: 0 }}
-                            animate={{ width: 80 }}
-                            transition={{ duration: 1, delay: 0.3 }}
-                            className="h-[2px]  mb-8"
+                            whileInView={{ width: 60 }}
+                            viewport={{ once: false, amount: 0.6 }}
+                            transition={{ duration: 0.7 }}
+                            className="h-[2px] bg-[var(--primary)] opacity-70 mb-10 rounded-full"
                         />
 
-                        <motion.span
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.4 }}
-                            className="block text-[#b89b72] tracking-[0.25em] text-sm mb-4"
-                        >
-                            بوابة الفن
-                        </motion.span>
-
+                        {/* TITLE */}
                         <motion.h1
-                            initial={{ opacity: 0, y: 40 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{
-                                duration: 0.8,
-                                delay: 0.5,
-                            }}
-                            className="text-4xl md:text-5xl xl:text-6xl font-bold text-[#1f1f1f] leading-[1.3] mb-8"
+                            initial={{ opacity: 0, y: 25 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: false, amount: 0.5 }}
+                            transition={{ duration: 0.8 }}
+                            className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold text-[var(--text-dark)] leading-[1.15] mb-6"
                         >
                             رحلة في عالم
-                            <span className="block text-[#b89b72] mt-2">
+                            <span className="block text-[var(--primary)] mt-2">
                                 الإبداع الفني الفاخر
                             </span>
                         </motion.h1>
 
+                        {/* PARAGRAPH 1 */}
                         <motion.p
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.8 }}
-                            className="text-gray-600 text-lg leading-loose mb-6"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: false, amount: 0.4 }}
+                            transition={{ duration: 0.6 }}
+                            className="text-gray-600 text-sm sm:text-base leading-[1.9] mb-5"
                         >
-                            مرحبًا بكم في بوابة الفن، وجهتكم الحصرية للوحات
-                            الفنية الراقية. نؤمن بأن الفن ليس مجرد عنصر
-                            ديكوري، بل تجربة بصرية تُثري المساحات وتمنحها
-                            شخصية استثنائية تعكس الذوق الرفيع.
+                            نحن أكثر من مجرد متجر للوحات الفنية — نحن منصة تُعيد تعريف العلاقة بين الإنسان والمساحة من حوله.
+                            نؤمن أن كل جدار يحمل فرصة ليصبح لوحة تعبّر عن الذوق، الهوية، والمشاعر.
                         </motion.p>
 
+                        {/* PARAGRAPH 2 */}
                         <motion.p
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 1 }}
-                            className="text-gray-600 text-lg leading-loose"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: false, amount: 0.4 }}
+                            transition={{ duration: 0.6, delay: 0.1 }}
+                            className="text-gray-600 text-sm sm:text-base leading-[1.9] mb-5"
                         >
-                            نختار أعمالنا بعناية فائقة لنقدم لكم مجموعة فريدة
-                            تجمع بين الجودة العالية، والحرفية المتقنة، والرؤية
-                            الفنية الملهمة التي تحول كل مساحة إلى معرض ينبض
-                            بالجمال.
+                            نختار أعمالنا الفنية بعناية شديدة، ليس فقط لجمالها البصري،
+                            ولكن لقيمتها الإبداعية وقدرتها على تحويل أي مساحة إلى تجربة بصرية متكاملة.
                         </motion.p>
 
-                        {/* <motion.div
+                        {/* PARAGRAPH 3 */}
+                        <motion.p
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: false, amount: 0.4 }}
+                            transition={{ duration: 0.6, delay: 0.2 }}
+                            className="text-gray-600 text-sm sm:text-base leading-[1.9] mb-5"
+                        >
+                            من اللوحات الحديثة إلى التصاميم الكلاسيكية، ومن الفن التجريدي إلى الإسلامي —
+                            نقدم مجموعة متنوعة تناسب مختلف الأذواق والمساحات، مع الحفاظ على مستوى عالٍ من الجودة.
+                        </motion.p>
+
+                        {/* PARAGRAPH 4 */}
+                        <motion.p
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: false, amount: 0.4 }}
+                            transition={{ duration: 0.6, delay: 0.3 }}
+                            className="text-gray-600 text-sm sm:text-base leading-[1.9]"
+                        >
+                            هدفنا ليس البيع فقط، بل خلق تجربة فنية تعيش داخل كل منزل،
+                            وتبقى جزءًا من يوميات الناس، تعكس ذوقهم وتضيف لمسة من الجمال لكل لحظة.
+                        </motion.p>
+
+                        {/* FOOTER ACCENT */}
+                        <motion.div
                             initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 1.3 }}
-                            className="mt-10 flex items-center gap-6"
+                            whileInView={{ opacity: 1 }}
+                            viewport={{ once: false, amount: 0.6 }}
+                            transition={{ duration: 0.8 }}
+                            className="mt-8 flex items-center gap-3"
                         >
-                            <div>
-                                <h3 className="text-3xl font-bold text-[#b89b72]">
-                                    +500
-                                </h3>
-                                <p className="text-sm text-gray-500">
-                                    عمل فني مميز
-                                </p>
-                            </div>
+                            <div className="w-10 h-[2px] bg-[var(--primary)] opacity-70" />
+                            <p className="text-xs text-gray-400 tracking-wider">
+                                فن يُصنع ليعيش معك — وليس ليُعلّق فقط
+                            </p>
+                        </motion.div>
 
-                            <div className="w-px h-12 bg-gray-300" />
-
-                            <div>
-                                <h3 className="text-3xl font-bold text-[#b89b72]">
-                                    +100
-                                </h3>
-                                <p className="text-sm text-gray-500">
-                                    فنان ومصمم
-                                </p>
-                            </div>
-                        </motion.div> */}
                     </div>
                 </div>
             </div>

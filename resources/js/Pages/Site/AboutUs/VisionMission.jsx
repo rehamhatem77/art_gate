@@ -5,102 +5,116 @@ export default function VisionMission() {
     return (
         <section
             dir="rtl"
-            className="relative min-h-[80vh] py-28 overflow-hidden bg-[#faf8f5]"
+            className="relative py-16 sm:py-20 lg:py-28 overflow-hidden
+                       bg-gradient-to-b from-[#fcfbf9] to-[#f6f3ee]"
         >
-            {/* Background Decorations */}
-            <div className="absolute top-20 left-10 w-72 h-72 bg-[#b89b72]/10 rounded-full blur-3xl" />
-            <div className="absolute bottom-10 right-10 w-96 h-96 bg-[#b89b72]/10 rounded-full blur-3xl" />
+            {/* soft ambient background */}
+            <div className="absolute inset-0 opacity-60 bg-[radial-gradient(circle_at_top_right,rgba(184,155,114,0.10),transparent_55%)]" />
 
-            <div className="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
-                {/* Heading */}
+            <div className="max-w-6xl mx-auto px-5 sm:px-8 lg:px-10 relative z-10">
+
+                {/* HEADER */}
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={{ opacity: 0, y: 18 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8 }}
-                    className="text-center mb-20"
+                    viewport={{ once: false }}
+                    transition={{ duration: 0.6 }}
+                    className="text-center mb-14 lg:mb-16"
                 >
-                    <span className="text-[#b89b72] tracking-[0.3em] text-sm">
-                        ART GATE
+                    <span className="text-[var(--primary)] text-xs sm:text-sm tracking-[0.4em] uppercase">
+                        Art Gate
                     </span>
 
-                    <h2 className="mt-4 text-4xl md:text-5xl lg:text-6xl font-bold text-[#1f1f1f]">
+                    <h2 className="mt-3 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--text-dark)]">
                         رؤيتنا ورسالتنا
                     </h2>
 
-                    <div className="w-24 h-[3px] bg-[#b89b72] mx-auto mt-8 rounded-full" />
+                    <div className="w-20 h-[2px] bg-[var(--primary)] opacity-70 mx-auto mt-5 rounded-full" />
                 </motion.div>
 
-                {/* Cards */}
-                <div className="grid lg:grid-cols-2 gap-10">
-                    {/* Vision */}
+                {/* GRID */}
+                <div className="grid lg:grid-cols-2 gap-6 lg:gap-10">
+
+                    {/* VISION */}
                     <motion.div
-                        initial={{ opacity: 0, x: 60 }}
+                        initial={{ opacity: 0, x: 35 }}
                         whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
+                        viewport={{ once: false }}
+                        transition={{ duration: 0.7 }}
                         className="
-                            bg-white
-                            rounded-[32px]
-                            p-10 lg:p-14
+                            relative
+                            rounded-3xl
+                            p-6 sm:p-8 lg:p-10
+                            bg-white/70 backdrop-blur-md
                             border border-[#ece4d8]
-                            shadow-[0_20px_60px_rgba(0,0,0,0.05)]
-                            relative
-                            overflow-hidden
+                            shadow-[0_10px_40px_rgba(0,0,0,0.04)]
+                            hover:shadow-[0_18px_60px_rgba(0,0,0,0.07)]
+                            transition-all duration-300
                         "
                     >
-                        <div className="absolute top-0 right-0 w-40 h-40 bg-[#b89b72]/5 rounded-full translate-x-1/3 -translate-y-1/3" />
+                        {/* soft glow accent */}
+                        <div className="absolute -top-10 -right-10 w-40 h-40 bg-[var(--primary)] opacity-20 rounded-full blur-2xl" />
 
-                        <div className="w-16 h-16 rounded-2xl bg-[#b89b72]/10 flex items-center justify-center mb-8">
-                            <FiEye className="text-[#b89b72] text-3xl" />
+                        <div className="flex items-center gap-3 mb-5">
+                            <div className="w-12 h-12 rounded-xl bg-[#b89b72]/10 flex items-center justify-center">
+                                <FiEye className="text-[var(--primary)] text-xl" />
+                            </div>
+
+                            <h3 className="text-xl sm:text-2xl font-bold text-[var(--text-dark)]">
+                                رؤيتنا
+                            </h3>
                         </div>
 
-                        <h3 className="text-3xl font-bold text-[#1f1f1f] mb-6">
-                            رؤيتنا
-                        </h3>
-
-                        <p className="text-lg leading-loose text-gray-600">
-                            أن نصبح المصدر الأكثر ثقةً وإلهامًا للوحات الفنية
-                            الفاخرة، وأن نعيد تعريف مفهوم الفخامة الفنية من خلال
-                            تقديم أعمال استثنائية تجمع بين الإبداع والجودة
-                            والهوية البصرية الراقية. نطمح لأن نكون الجسر الذي
-                            يربط الفنانين المبدعين بعشاق الفن حول العالم.
+                        <p className="text-[var(--accent)] text-sm sm:text-base leading-[1.9]">
+                            أن نصبح المصدر الأكثر ثقةً وإلهامًا للوحات الفنية الفاخرة،
+                            وأن نعيد تعريف مفهوم الفخامة الفنية من خلال تقديم أعمال
+                            تجمع بين الإبداع والجودة والهوية البصرية الراقية.
+                            نطمح لأن نكون الجسر الذي يربط الفنانين بعشاق الفن حول العالم.
                         </p>
                     </motion.div>
 
-                    {/* Mission */}
+                    {/* MISSION */}
                     <motion.div
-                        initial={{ opacity: 0, x: -60 }}
+                        initial={{ opacity: 0, x: -35 }}
                         whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
+                        viewport={{ once: false }}
+                        transition={{ duration: 0.7 }}
                         className="
-                            bg-[#1f1f1f]
-                            rounded-[32px]
-                            p-10 lg:p-14
-                            text-white
                             relative
-                            overflow-hidden
+                            rounded-3xl
+                            p-6 sm:p-8 lg:p-10
+                            bg-gradient-to-br from-[#1f1f1f] to-[#2a2a2a]
+                            text-white
+                            shadow-[0_15px_50px_rgba(0,0,0,0.2)]
+                            hover:shadow-[0_25px_70px_rgba(0,0,0,0.3)]
+                            transition-all duration-300
                         "
                     >
-                        <div className="absolute bottom-0 left-0 w-52 h-52 bg-white/5 rounded-full translate-y-1/3 -translate-x-1/3" />
+                        {/* subtle gold glow */}
+                        <div className="absolute -bottom-10 -left-10 w-52 h-52 bg-[#b89b72]/10 rounded-full blur-3xl" />
 
-                        <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mb-8">
-                            <FiTarget className="text-[#d4b489] text-3xl" />
+                        <div className="flex items-center gap-3 mb-5">
+                            <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+                                <FiTarget className="text-[var(--primary)] text-xl" />
+                            </div>
+
+                            <h3 className="text-xl sm:text-2xl font-bold">
+                                رسالتنا
+                            </h3>
                         </div>
 
-                        <h3 className="text-3xl font-bold mb-6">
-                            رسالتنا
-                        </h3>
-
-                        <p className="text-lg leading-loose text-gray-300">
-                            اكتشاف وعرض المواهب الفنية المميزة، وتوفير مجموعة
-                            مختارة بعناية من الأعمال الراقية التي تثري المساحات
-                            وتلهم المشاعر. نلتزم بتقديم تجربة فنية متكاملة
-                            تجمع بين الجودة الاستثنائية والخدمة الراقية والذوق
-                            الرفيع.
+                        <p className="text-gray-300 text-sm sm:text-base leading-[1.9]">
+                            اكتشاف وعرض المواهب الفنية المميزة، وتوفير مجموعة مختارة
+                            بعناية من الأعمال الراقية التي تثري المساحات وتلهم المشاعر.
+                            نلتزم بتقديم تجربة فنية متكاملة تجمع بين الجودة والخدمة الراقية
+                            والذوق الرفيع.
                         </p>
                     </motion.div>
+                </div>
+
+                {/* bottom accent line */}
+                <div className="mt-20 flex justify-center">
+                    <div className="w-28 h-[1px] bg-gradient-to-r from-transparent via-[#b89b72] to-transparent" />
                 </div>
             </div>
         </section>

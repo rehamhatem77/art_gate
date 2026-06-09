@@ -1,24 +1,106 @@
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { FiPlay, FiX } from "react-icons/fi";
+
 export default function AboutVideoSection() {
+  const [open, setOpen] = useState(false);
+
   return (
-    <section className="relative h-[450px] md:h-[600px] flex items-center justify-center">
-      <div className="absolute inset-0 z-0">
-        <img
-          alt="Luxurious art interior background"
-          className="w-full h-full object-cover"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgp0eJIZv1Nx3EFdMEN7zLbcYaEO4RRRPW8JLCjujc30dK5FYObqaEn_5bR1mucEv01LQpGrnMVW9Qw0bA8AyqNkic5c5i-CWomLbKdzjmkthesCaHt3dHwvZtEPwSTYhJhWOZ5VU3xvLqPYuVTQuxkskMy_zKZYx_vastkC40uc70IOB8BC8ZFHwAuHPtusbKKxgjIGQBR9ZtwPAPwMapzqrc8qkGY7LMLaEco-_E19xbPKWdoLaVM5Fj6f5J79tkVHFIeLU"
-        />
-        <div className="absolute inset-0 bg-black/30" />
-      </div>
-      <div className="relative z-10 text-center text-white px-4">
-        <button className="bg-art-brown hover:bg-art-dark transition-colors w-24 h-24 rounded-full flex items-center justify-center mb-6 mx-auto shadow-2xl">
-          <svg className="h-10 w-10 ml-1" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M3 22v-20l18 10-18 10z" />
-          </svg>
-        </button>
-        <h2 className="text-3xl md:text-5xl font-bold tracking-tight font-serif">
-          اكتشف الفرق مع بوابة الفن
-        </h2>
-      </div>
-    </section>
+    <>
+      {/* HERO CARD */}
+      <section className="py-20 flex justify-center ">
+        <motion.div
+          initial={{ opacity: 0, y: 40, scale: 0.98 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: false, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="relative w-[92%] max-w-6xl"
+        >
+          {/* PILL CONTAINER */}
+          <div className="relative h-[320px] sm:h-[400px] md:h-[460px] rounded-[999px] overflow-hidden shadow-xl">
+
+            {/* BACKGROUND IMAGE */}
+            <img
+              src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=2000"
+              className="w-full h-full object-cover scale-110"
+              alt="luxury interior"
+            />
+
+            {/* OVERLAY */}
+            <div className="absolute inset-0 bg-black/40" />
+
+            {/* CONTENT (NO MOTION HERE) */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 text-white">
+
+              <p className="text-sm md:text-base text-white/80 mb-2">
+                أين تجد؟
+              </p>
+
+              <h2 className="text-lg sm:text-2xl md:text-3xl font-medium max-w-2xl">
+                هناك العديد من الأنواع المتوفرة من الأعمال الفنية
+              </h2>
+
+              {/* BUTTON (optional small motion only) */}
+              <motion.button
+                onClick={() => setOpen(true)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="
+                  mt-6
+                  w-14 h-14 sm:w-16 sm:h-16
+                  rounded-full
+                  bg-white/10 backdrop-blur-md
+                  border border-white/40
+                  flex items-center justify-center
+                "
+              >
+                <FiPlay className="text-white text-xl ml-0.5" />
+              </motion.button>
+
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* VIDEO MODAL */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[999] bg-black/95 flex items-center justify-center p-4"
+            onClick={() => setOpen(false)}
+          >
+            <button
+              onClick={() => setOpen(false)}
+              className="absolute top-6 right-6 text-white text-3xl"
+            >
+              <FiX />
+            </button>
+
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              transition={{ duration: 0.25 }}
+              className="w-full max-w-5xl aspect-video"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <video
+                className="w-full h-full rounded-2xl"
+                controls
+                autoPlay
+              >
+                <source
+                  src="https://cdn.coverr.co/videos/coverr-a-woman-decorating-a-room-1576/1080p.mp4"
+                  type="video/mp4"
+                />
+              </video>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
