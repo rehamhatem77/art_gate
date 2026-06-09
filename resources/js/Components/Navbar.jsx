@@ -88,7 +88,7 @@ const { url } = usePage();
         { href: "/shop", label: "المتجر" , routeName: "shop"},
         // { href: "/blog", label: "المدونة" , routeName: "blog"},
         { href: "/about-us", label: "من نحن" , routeName: "about-us"},
-        { href: "/contact", label: "اتصل بنا" , routeName: "contact"},
+        { href: "/contact-us", label: "اتصل بنا" , routeName: "contact-us"},
     ];
 
     return (

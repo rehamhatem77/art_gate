@@ -2,6 +2,7 @@ import AnnouncementBar from "@/Components/AnnouncementBar";
 import Footer from "@/Components/Footer";
 import Navbar from "@/Components/Navbar";
 import { Head, usePage } from "@inertiajs/react";
+import { Toaster } from "react-hot-toast";
 
 export default function SiteLayout({ children, title ,announcement }) {
     const auth=usePage().props.auth; 
@@ -20,6 +21,7 @@ export default function SiteLayout({ children, title ,announcement }) {
         <main className="flex-grow">
           {children}
         </main>
+       
 
          <Footer />
           {/* <WhatsAppButton /> */}

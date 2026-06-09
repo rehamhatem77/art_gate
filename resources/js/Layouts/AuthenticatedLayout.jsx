@@ -13,6 +13,7 @@ import {
     FiGlobe,
     FiHome,
     FiBriefcase,
+    FiMail,
 } from "react-icons/fi";
 import { IoColorPaletteOutline } from "react-icons/io5";
 
@@ -90,10 +91,10 @@ export default function AuthenticatedLayout({ children }) {
     const sitePages = [
         { name: "الصفحة الرئيسية", icon: <FiHome />, path: "/admin/homepage" },
         { name: "من نحن", icon: <FiBriefcase />, path: "/admin/about-page" },
-        { name: "تواصل معنا", icon: <FiGlobe />, path: "/admin/contact-us" },
+        { name: "تواصل معنا", icon: <FiGlobe />, path: "/admin/contact-page" },
         {
             name: "رسائل العملاء",
-            icon: <FaRegCommentDots />,
+            icon: <FiMail />,
             path: "/admin/contact-messages",
         },
     ];

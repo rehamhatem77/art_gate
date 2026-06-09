@@ -4,7 +4,7 @@ import { useState } from "react";
 import SectionCard from "@/Components/SectionCard";
 import AdminPageHeader from "@/Components/AdminPageHeader";
 import Breadcrumb from "@/Components/Breadcrumb";
-import { FiHome } from "react-icons/fi";
+import { FiBriefcase, FiHome } from "react-icons/fi";
 
 const fieldLabels = {
     // HERO
@@ -172,7 +172,7 @@ export default function Index({ about }) {
                 <AdminPageHeader
                     title="إدارة صفحة من نحن"
                     description="تحكم كامل في محتوى صفحة من نحن"
-                    icon={FiHome}
+                    icon={FiBriefcase}
                     actions={[]}
                 />
 

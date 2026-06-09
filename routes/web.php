@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\AboutUsControllter;
 use App\Http\Controllers\Admin\AdminAboutPageController;
+use App\Http\Controllers\Admin\AdminContactPageController;
 use App\Http\Controllers\Admin\AdminHomePageController;
 use App\Http\Controllers\Admin\CategoriesController;
+use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FrameTypesController;
 use App\Http\Controllers\Admin\ProductsController;
@@ -12,6 +14,7 @@ use App\Http\Controllers\Admin\ShapesController;
 use App\Http\Controllers\Admin\SizesController;
 use App\Http\Controllers\Admin\TableauNumbersController;
 use App\Http\Controllers\Admin\TagsController;
+use App\Http\Controllers\ContactPageController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\ProductDetailsController;
 use App\Http\Controllers\ProfileController;
@@ -33,7 +36,8 @@ Route::get('/shop', [ShopPageController::class, 'index'])->name('shop');
 Route::get('/shop/{slug}', [ProductDetailsController::class, 'show'])
     ->name('shop.product.show');
 Route::get('/about-us', [AboutUsControllter::class, 'index'])->name('about-us');
-
+Route::get('/contact-us', [ContactPageController::class, 'index'])->name('contact-us');
+Route::post('/contact', [ContactPageController::class, 'store'])->name('contact.store');
 
 // Route::get('/dashboard', function () {
 //     return Inertia::render('Dashboard');
@@ -152,15 +156,45 @@ Route::middleware('auth')->group(function () {
 
 
 
-    Route::prefix('about-page')->name('about.')->group(function () {
-        Route::get('/', [AdminAboutPageController::class, 'index'])
-        ->name('index');
-    Route::post('/hero', [AdminAboutPageController::class, 'updateHero'])->name('hero.update');
-    Route::post('/vision-mission', [AdminAboutPageController::class, 'updateVisionMission'])->name('vision-mission.update');
-    Route::post('/story', [AdminAboutPageController::class, 'updateStory'])->name('story.update');
-    Route::post('/video', [AdminAboutPageController::class, 'updateVideo'])->name('video.update');
-    Route::post('/team', [AdminAboutPageController::class, 'updateTeam'])->name('team.update');
-});
+            Route::prefix('about-page')->name('about.')->group(function () {
+                Route::get('/', [AdminAboutPageController::class, 'index'])
+                    ->name('index');
+                Route::post('/hero', [AdminAboutPageController::class, 'updateHero'])->name('hero.update');
+                Route::post('/vision-mission', [AdminAboutPageController::class, 'updateVisionMission'])->name('vision-mission.update');
+                Route::post('/story', [AdminAboutPageController::class, 'updateStory'])->name('story.update');
+                Route::post('/video', [AdminAboutPageController::class, 'updateVideo'])->name('video.update');
+                Route::post('/team', [AdminAboutPageController::class, 'updateTeam'])->name('team.update');
+            });
+
+            Route::get('/contact-messages', [ContactMessageController::class, 'index'])
+                ->name('contact-messages.index');
+
+            Route::get('/contact-messages/{id}', [ContactMessageController::class, 'show'])
+                ->name('contact-messages.show');
+
+            Route::delete('/contact-messages/{id}', [ContactMessageController::class, 'destroy'])
+                ->name('contact-messages.destroy');
+
+            Route::prefix('contact-page')->name('contact-page.')->group(function () {
+                Route::get('/', [AdminContactPageController::class, 'index'])
+                    ->name('index');
+
+                Route::post('/hero', [AdminContactPageController::class, 'updateHero'])
+                    ->name('hero.update');
+
+                Route::post('/info', [AdminContactPageController::class, 'updateInfo'])
+                    ->name('info.update');
+
+                Route::post('/social', [AdminContactPageController::class, 'updateSocial'])
+                    ->name('social.update');
+
+                Route::post('/map', [AdminContactPageController::class, 'updateMap'])
+                    ->name('map.update');
+
+                Route::post('/footer', [AdminContactPageController::class, 'updateFooter'])
+                    ->name('footer.update');
+            });
+
 
 
             // Route::get('/tableau-numbers', [TableauNumbersController::class, 'index'])
