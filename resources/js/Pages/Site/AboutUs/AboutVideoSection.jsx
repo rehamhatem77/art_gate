@@ -1,9 +1,19 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiPlay, FiX } from "react-icons/fi";
+import { getImage } from "@/Utils/GetImage";
+function getYouTubeId(url) {
+  if (!url) return "";
 
-export default function AboutVideoSection() {
+  const match = url.match(
+    /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([^&?/]+)/
+  );
+
+  return match ? match[1] : "";
+}
+export default function AboutVideoSection({section}) {
   const [open, setOpen] = useState(false);
+  const videoId = getYouTubeId(section?.url);
 
   return (
     <>
@@ -21,7 +31,7 @@ export default function AboutVideoSection() {
 
             {/* BACKGROUND IMAGE */}
             <img
-              src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=2000"
+              src={section.cover?getImage(section.cover) :"https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=2000"}
               className="w-full h-full object-cover scale-110"
               alt="luxury interior"
             />
@@ -33,11 +43,11 @@ export default function AboutVideoSection() {
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 text-white">
 
               <p className="text-sm md:text-base text-white/80 mb-2">
-                أين تجد؟
+              { section.subtitle ||" أين تجد؟"}
               </p>
 
               <h2 className="text-lg sm:text-2xl md:text-3xl font-medium max-w-2xl">
-                هناك العديد من الأنواع المتوفرة من الأعمال الفنية
+              { section.title || "هناك العديد من الأنواع المتوفرة من الأعمال الفنية"}
               </h2>
 
               {/* BUTTON (optional small motion only) */}
@@ -63,7 +73,7 @@ export default function AboutVideoSection() {
       </section>
 
       {/* VIDEO MODAL */}
-      <AnimatePresence>
+       <AnimatePresence>
         {open && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -87,16 +97,20 @@ export default function AboutVideoSection() {
               className="w-full max-w-5xl aspect-video"
               onClick={(e) => e.stopPropagation()}
             >
-              <video
-                className="w-full h-full rounded-2xl"
-                controls
-                autoPlay
-              >
-                <source
-                  src="https://cdn.coverr.co/videos/coverr-a-woman-decorating-a-room-1576/1080p.mp4"
-                  type="video/mp4"
+              {videoId ? (
+                <iframe
+                  className="w-full h-full rounded-2xl"
+                  src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+                  title="About Video"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
                 />
-              </video>
+              ) : (
+                <p className="text-white text-center">
+                  Invalid video URL
+                </p>
+              )}
             </motion.div>
           </motion.div>
         )}

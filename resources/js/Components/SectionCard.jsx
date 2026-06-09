@@ -17,6 +17,37 @@ const fieldLabels = {
     category_section_title: "العنوان",
     category_section_subtitle: "العنوان الفرعي",
     category_section_description: "الوصف",
+
+
+    hero_title: "عنوان الهيرو",
+    hero_subtitle: "العنوان الفرعي",
+    hero_description: "الوصف",
+    hero_image: "صورة الهيرو",
+    footer: "نص الفوتر",
+
+    // VISION & MISSION
+    vision_mission_section_title: "عنوان قسم الرؤية والرسالة",
+    vision_title: "عنوان الرؤية",
+    vision_description: "وصف الرؤية",
+    mission_title: "عنوان الرسالة",
+    mission_description: "وصف الرسالة",
+
+    // STORY
+    story_title: "عنوان القصة",
+    story_subtitle: "العنوان الفرعي للقصة",
+    story_description: "تفاصيل القصة",
+
+    // VIDEO
+    video_title: "عنوان الفيديو",
+    video_subtitle: "العنوان الفرعي للفيديو",
+    video_cover: "صورة الغلاف",
+    video_url: "رابط الفيديو",
+
+    // TEAM
+    team: "الفريق",
+    "team.name": "اسم العضو",
+    "team.role": "المسمى الوظيفي",
+    "team.img": "صورة العضو",
 };
 
 export default function SectionCard({
@@ -30,33 +61,61 @@ export default function SectionCard({
             "slider"
         );
 
+    // const hasData = isSlider
+    //     ? fieldsData.slider?.length > 0
+    //     : Object.values(fieldsData).some(
+    //         (value) =>
+    //             value !== null &&
+    //             value !== "" &&
+    //             value !== undefined
+    //     );
     const hasData = isSlider
-        ? fieldsData.slider?.length > 0
-        : Object.values(fieldsData).some(
-              (value) =>
-                  value !== null &&
-                  value !== "" &&
-                  value !== undefined
-          );
+    ? fieldsData.slider?.length > 0
+    : Object.entries(fieldsData).some(([key, value]) => {
+          if (key === "team") return value?.length > 0;
 
-    const imageField = Object.keys(
-        fieldsData
-    ).find(
-        (key) =>
-            key.includes("image") &&
-            fieldsData[key]
-    );
+          if (typeof value === "object" && value !== null) return false;
 
-    const previewFields = Object.entries(
-        fieldsData
-    )
-        .filter(
-            ([key, value]) =>
-                value &&
-                !key.includes("image") &&
-                key !== "slider"
-        )
-        .slice(0, 3);
+          return value !== null && value !== "" && value !== undefined;
+      });
+      
+
+    // const imageField = Object.keys(
+    //     fieldsData
+    // ).find(
+    //     (key) =>
+    //         key.includes("image") &&
+    //         fieldsData[key]
+    // );
+    const imageField = Object.entries(fieldsData).find(
+    ([key, value]) =>
+        key.includes("image") &&
+        value &&
+        typeof value === "string"
+)?.[0];
+
+    // const previewFields = Object.entries(
+    //     fieldsData
+    // )
+    //     .filter(
+    //         ([key, value]) =>
+    //             value &&
+    //             !key.includes("image") &&
+    //             key !== "slider" &&
+    //             key !== "team"
+
+    //     )
+    //     .slice(0, 3);
+    const previewFields = Object.entries(fieldsData)
+    .filter(([key, value]) => {
+        if (!value) return false;
+        if (key === "slider" || key === "team") return false;
+        if (typeof value === "object") return false;
+        if (key.includes("image")) return false;
+
+        return true;
+    })
+    .slice(0, 3);
 
     return (
         <div
@@ -172,6 +231,11 @@ export default function SectionCard({
                             />
                         </div>
                     )}
+                    {fieldsData.team?.length > 0 && (
+                        <div className="text-sm text-gray-600">
+                            👥 عدد الفريق: {fieldsData.team.length}
+                        </div>
+                    )}
 
                     {/* Text Preview */}
                     <div className="flex-1 space-y-3">
@@ -194,13 +258,13 @@ export default function SectionCard({
                                             {String(
                                                 value
                                             ).length >
-                                            70
+                                                70
                                                 ? `${String(
-                                                      value
-                                                  ).slice(
-                                                      0,
-                                                      70
-                                                  )}...`
+                                                    value
+                                                ).slice(
+                                                    0,
+                                                    70
+                                                )}...`
                                                 : value}
                                         </span>
                                     </div>

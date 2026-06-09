@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { FiEye, FiTarget } from "react-icons/fi";
 
-export default function VisionMission() {
+export default function VisionMission({section}) {
     return (
         <section
             dir="rtl"
@@ -26,7 +26,7 @@ export default function VisionMission() {
                     </span>
 
                     <h2 className="mt-3 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--text-dark)]">
-                        رؤيتنا ورسالتنا
+                      {section?.section_title? section.section_title : "رؤيتنا ورسالتنا"}
                     </h2>
 
                     <div className="w-20 h-[2px] bg-[var(--primary)] opacity-70 mx-auto mt-5 rounded-full" />
@@ -61,15 +61,15 @@ export default function VisionMission() {
                             </div>
 
                             <h3 className="text-xl sm:text-2xl font-bold text-[var(--text-dark)]">
-                                رؤيتنا
+                               {section?.vision.title? section.vision.title : "رؤيتنا"}
                             </h3>
                         </div>
 
                         <p className="text-[var(--accent)] text-sm sm:text-base leading-[1.9]">
-                            أن نصبح المصدر الأكثر ثقةً وإلهامًا للوحات الفنية الفاخرة،
+                         {section?.vision.description? section.vision.description : `  أن نصبح المصدر الأكثر ثقةً وإلهامًا للوحات الفنية الفاخرة،
                             وأن نعيد تعريف مفهوم الفخامة الفنية من خلال تقديم أعمال
                             تجمع بين الإبداع والجودة والهوية البصرية الراقية.
-                            نطمح لأن نكون الجسر الذي يربط الفنانين بعشاق الفن حول العالم.
+                            نطمح لأن نكون الجسر الذي يربط الفنانين بعشاق الفن حول العالم.`}
                         </p>
                     </motion.div>
 
@@ -99,15 +99,16 @@ export default function VisionMission() {
                             </div>
 
                             <h3 className="text-xl sm:text-2xl font-bold">
-                                رسالتنا
+                               {section?.mission.title?section.mission.title : "رسالتنا"}
                             </h3>
                         </div>
 
                         <p className="text-gray-300 text-sm sm:text-base leading-[1.9]">
+                            {section?.mission.description? section.mission.description:`
                             اكتشاف وعرض المواهب الفنية المميزة، وتوفير مجموعة مختارة
                             بعناية من الأعمال الراقية التي تثري المساحات وتلهم المشاعر.
                             نلتزم بتقديم تجربة فنية متكاملة تجمع بين الجودة والخدمة الراقية
-                            والذوق الرفيع.
+                            والذوق الرفيع.`}
                         </p>
                     </motion.div>
                 </div>

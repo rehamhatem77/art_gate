@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AboutUsControllter;
+use App\Http\Controllers\Admin\AdminAboutPageController;
 use App\Http\Controllers\Admin\AdminHomePageController;
 use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -31,7 +32,7 @@ Route::get('/', [HomePageController::class, 'index'])->name('home');
 Route::get('/shop', [ShopPageController::class, 'index'])->name('shop');
 Route::get('/shop/{slug}', [ProductDetailsController::class, 'show'])
     ->name('shop.product.show');
-Route::get('/about-us',[AboutUsControllter::class,'index'])->name('about-us');
+Route::get('/about-us', [AboutUsControllter::class, 'index'])->name('about-us');
 
 
 // Route::get('/dashboard', function () {
@@ -93,7 +94,7 @@ Route::middleware('auth')->group(function () {
 
 
 
-                Route::get('/services', [ServicesController::class, 'index'])
+            Route::get('/services', [ServicesController::class, 'index'])
                 ->name('services.index');
             Route::post('/services', [ServicesController::class, 'store'])
                 ->name('services.store');
@@ -131,26 +132,35 @@ Route::middleware('auth')->group(function () {
 
 
 
- Route::get('/homepage', [AdminHomePageController::class, 'index'])
-        ->name('homepage.index');
+            Route::get('/homepage', [AdminHomePageController::class, 'index'])
+                ->name('homepage.index');
 
-    Route::post('/announcement', [AdminHomePageController::class, 'updateAnnouncement'])
-        ->name('homepage.announcement.update');
+            Route::post('/announcement', [AdminHomePageController::class, 'updateAnnouncement'])
+                ->name('homepage.announcement.update');
 
-    Route::post('/slider', [AdminHomePageController::class, 'updateSlider'])
-        ->name('homepage.slider.update');
+            Route::post('/slider', [AdminHomePageController::class, 'updateSlider'])
+                ->name('homepage.slider.update');
 
-    Route::post('/about', [AdminHomePageController::class, 'updateAbout'])
-        ->name('homepage.about.update');
+            Route::post('/about', [AdminHomePageController::class, 'updateAbout'])
+                ->name('homepage.about.update');
 
-    Route::post('/special', [AdminHomePageController::class, 'updateSpecial'])
-        ->name('homepage.special.update');
+            Route::post('/special', [AdminHomePageController::class, 'updateSpecial'])
+                ->name('homepage.special.update');
 
-    Route::post('/category', [AdminHomePageController::class, 'updateCategory'])
-        ->name('homepage.category.update');
+            Route::post('/category', [AdminHomePageController::class, 'updateCategory'])
+                ->name('homepage.category.update');
 
 
 
+    Route::prefix('about-page')->name('about.')->group(function () {
+        Route::get('/', [AdminAboutPageController::class, 'index'])
+        ->name('index');
+    Route::post('/hero', [AdminAboutPageController::class, 'updateHero'])->name('hero.update');
+    Route::post('/vision-mission', [AdminAboutPageController::class, 'updateVisionMission'])->name('vision-mission.update');
+    Route::post('/story', [AdminAboutPageController::class, 'updateStory'])->name('story.update');
+    Route::post('/video', [AdminAboutPageController::class, 'updateVideo'])->name('video.update');
+    Route::post('/team', [AdminAboutPageController::class, 'updateTeam'])->name('team.update');
+});
 
 
             // Route::get('/tableau-numbers', [TableauNumbersController::class, 'index'])
