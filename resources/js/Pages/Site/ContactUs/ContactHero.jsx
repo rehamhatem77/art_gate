@@ -11,7 +11,7 @@ export default function ContactHero({ hero }) {
   return (
     <section
       dir="rtl"
-      className="relative h-[85vh] min-h-[750px] overflow-hidden bg-black"
+      className="relative h-[80vh] min-h-[650px] overflow-hidden bg-black"
     >
       {/* Background */}
       <motion.div

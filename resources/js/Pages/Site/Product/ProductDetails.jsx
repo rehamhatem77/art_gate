@@ -6,8 +6,9 @@ import AdditionalInfo from "./AdditionalInfo";
 import { usePage } from "@inertiajs/react";
 import FeaturesSection from "../Components/FeaturesSection";
 import RecentlyViewedSection from "../Components/RecentlyViewedSection";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useRecentlyViewed from "@/Hooks/useRecentlyViewed";
+import QuickViewModal from "../HomePage/QuickViewModal";
 
 export default function ProductDetails({
     product,
@@ -15,8 +16,22 @@ export default function ProductDetails({
 }) {
     const { services } = usePage().props;
     const { announcement } = usePage().props;
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [showQuickView, setShowQuickView] = useState(false);
+
+    const openQuickView = (product) => {
+        setSelectedProduct(product);
+        setShowQuickView(true);
+    };
+
+
+    const closeQuickView = () => {
+        setShowQuickView(false);
+        setSelectedProduct(null);
+    };
+
     const recentProducts =
-    useRecentlyViewed();
+        useRecentlyViewed();
 
     useEffect(() => {
         if (!product) return;
@@ -91,10 +106,18 @@ export default function ProductDetails({
                                     <ProductCard
                                         key={product.id}
                                         product={product}
+                                        onQuickView={openQuickView}
+
                                     />
                                 ))}
                             </div>
                         </section></>
+                )}
+                {showQuickView && selectedProduct && (
+                    <QuickViewModal
+                        product={selectedProduct}
+                        onClose={closeQuickView}
+                    />
                 )}
 
                 <FeaturesSection services={services} />
@@ -103,7 +126,7 @@ export default function ProductDetails({
                         (item) => item.id !== product.id
                     )}
                 /> */}
-                   <RecentlyViewedSection
+                <RecentlyViewedSection
                     recentProducts={recentProducts}
                 />
 

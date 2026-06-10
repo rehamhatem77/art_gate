@@ -5,6 +5,7 @@ import { LuArrowUpDown } from "react-icons/lu";
 import { FiFilter } from "react-icons/fi";
 import { router } from "@inertiajs/react";
 import { motion, AnimatePresence } from "framer-motion";
+import QuickViewModal from "../HomePage/QuickViewModal";
 
 export default function ProductsSection({
     products,
@@ -94,30 +95,45 @@ export default function ProductsSection({
         setPage(1);
         setHasMore(true);
     }, [products]);
-const containerVariants = {
-    hidden: {},
-    visible: {
-        transition: {
-            staggerChildren: 0.06,
-            delayChildren: 0.5,
+    const containerVariants = {
+        hidden: {},
+        visible: {
+            transition: {
+                staggerChildren: 0.06,
+                delayChildren: 0.5,
+            },
         },
-    },
-};
+    };
 
-const itemVariants = {
-    hidden: {
-        opacity: 0,
-        y: 40,
-    },
-    visible: {
-        opacity: 1,
-        y: 0,
-        transition: {
-            duration: 0.6,
-            ease: "easeOut",
+    const itemVariants = {
+        hidden: {
+            opacity: 0,
+            y: 40,
         },
-    },
-};
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.6,
+                ease: "easeOut",
+            },
+        },
+    };
+
+
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [showQuickView, setShowQuickView] = useState(false);
+
+    const openQuickView = (product) => {
+        setSelectedProduct(product);
+        setShowQuickView(true);
+    };
+
+
+    const closeQuickView = () => {
+        setShowQuickView(false);
+        setSelectedProduct(null);
+    };
     return (
         <div className="w-full ">
 
@@ -262,7 +278,7 @@ h-11 rounded-xl focus:ring-1
                     initial="hidden"
                     whileInView="visible"
                     animate="visible"
-                   
+
                     className="
             grid
             grid-cols-1
@@ -275,9 +291,9 @@ h-11 rounded-xl focus:ring-1
                     {items.map((product) => (
                         <motion.div
                             key={product.id}
-                             variants={itemVariants}
-                            >
-                        <ProductCard key={product.id} product={product} />
+                            variants={itemVariants}
+                        >
+                            <ProductCard key={product.id} product={product} onQuickView={openQuickView} />
                         </motion.div>
                     ))}
                 </motion.div>
@@ -354,6 +370,13 @@ h-11 rounded-xl focus:ring-1
                         إعادة ضبط الفلاتر
                     </button>
                 </div>
+            )}
+
+            {showQuickView && selectedProduct && (
+                <QuickViewModal
+                    product={selectedProduct}
+                    onClose={closeQuickView}
+                />
             )}
 
             {hasMore && items.length !== total && (

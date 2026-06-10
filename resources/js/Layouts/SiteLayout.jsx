@@ -1,4 +1,5 @@
 import AnnouncementBar from "@/Components/AnnouncementBar";
+import FlashToast from "@/Components/FlashToast";
 import Footer from "@/Components/Footer";
 import Navbar from "@/Components/Navbar";
 import { Head, usePage } from "@inertiajs/react";
@@ -19,6 +20,7 @@ export default function SiteLayout({ children, title ,announcement }) {
         <Navbar auth={auth}/>
 
         <main className="flex-grow">
+          <FlashToast />
           {children}
         </main>
        

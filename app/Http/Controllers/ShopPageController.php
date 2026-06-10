@@ -13,6 +13,17 @@ class ShopPageController extends Controller
 {
     public function index(Request $request)
     {
+        $wishlistIds = auth()->check()
+
+            ? auth()->user()
+
+            ->wishlistProducts()
+
+            ->pluck('products.id')
+
+            ->toArray()
+
+            : [];
         $categories = Category::withCount('products')->get();
 
         $tags = Tag::all()
@@ -199,33 +210,98 @@ class ShopPageController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $products = $productsPaginated->getCollection()->map(function ($product) {
+        // $products = $productsPaginated->getCollection()->map(function ($product)use ($wishlistIds) {
 
+        //     return [
+        //         'id' => $product->id,
+        //         'name' => $product->name,
+        //         'code' => $product->code,
+        //         'main_image' => $product->main_image,
+        //         'slug'=>$product->slug,
+        //         'isWishlisted' => in_array(
+
+        //                 $product->id,
+
+        //                 $wishlistIds
+
+        //             ),
+
+        //         'place' => $product->place ?? [],
+        //         'design_colors' => $product->design_colors ?? [],
+        //         'pieces_count' => $product->pieces_count,
+
+        //         'shape' => $product->shape?->shape,
+
+        //         'price' => $product->variants->min('price'),
+
+        //         'category' => $product->category,
+
+        //         'images' => $product->images->map(function ($image) {
+        //             return [
+        //                 'id' => $image->id,
+        //                 'image' => $image->image,
+        //             ];
+        //         }),
+        //     ];
+        // });
+
+        $products = $productsPaginated->getCollection()->map(function ($product) use ($wishlistIds) {
+
+    return [
+        'id' => $product->id,
+        'name' => $product->name,
+        'code' => $product->code,
+        'slug' => $product->slug,
+        'description' => $product->description,
+
+        'main_image' => $product->main_image,
+
+        'isWishlisted' => in_array($product->id, $wishlistIds),
+
+        'place' => $product->place ?? [],
+        'design_colors' => $product->design_colors ?? [],
+        'pieces_count' => $product->pieces_count,
+
+        'shape' => $product->shape?->shape,
+
+        'price' => $product->variants->min('price'),
+
+        'category' => $product->category,
+
+        'tags' => $product->tags, 
+
+      
+        'variants' => $product->variants->map(function ($variant) {
             return [
-                'id' => $product->id,
-                'name' => $product->name,
-                'code' => $product->code,
-                'main_image' => $product->main_image,
-                'slug'=>$product->slug,
+                'id' => $variant->id,
 
-                'place' => $product->place ?? [],
-                'design_colors' => $product->design_colors ?? [],
-                'pieces_count' => $product->pieces_count,
+                'size' => [
+                    'id' => $variant->size->id,
+                    'width' => $variant->size->width,
+                    'height' => $variant->size->height,
+                    'label' => $variant->size->width . ' × ' . $variant->size->height,
+                ],
 
-                'shape' => $product->shape?->shape,
+                'frame' => [
+                    'id' => $variant->frameType->id,
+                    'type' => $variant->frameType->type,
+                    'colors' => $variant->frameType->colors,
+                ],
 
-                'price' => $product->variants->min('price'),
-
-                'category' => $product->category,
-
-                'images' => $product->images->map(function ($image) {
-                    return [
-                        'id' => $image->id,
-                        'image' => $image->image,
-                    ];
-                }),
+                'price' => $variant->price,
+                'stock' => $variant->stock,
+                'image' => $variant->image,
             ];
-        });
+        }),
+
+        'images' => $product->images->map(function ($image) {
+            return [
+                'id' => $image->id,
+                'image' => $image->image,
+            ];
+        }),
+    ];
+});
         if ($request->header('X-Load-More') === 'true') {
 
             return response()->json([

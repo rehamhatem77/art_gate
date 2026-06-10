@@ -2,6 +2,7 @@
 
 namespace App\Models\Admin;
 
+use App\Models\Wishlist;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -64,4 +65,8 @@ public function getTagsAttribute($value)
     {
         return $this->hasMany(ProductVariant::class);
     }
+    public function wishlists()
+{
+    return $this->hasMany(Wishlist::class);
+}
 }

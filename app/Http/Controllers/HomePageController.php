@@ -16,6 +16,17 @@ class HomePageController extends Controller
 
     public function index(Request $request)
     {
+        $wishlistIds = auth()->check()
+
+            ? auth()->user()
+
+            ->wishlistProducts()
+
+            ->pluck('products.id')
+
+            ->toArray()
+
+            : [];
         $announcementData = HomePage::query()->select('announcement')->first();
         $sliderData = HomePage::query()->select('slider')->first();
         $productIds = collect($sliderData?->slider ?? [])
@@ -79,7 +90,7 @@ class HomePageController extends Controller
             ->latest()
             ->take(4)
             ->get()
-            ->map(function ($product) {
+            ->map(function ($product) use ($wishlistIds) {
                 return [
                     'id' => $product->id,
                     'name' => $product->name,
@@ -87,6 +98,13 @@ class HomePageController extends Controller
                     'slug' => $product->slug,
                     'description' => $product->description,
                     'main_image' => $product->main_image,
+                    'isWishlisted' => in_array(
+
+                        $product->id,
+
+                        $wishlistIds
+
+                    ),
                     'price' => $product->variants->min('price'),
                     'category' => $product->category,
                     'tags' => $product->tags,
@@ -153,16 +171,23 @@ class HomePageController extends Controller
         ])
             ->whereIn('id', $topCategories->pluck('id'))
             ->get()
-            ->map(function ($cat) {
+            ->map(function ($cat) use ($wishlistIds) {
                 return [
                     'id' => $cat->id,
                     'name' => $cat->name,
                     'key' => 'category_' . $cat->id,
-                    'products' => $cat->products->map(function ($product) {
+                    'products' => $cat->products->map(function ($product) use ($wishlistIds)  {
                         return [
                             'id' => $product->id,
                             'name' => $product->name,
                             'main_image' => $product->main_image,
+                             'isWishlisted' => in_array(
+
+                                $product->id,
+
+                                $wishlistIds
+
+                            ),
 
                             'category' => $product->category
                                 ? [

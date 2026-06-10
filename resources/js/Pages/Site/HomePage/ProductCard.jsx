@@ -1,6 +1,8 @@
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import { useState } from "react";
 import { FiChevronLeft, FiChevronRight, FiHeart } from "react-icons/fi";
+
+import { FaHeart } from "react-icons/fa";
 
 export default function ProductCard({ product, onQuickView }) {
     const allImages = [
@@ -9,6 +11,7 @@ export default function ProductCard({ product, onQuickView }) {
     ].filter(Boolean);
 
     const [currentImage, setCurrentImage] = useState(0);
+    const { auth } = usePage().props;
 
     const nextImage = (e) => {
         e.stopPropagation();
@@ -25,6 +28,33 @@ export default function ProductCard({ product, onQuickView }) {
             prev === 0 ? allImages.length - 1 : prev - 1,
         );
     };
+
+
+   const toggleWishlist = (product) => {
+    if (!auth.user) {
+        router.visit(route("login"));
+        return;
+    }
+
+    if (product.isWishlisted) {
+        router.delete(
+            route("wishlist.destroy", product.id),
+            {
+                preserveScroll: true,
+                preserveState: true,
+            }
+        );
+    } else {
+        router.post(
+            route("wishlist.store", product.id),
+            {},
+            {
+                preserveScroll: true,
+                preserveState: true,
+            }
+        );
+    }
+};
     return (
         <div
             className="
@@ -35,22 +65,17 @@ export default function ProductCard({ product, onQuickView }) {
     ease-out
 "
         >
-            <button 
-            onClick={() => {
-                                                    router.visit(
-                                                        route(
-                                                            "shop.product.show",
-                                                            product.slug
-                                                        )
-                                                    )
-                                                }}
+            <div
+                onClick={() =>
+                    router.visit(route("shop.product.show", product.slug))
+                }
             >
-            {/* Image */}
-            <div className="relative overflow-hidden rounded-2xl bg-white">
-                {/* Product Code */}
+                {/* Image */}
+                <div className="relative overflow-hidden rounded-2xl bg-white">
+                    {/* Product Code */}
 
-                <div
-                    className="
+                    <div
+                        className="
                         absolute
                         top-3
                         left-3
@@ -66,11 +91,17 @@ export default function ProductCard({ product, onQuickView }) {
                         font-semibold
                         shadow-lg
                     "
-                >
-                    كود المنتج: {product.code}
-                </div>
-                <button
-                    className="
+                    >
+                        كود المنتج: {product.code}
+                    </div>
+                    <button
+
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            toggleWishlist(product);
+                        }}
+
+                        className="
                             absolute
                             top-3
                             right-3
@@ -92,15 +123,22 @@ shadow-md
                             lg:opacity-0
                             lg:group-hover:opacity-100
                         "
-                >
-                    <FiHeart size={20} />
-                </button>
+                    >
+                        {product.isWishlisted ? (
+                            <FaHeart
+                                size={20}
+                                className="text-[var(--primary)]"
+                            />
+                        ) : (
+                            <FiHeart size={20} />
+                        )}
+                    </button>
 
-                {/* Product Image */}
-                <img
-                    src={`/storage/${allImages[currentImage]}`}
-                    alt={product.name}
-                    className="
+                    {/* Product Image */}
+                    <img
+                        src={`/storage/${allImages[currentImage]}`}
+                        alt={product.name}
+                        className="
         w-full
         h-[180px]
         sm:h-[220px]
@@ -112,11 +150,11 @@ shadow-md
         lg:group-hover:h-[240px]
         lg:group-hover:scale-105
     "
-                />
+                    />
 
-                {/* Overlay */}
-                <div
-                    className="
+                    {/* Overlay */}
+                    <div
+                        className="
                         absolute
                         inset-0
                         bg-black/10
@@ -125,14 +163,14 @@ shadow-md
                         transition-all
                         duration-500
                     "
-                />
+                    />
 
-                {/* Arrows - Desktop Only */}
-                {product.images?.length > 0 && (
-                    <>
-                        <button
-                            onClick={prevImage}
-                            className="
+                    {/* Arrows - Desktop Only */}
+                    {product.images?.length > 0 && (
+                        <>
+                            <button
+                                onClick={prevImage}
+                                className="
         absolute
         left-3
         top-1/2
@@ -161,13 +199,13 @@ shadow-md
         transition-all
         duration-300
     "
-                        >
-                            <FiChevronLeft size={18} />
-                        </button>
+                            >
+                                <FiChevronLeft size={18} />
+                            </button>
 
-                        <button
-                            onClick={nextImage}
-                            className="
+                            <button
+                                onClick={nextImage}
+                                className="
         absolute
         right-3
         top-1/2
@@ -196,15 +234,15 @@ shadow-md
         transition-all
         duration-300
     "
-                        >
-                            <FiChevronRight size={18} />
-                        </button>
-                    </>
-                )}
+                            >
+                                <FiChevronRight size={18} />
+                            </button>
+                        </>
+                    )}
 
-                {allImages.length > 1 && (
-                    <div
-                        className="
+                    {allImages.length > 1 && (
+                        <div
+                            className="
         absolute
         bottom-3
         left-1/2
@@ -222,25 +260,24 @@ shadow-md
         transition-all
         duration-300
     "
-                    >
-                        {allImages.map((_, index) => (
-                            <div
-                                key={index}
-                                className={`h-1.5 rounded-full transition-all ${
-                                    currentImage === index
+                        >
+                            {allImages.map((_, index) => (
+                                <div
+                                    key={index}
+                                    className={`h-1.5 rounded-full transition-all ${currentImage === index
                                         ? "w-5 bg-white"
                                         : "w-1.5 bg-white/60"
-                                }`}
-                            />
-                        ))}
-                    </div>
-                )}
-            </div>
+                                        }`}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </div>
 
-            {/* Content */}
-            <div className="pt-3 px-2 text-right">
-                <h3
-                    className="
+                {/* Content */}
+                <div className="pt-3 px-2 text-right">
+                    <h3
+                        className="
                         text-base
                         md:text-lg
                         font-bold
@@ -249,37 +286,40 @@ shadow-md
                         mb-2
                         leading-7
                     "
-                >
-                    {product.name}
-                </h3>
+                    >
+                        {product.name}
+                    </h3>
 
-                <p className="text-sm text-[var(--accent)] mb-2 px-2 line-clamp-1">
-                    {[
-                        product.category?.name,
-                        ...(product.tags?.slice(0, 2).map((tag) => tag.name) ||
-                            []),
-                    ]
-                        .filter(Boolean)
-                        .join(" , ")}
-                </p>
+                    <p className="text-sm text-[var(--accent)] mb-2 px-2 line-clamp-1">
+                        {[
+                            product.category?.name,
+                            ...(product.tags?.slice(0, 2).map((tag) => tag.name) ||
+                                []),
+                        ]
+                            .filter(Boolean)
+                            .join(" , ")}
+                    </p>
 
-                <div
-                    className="
+                    <div
+                        className="
                         text-lg
                         md:text-xl
                         font-bold
                         text-[var(--secondary)]
                     "
-                >
-                    {product.price}
-                    <span className="mr-1 text-base">جنيه</span>
-                </div>
+                    >
+                        {product.price}
+                        <span className="mr-1 text-base">جنيه</span>
+                    </div>
 
-                {/* Fixed Button Area */}
-                <div className="h-14 mt-3 overflow-hidden">
-                    <button
-                        onClick={() => onQuickView(product)}
-                        className="
+                    {/* Fixed Button Area */}
+                    <div className="h-14 mt-3 overflow-hidden">
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onQuickView(product);
+                            }}
+                            className="
                             w-full
                             h-11
                             rounded-full
@@ -301,11 +341,12 @@ shadow-md
 
                             hover:opacity-90
                         "
-                    >
-                        أضف إلى السلة
-                    </button>
-                </div>
-            </div></button>
+                        >
+                            أضف إلى السلة
+                        </button>
+                        
+                    </div>
+                </div></div>
         </div>
     );
 }

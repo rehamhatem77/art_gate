@@ -14,13 +14,15 @@ import { AnimatePresence, motion } from "framer-motion";
 import { getImage } from "@/Utils/GetImage";
 
 import { useEffect } from "react";
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
+import { FaHeart } from "react-icons/fa6";
 export default function QuickViewModal({
     product,
     onClose,
 }) {
 
     const [qty, setQty] = useState(1);
+    const { auth } = usePage().props;
 
 
     const images =
@@ -89,6 +91,50 @@ export default function QuickViewModal({
             );
         }
     }, [selectedVariant]);
+
+
+    const [isWishlisted, setIsWishlisted] = useState(
+    product.isWishlisted
+);
+useEffect(() => {
+    setIsWishlisted(product.isWishlisted);
+}, [product]);
+
+   const toggleWishlist = () => {
+    if (!auth.user) {
+        router.visit(route("login"));
+        return;
+    }
+
+    setIsWishlisted(prev => !prev);
+
+    if (isWishlisted) {
+        router.delete(
+            route("wishlist.destroy", product.id),
+            {
+                preserveScroll: true,
+                preserveState: true,
+
+                onError: () => {
+                    setIsWishlisted(true);
+                },
+            }
+        );
+    } else {
+        router.post(
+            route("wishlist.store", product.id),
+            {},
+            {
+                preserveScroll: true,
+                preserveState: true,
+
+                onError: () => {
+                    setIsWishlisted(false);
+                },
+            }
+        );
+    }
+};
     return (
         <motion.div
             initial={{ opacity: 0 }}
@@ -181,7 +227,7 @@ h-full
                         <div className="grid grid-cols-[60px_1fr] gap-4">
                             {/* Thumbs */}
                             <div className="space-y-3 overflow-y-auto pr-1">
-                                {images.map((image, index) => (
+                                {images?.map((image, index) => (
                                     <button
                                         key={index}
                                         onClick={() => setSelectedImage(image)}
@@ -472,6 +518,11 @@ bg-white
                         >
                             <div className="flex gap-3">
                                 <button
+                                 onClick={(e) => {
+                        
+                            toggleWishlist(product);
+                        }}
+
                                     className="
                                         w-10
                                         h-10
@@ -482,7 +533,15 @@ bg-white
                                         justify-center
                                     "
                                 >
-                                    <FiHeart size={20} className="hover:text-[var(--primary)]" />
+
+                                    {isWishlisted ? (
+                                        <FaHeart
+                                            size={20}
+                                            className=" text-[var(--primary)]"
+                                        />
+                                    ) : (
+                                        <FiHeart size={20} className="hover:text-[var(--primary)]" />
+                                    )}
                                 </button>
 
                                 <button

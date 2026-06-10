@@ -12,7 +12,8 @@ import { FaWhatsapp } from "react-icons/fa";
 
 import { AnimatePresence, motion } from "framer-motion";
 
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
+import { FaHeart } from "react-icons/fa6";
 export default function ProductInfo({
     product,
 }) {
@@ -28,6 +29,11 @@ export default function ProductInfo({
             firstVariant?.size?.label ||
             ""
         );
+    const { auth, footer } = usePage().props;
+
+    const [isWishlisted, setIsWishlisted] = useState(
+        product.isWishlisted || false
+    );
 
     const [
         selectedFrame,
@@ -114,6 +120,65 @@ export default function ProductInfo({
             },
         },
     };
+
+    const toggleWishlist = () => {
+        if (!auth.user) {
+            router.visit(route("login"));
+            return;
+        }
+
+        if (isWishlisted) {
+            router.delete(
+                route("wishlist.destroy", product.id),
+                {
+                    preserveScroll: true,
+
+                    onSuccess: () => {
+                        setIsWishlisted(false);
+                    },
+                }
+            );
+        } else {
+            router.post(
+                route("wishlist.store", product.id),
+                {},
+                {
+                    preserveScroll: true,
+
+                    onSuccess: () => {
+                        setIsWishlisted(true);
+                    },
+                }
+            );
+        }
+    };
+    const orderViaWhatsapp = () => {
+    const phone =
+        footer?.whatsapp?.replace(/\D/g, "") ||
+        "201000000000";
+
+    const message = `
+مرحباً، أريد طلب هذا المنتج:
+
+📌 الاسم: ${product.name}
+🔢 الكود: ${product.code}
+📏 المقاس: ${selectedSize}
+🖼️ نوع الإطار: ${selectedFrame}
+${selectedFrameColor ? `🎨 لون الإطار: ${selectedFrameColor.name}` : ""}
+🔢 الكمية: ${qty}
+💰 السعر الإجمالي: ${total} جنيه
+
+🔗 المنتج:
+${window.location.href}
+`;
+
+    window.open(
+        `https://wa.me/${phone}?text=${encodeURIComponent(
+            message
+        )}`,
+        "_blank"
+    );
+};
     return (
         <motion.div
             variants={containerVariants}
@@ -435,7 +500,7 @@ sm:px-3
                 text-[var(--primary)]
             "
                             >
-                          اختر لون الإطار المناسب لك *
+                                اختر لون الإطار المناسب لك *
                             </h3>
 
                             {selectedVariant?.frame?.colors?.length > 0 && (
@@ -453,7 +518,7 @@ sm:px-3
                                                 <motion.button
                                                     key={color.code}
                                                     type="button"
-                                                    
+
                                                     whileTap={{
                                                         scale: 0.95,
                                                     }}
@@ -687,6 +752,7 @@ sm:px-3
                     </span>
                 </button>
                 <button
+                     onClick={orderViaWhatsapp}
                     className="
                         flex-1
                         h-12
@@ -708,6 +774,7 @@ sm:px-3
                     </span>
                 </button>
                 <button
+                    onClick={toggleWishlist}
                     className="
                         w-12
                         h-12
@@ -718,7 +785,15 @@ sm:px-3
                         justify-center
                     "
                 >
-                    <FiHeart size={22} />
+
+                    {isWishlisted ? (
+                        <FaHeart
+                            size={22}
+                            className="text-[var(--primary)]"
+                        />
+                    ) : (
+                        <FiHeart size={22} />
+                    )}
                 </button>
             </motion.div>
 
