@@ -42,7 +42,7 @@ export default function ProductCard({ product, onQuickView }) {
             {
                 preserveScroll: true,
                 preserveState: true,
-                only: ["wishlistCount"],
+                with: ["wishlistCount"],
             }
         );
     } else {
@@ -52,7 +52,7 @@ export default function ProductCard({ product, onQuickView }) {
             {
                 preserveScroll: true,
                 preserveState: true,
-                only: ["wishlistCount"],
+                with: ["wishlistCount"],
             }
         );
     }

@@ -1,13 +1,24 @@
 import SiteLayout from "@/Layouts/SiteLayout";
 import { motion } from "framer-motion";
 import WishlistCard from "./WishlistCard";
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import { FiHeart, FiArrowLeft } from "react-icons/fi";
+import FeaturesSection from "../Components/FeaturesSection";
+import RecentlyViewedSection from "../Components/RecentlyViewedSection";
+import useRecentlyViewed from "@/Hooks/useRecentlyViewed";
+import { useState } from "react";
 
 export default function Wishlist({ products }) {
+       const { services } = usePage().props;
+      
+        const recentProducts =
+            useRecentlyViewed();
+        const normalizeArray = (value) =>
+            Array.isArray(value) ? value : [];
+      
     return (
         <SiteLayout title="قائمة الأمنيات">
-            <div dir="rtl" className="bg-[#faf8f5] min-h-screen">
+            <div className=" min-h-screen">
 
                 {/* ================= HERO ================= */}
                 <section className="relative h-[420px] overflow-hidden">
@@ -105,7 +116,7 @@ export default function Wishlist({ products }) {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             className="
-                                bg-white
+                               bg-[#faf8f5]
                                 rounded-[30px]
                                 shadow-[0_20px_60px_rgba(0,0,0,0.08)]
                                 border
@@ -217,6 +228,9 @@ export default function Wishlist({ products }) {
                     </div>
                 </section>
             </div>
+
+            <FeaturesSection services={services} />
+            <RecentlyViewedSection recentProducts={recentProducts} />
         </SiteLayout>
     );
 }

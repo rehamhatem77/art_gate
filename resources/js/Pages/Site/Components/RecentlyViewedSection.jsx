@@ -2,7 +2,7 @@ import { router } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import { button } from "framer-motion/client";
 
-export default function RecentlyViewedSection({recentProducts=[]}) {
+export default function RecentlyViewedSection({ recentProducts = [] }) {
     return (
         <section className="pt-18 pb-20 lg:pt-22 lg:pb-28">
             <div className="max-w-7xl mx-auto px-4">
@@ -34,72 +34,79 @@ export default function RecentlyViewedSection({recentProducts=[]}) {
                 </motion.div>
 
                 {/* Products */}
-                {recentProducts?.length>0 ?(
-                   
-                <div
-                    className="
-                        flex
-                        flex-col
-                        lg:flex-row
-                        justify-start
-                        items-start
-                        gap-8
-                        px-8
-                        lg:gap-12
-                    "
-                >
-                    {recentProducts?.map((product, index) => (
-                         <button
-                    
-                     onClick={() => {
-                                                            router.visit(
-                                                                route(
-                                                                    "shop.product.show",
-                                                                    product.slug
-                                                                )
-                                                            )
-                                                        }}
+                {recentProducts?.length > 0 ? (
+
+                    <div
+
+                        className="
+        flex
+        flex-col
+        lg:flex-row
+        justify-center
+        items-stretch
+        gap-6
+        lg:gap-12
+        px-0
+        sm:px-4
+        lg:px-8
+    "
                     >
-                        <motion.div
-                            key={product.id}
-                          
-                            viewport={{ once: true }}
-                            transition={{
-                                duration: 0.5,
-                                delay: index * 0.15,
-                            }}
-                            className="
-                                flex
-                                flex-row-reverse
-                                items-center
-                                gap-5
-                                group
-                                cursor-pointer
-                                max-w-[360px]
+
+                        {recentProducts?.map((product, index) => (
+                            <button
+
+                                onClick={() => {
+                                    router.visit(
+                                        route(
+                                            "shop.product.show",
+                                            product.slug
+                                        )
+                                    )
+                                }}
+                            >
+                                <motion.div
+                                    key={product.id}
+
+                                    viewport={{ once: true }}
+                                    transition={{
+                                        duration: 0.5,
+                                        delay: index * 0.15,
+                                    }}
+                                    className="
+                                 flex
+    flex-row-reverse
+    items-center
+    gap-4
+    sm:gap-5
+    group
+    cursor-pointer
+    w-full
+    max-w-full
+    lg:max-w-[360px]
                             "
-                        >
-                            
-
-                            {/* TEXT LEFT */}
-                            <div className="text-right">
-                                <h3
-                                    className="
-                                        text-[18px]
-                                        leading-9
-                                        font-normal
-                                        text-[#1d1d1d]
-
-                                        transition-colors
-                                        duration-300
-
-                                        
-                                    "
                                 >
-                                    {product.name}
-                                </h3>
 
-                                <div
-                                    className="
+
+                                    {/* TEXT LEFT */}
+                                    <div className="text-right flex-1 min-w-0">
+                                        <h3
+                                            className="
+        text-[16px]
+        sm:text-[18px]
+        leading-7
+        sm:leading-9
+        font-normal
+        text-[#1d1d1d]
+        transition-colors
+        duration-300
+        line-clamp-2
+    "
+                                        >
+                                            {product.name}
+                                        </h3>
+
+                                        <div
+                                            className="
                                         mt-3
 
                                         text-[18px]
@@ -107,31 +114,33 @@ export default function RecentlyViewedSection({recentProducts=[]}) {
 
                                         text-[var(--primary)]
                                     "
-                                >
-                                    {product.price} جنيه
-                                </div>
-                            </div>
-                            {/* IMAGE RIGHT */}
-                            <div className="relative shrink-0">
-                                <img
-                                    src={`/storage/${product.image}`}
-                                    
-                                    alt={product.name}
-                                    className="
-                                        w-[140px]
-                                        h-[140px]
-                                        object-cover
-                                        rounded-md
+                                        >
+                                            {product.price} جنيه
+                                        </div>
+                                    </div>
+                                    {/* IMAGE RIGHT */}
+                                    <div className="relative shrink-0">
+                                        <img
+                                            src={`/storage/${product.image}`}
 
-                                        transition-transform
-                                        duration-500
+                                            alt={product.name}
+                                            className="
+    w-[100px]
+    h-[100px]
+    sm:w-[120px]
+    sm:h-[120px]
+    lg:w-[140px]
+    lg:h-[140px]
+    object-cover
+    rounded-md
+    transition-transform
+    duration-500
+    group-hover:scale-105
+"
+                                        />
 
-                                        group-hover:scale-105
-                                    "
-                                />
-
-                                <div
-                                    className="
+                                        <div
+                                            className="
                                         absolute
                                         top-2
                                         right-2
@@ -147,17 +156,17 @@ export default function RecentlyViewedSection({recentProducts=[]}) {
 
                                         rounded-md
                                     "
-                                >
-                                    كود المنتج: {product.code}
-                                </div>
-                            </div>
-                        </motion.div></button>
-                    ))}
-                </div>
-                ):(
+                                        >
+                                            كود المنتج: {product.code}
+                                        </div>
+                                    </div>
+                                </motion.div></button>
+                        ))}
+                    </div>
+                ) : (
                     <p className=" text-gray-500 text-center">
-                    لا يوجد منتجات تم عرضها بعد
-                </p>
+                        لا يوجد منتجات تم عرضها بعد
+                    </p>
                 )}
             </div>
         </section>
