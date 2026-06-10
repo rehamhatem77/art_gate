@@ -21,14 +21,13 @@ function NavLink({ active, children, onClick, mobile }) {
                 cursor-pointer
                 transition-all duration-300
                 
-                ${
-                    mobile
-                        ? `
+                ${mobile
+                    ? `
                             w-full
                             px-4 py-3
                             rounded-2xl
                           `
-                        : `
+                    : `
                             px-4 py-2
                             flex flex-col items-center
                           `
@@ -50,10 +49,9 @@ function NavLink({ active, children, onClick, mobile }) {
                         
                         ${mobile ? "text-base" : "text-lg"}
 
-                        ${
-                            active
-                                ? "text-[var(--primary)]"
-                                : "text-[var(--text-dark)] group-hover:text-[var(--primary)]"
+                        ${active
+                            ? "text-[var(--primary)]"
+                            : "text-[var(--text-dark)] group-hover:text-[var(--primary)]"
                         }
                     `}
                 >
@@ -69,10 +67,9 @@ function NavLink({ active, children, onClick, mobile }) {
                         origin-right
                         transition-transform duration-300 ease-out
 
-                        ${
-                            active
-                                ? "scale-x-100"
-                                : "scale-x-0 group-hover:scale-x-100"
+                        ${active
+                            ? "scale-x-100"
+                            : "scale-x-0 group-hover:scale-x-100"
                         }
                     `}
                 />
@@ -82,13 +79,13 @@ function NavLink({ active, children, onClick, mobile }) {
 }
 
 function NavigationMenu({ isMobile = false, onClose }) {
-const { url } = usePage();
+    const { url } = usePage();
     const links = [
-        { href: "/", label: "الرئيسية" , routeName: "home"},
-        { href: "/shop", label: "المتجر" , routeName: "shop"},
+        { href: "/", label: "الرئيسية", routeName: "home" },
+        { href: "/shop", label: "المتجر", routeName: "shop" },
         // { href: "/blog", label: "المدونة" , routeName: "blog"},
-        { href: "/about-us", label: "من نحن" , routeName: "about-us"},
-        { href: "/contact-us", label: "اتصل بنا" , routeName: "contact-us"},
+        { href: "/about-us", label: "من نحن", routeName: "about-us" },
+        { href: "/contact-us", label: "اتصل بنا", routeName: "contact-us" },
     ];
 
     return (
@@ -116,13 +113,53 @@ const { url } = usePage();
 }
 
 function UserIcons({ auth, mobile = false }) {
+
+    const { url, props } = usePage();
+    const wishlistCount = props.wishlistCount || 0;
+
+    const isWishlist = url.startsWith("/wishlist");
     const iconClass =
         "cursor-pointer transition-all duration-300 hover:text-[var(--primary)] hover:scale-110 active:scale-95";
 
     if (mobile) {
         return (
             <div className="flex items-center gap-6">
-                <FiHeart size={23} className={iconClass} />
+               
+                    <button
+                        onClick={() => router.get("/wishlist")}
+                        className="relative"
+                    >
+                        <FiHeart
+                            size={22}
+                            className={`${iconClass} ${isWishlist
+                                ? "text-[var(--primary)]"
+                                : ""
+                                }`}
+                        />
+
+                        {wishlistCount > 0 && (
+                            <span
+                                className="
+                absolute
+                -top-2
+                -left-2
+                bg-[var(--primary)]
+                text-white
+                text-[10px]
+                w-4
+                h-4
+                rounded-full
+                flex
+                items-center
+                justify-center
+                font-medium
+            "
+                            >
+                                {wishlistCount}
+                            </span>
+                        )}
+                    </button>
+               
 
                 <div className="relative">
                     <FiShoppingCart size={23} className={iconClass} />
@@ -133,7 +170,7 @@ function UserIcons({ auth, mobile = false }) {
                             bg-[var(--primary)]
                             text-white
                             text-[10px]
-                            w-5 h-5
+                            w-4 h-4
                             rounded-full
                             flex items-center justify-center
                             animate-floating
@@ -175,7 +212,42 @@ function UserIcons({ auth, mobile = false }) {
 
             <FiSearch size={22} className={iconClass} />
 
-            <FiHeart size={22} className={iconClass} />
+          
+                <button
+                    onClick={() => router.get("/wishlist")}
+                    className="relative"
+                >
+                    <FiHeart
+                        size={22}
+                        className={`${iconClass} ${isWishlist
+                            ? "text-[var(--primary)]"
+                            : ""
+                            }`}
+                    />
+
+                    {wishlistCount > 0 && (
+                        <span
+                            className="
+                absolute
+                -top-2
+                -left-2
+                bg-[var(--primary)]
+                text-white
+                text-[10px]
+                w-4
+                h-4
+                rounded-full
+                flex
+                items-center
+                justify-center
+                font-medium
+            "
+                        >
+                            {wishlistCount}
+                        </span>
+                    )}
+                </button>
+           
 
             <div className="relative">
                 <FiShoppingCart size={22} className={iconClass} />
@@ -186,7 +258,7 @@ function UserIcons({ auth, mobile = false }) {
                         bg-[var(--primary)]
                         text-white
                         text-[10px]
-                        w-5 h-5
+                        w-4 h-4
                         rounded-full
                         flex items-center justify-center
                     "
@@ -214,6 +286,11 @@ export default function Navbar({ auth }) {
     const [open, setOpen] = useState(false);
 
     const [scrolled, setScrolled] = useState(false);
+
+    const { url, props } = usePage();
+    const wishlistCount = props.wishlistCount || 0;
+
+    const isWishlist = url.startsWith("/wishlist");
 
     useEffect(() => {
         const handleScroll = () => {
@@ -495,19 +572,47 @@ export default function Navbar({ auth }) {
                 flex items-center justify-center gap-10
             "
                     >
-                        <FiHeart
-                            size={25}
-                            className="
-                    cursor-pointer
+                        <div className="relative">
+                            <FiHeart
+                                onClick={() => router.get("/wishlist")}
+                                size={25}
+                                className={`
+            cursor-pointer
+            hover:text-[var(--primary)]
+            hover:scale-110
+            active:scale-95
+            smooth-transition
+            ${isWishlist
+                                        ? "text-[var(--primary)]"
+                                        : "text-gray-700"}
+        `}
+                            />
 
-                    hover:text-[var(--primary)]
-                    hover:scale-110
-
-                    active:scale-95
-
-                    smooth-transition
-                "
-                        />
+                            {wishlistCount > 0 && (
+                                <span
+                                    className="
+                absolute
+                -top-2
+                -left-3
+                min-w-[18px]
+                h-[18px]
+                px-1
+                rounded-full
+                bg-[var(--primary)]
+                text-white
+                text-[10px]
+                font-semibold
+                flex
+                items-center
+                justify-center
+                shadow-md
+                animate-floating
+            "
+                                >
+                                    {wishlistCount > 99 ? "99+" : wishlistCount}
+                                </span>
+                            )}
+                        </div>
 
                         <div className="relative ">
                             <FiShoppingCart
@@ -526,7 +631,7 @@ export default function Navbar({ auth }) {
 
                             <span
                                 className="
-                        absolute -top-2 -left-2
+                        absolute -top-2 -left-3
                         animate-floating
 
                         bg-[var(--primary)]

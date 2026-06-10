@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Admin\HomePage;
 use App\Models\Admin\Service;
+use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
@@ -57,6 +58,10 @@ class AppServiceProvider extends ServiceProvider
                 'address'     => $contact?->address,
             ];
         }),
+        'wishlistCount' => fn() =>
+    Auth::check()
+        ? Wishlist::where('user_id', Auth::id())->count()
+        : 0,
         ]);
         
     }

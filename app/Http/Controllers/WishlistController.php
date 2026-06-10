@@ -25,6 +25,7 @@ class WishlistController extends Controller
             'id' => $product->id,
             'name' => $product->name,
             'slug' => $product->slug,
+            'code'=>$product->code,
             'main_image' => $product->main_image,
             'price' => $product->variants->min('price'),
             'isWishlisted' => true,
@@ -34,7 +35,7 @@ class WishlistController extends Controller
         ];
     });
 
-        return Inertia::render('Site/Wishlist/WishlistPage', [
+        return Inertia::render('Site/WishlistPage/Wishlist', [
             'products' => $products
         ]);
     }

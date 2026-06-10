@@ -132,6 +132,7 @@ export default function ProductInfo({
                 route("wishlist.destroy", product.id),
                 {
                     preserveScroll: true,
+                    only: ["wishlistCount"],
 
                     onSuccess: () => {
                         setIsWishlisted(false);
@@ -144,6 +145,7 @@ export default function ProductInfo({
                 {},
                 {
                     preserveScroll: true,
+                    only: ["wishlistCount"],
 
                     onSuccess: () => {
                         setIsWishlisted(true);

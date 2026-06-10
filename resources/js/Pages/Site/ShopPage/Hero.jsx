@@ -47,7 +47,11 @@ export default function Hero({ categories, tags, onSelect }) {
                     src="https://images.unsplash.com/photo-1506744038136-46273834b3fb"
                     className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-[#243457]/80" />
+                {/* <div className="absolute inset-0 bg-[#243457]/80" /> */}
+                {/* Overlay */}
+      <div className="absolute inset-0 bg-black/55" />
+
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/40" />
             </div>
 
             <div className="relative max-w-7xl mx-auto px-6 py-16">

@@ -114,6 +114,7 @@ useEffect(() => {
             {
                 preserveScroll: true,
                 preserveState: true,
+                only: ["wishlistCount"],
 
                 onError: () => {
                     setIsWishlisted(true);
@@ -127,6 +128,7 @@ useEffect(() => {
             {
                 preserveScroll: true,
                 preserveState: true,
+                only: ["wishlistCount"],
 
                 onError: () => {
                     setIsWishlisted(false);
