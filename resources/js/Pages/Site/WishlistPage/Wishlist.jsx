@@ -8,7 +8,7 @@ import RecentlyViewedSection from "../Components/RecentlyViewedSection";
 import useRecentlyViewed from "@/Hooks/useRecentlyViewed";
 import { useState } from "react";
 
-export default function Wishlist({ products }) {
+export default function Wishlist({ products ,announcement }) {
        const { services } = usePage().props;
       
         const recentProducts =
@@ -17,7 +17,7 @@ export default function Wishlist({ products }) {
             Array.isArray(value) ? value : [];
       
     return (
-        <SiteLayout title="قائمة الأمنيات">
+        <SiteLayout title="قائمة الأمنيات" announcement={announcement}>
             <div className=" min-h-screen">
 
                 {/* ================= HERO ================= */}
