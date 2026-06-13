@@ -112,107 +112,20 @@ function NavigationMenu({ isMobile = false, onClose }) {
     );
 }
 
-function UserIcons({ auth, mobile = false }) {
+function UserIcons({ auth, mobile = false, cartCount = 0, }) {
 
     const { url, props } = usePage();
     const wishlistCount = props.wishlistCount || 0;
 
     const isWishlist = url.startsWith("/wishlist");
+    const isCart = url.startsWith("/cart");
     const iconClass =
         "cursor-pointer transition-all duration-300 hover:text-[var(--primary)] hover:scale-110 active:scale-95";
 
     if (mobile) {
         return (
             <div className="flex items-center gap-6">
-               
-                    <button
-                        onClick={() => router.get("/wishlist")}
-                        className="relative"
-                    >
-                        <FiHeart
-                            size={22}
-                            className={`${iconClass} ${isWishlist
-                                ? "text-[var(--primary)]"
-                                : ""
-                                }`}
-                        />
 
-                        {wishlistCount > 0 && (
-                            <span
-                                className="
-                absolute
-                -top-2
-                -left-2
-                bg-[var(--primary)]
-                text-white
-                text-[10px]
-                w-4
-                h-4
-                rounded-full
-                flex
-                items-center
-                justify-center
-                font-medium
-            "
-                            >
-                                {wishlistCount}
-                            </span>
-                        )}
-                    </button>
-               
-
-                <div className="relative">
-                    <FiShoppingCart size={23} className={iconClass} />
-
-                    <span
-                        className="
-                            absolute -top-2 -left-2
-                            bg-[var(--primary)]
-                            text-white
-                            text-[10px]
-                            w-4 h-4
-                            rounded-full
-                            flex items-center justify-center
-                            animate-floating
-
-                        "
-                    >
-                        0
-                    </span>
-                </div>
-            </div>
-        );
-    }
-
-    return (
-        <div className="flex items-center gap-5 text-gray-700">
-            {auth?.user ? (
-                <a href="/profile">
-                    <FiUser size={22} className={iconClass} />
-                </a>
-            ) : (
-                <div className="flex items-center gap-2 text-sm md:text-base font-medium">
-                    <a
-                        href="/login"
-                        className="hover:text-[var(--primary)] transition"
-                    >
-                        تسجيل الدخول
-                    </a>
-
-                    <span>/</span>
-
-                    <a
-                        href="/register"
-                        className="text-[var(--primary)] hover:underline"
-                    >
-                        التسجيل
-                    </a>
-                </div>
-            )}
-
-            <FiSearch size={22} className={iconClass} />
-
-          
                 <button
                     onClick={() => router.get("/wishlist")}
                     className="relative"
@@ -247,12 +160,128 @@ function UserIcons({ auth, mobile = false }) {
                         </span>
                     )}
                 </button>
-           
 
-            <div className="relative">
-                <FiShoppingCart size={22} className={iconClass} />
 
-                <span
+                <button className="relative" onClick={() => router.get("/cart")}>
+
+                    <FiShoppingCart size={23} className={`${iconClass} ${isCart
+                        ? "text-[var(--primary)]"
+                        : ""
+                        }`} />
+
+                    {/* <span
+                        className="
+                            absolute -top-2 -left-2
+                            bg-[var(--primary)]
+                            text-white
+                            text-[10px]
+                            w-4 h-4
+                            rounded-full
+                            flex items-center justify-center
+                            animate-floating
+
+                        "
+                    >
+                        0
+                    </span> */}
+                    {cartCount > 0 && (
+                        <span
+                            className="
+            absolute -top-2 -left-2
+            bg-[var(--primary)]
+            text-white
+            text-[10px]
+            min-w-[16px]
+            h-4
+            px-1
+            rounded-full
+            flex
+            items-center
+            justify-center
+            font-medium
+        "
+                        >
+                            {cartCount > 99 ? "99+" : cartCount}
+                        </span>
+                    )}
+                </button>
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex items-center gap-5 text-gray-700">
+            {auth?.user ? (
+                <a href="/profile">
+                    <FiUser size={22} className={iconClass} />
+                </a>
+            ) : (
+                <div className="flex items-center gap-2 text-sm md:text-base font-medium">
+                    <a
+                        href="/login"
+                        className="hover:text-[var(--primary)] transition"
+                    >
+                        تسجيل الدخول
+                    </a>
+
+                    <span>/</span>
+
+                    <a
+                        href="/register"
+                        className="text-[var(--primary)] hover:underline"
+                    >
+                        التسجيل
+                    </a>
+                </div>
+            )}
+
+            <FiSearch size={22} className={iconClass} />
+
+
+            <button
+                onClick={() => router.get("/wishlist")}
+                className="relative"
+            >
+                <FiHeart
+                    size={22}
+                    className={`${iconClass} ${isWishlist
+                        ? "text-[var(--primary)]"
+                        : ""
+                        }`}
+                />
+
+                {wishlistCount > 0 && (
+                    <span
+                        className="
+                absolute
+                -top-2
+                -left-2
+                bg-[var(--primary)]
+                text-white
+                text-[10px]
+                w-4
+                h-4
+                rounded-full
+                flex
+                items-center
+                justify-center
+                font-medium
+            "
+                    >
+                        {wishlistCount}
+                    </span>
+                )}
+            </button>
+
+
+            <button className="relative" onClick={() => router.get("/cart")}>
+
+                <FiShoppingCart size={22} className={`${iconClass} ${isCart
+                    ? "text-[var(--primary)]"
+                    : ""
+                    }`} />
+
+                {/* <span
                     className="
                         absolute -top-2 -left-2
                         bg-[var(--primary)]
@@ -264,8 +293,28 @@ function UserIcons({ auth, mobile = false }) {
                     "
                 >
                     0
-                </span>
-            </div>
+                </span> */}
+                {cartCount > 0 && (
+                    <span
+                        className="
+            absolute -top-2 -left-2
+            bg-[var(--primary)]
+            text-white
+            text-[10px]
+            min-w-[16px]
+            h-4
+            px-1
+            rounded-full
+            flex
+            items-center
+            justify-center
+            font-medium
+        "
+                    >
+                        {cartCount > 99 ? "99+" : cartCount}
+                    </span>
+                )}
+            </button>
         </div>
     );
 }
@@ -289,8 +338,56 @@ export default function Navbar({ auth }) {
 
     const { url, props } = usePage();
     const wishlistCount = props.wishlistCount || 0;
-
     const isWishlist = url.startsWith("/wishlist");
+    const isCart = url.startsWith("/cart");
+    const serverCartCount = props.cartCount || 0;
+
+    const [cartCount, setCartCount] = useState(
+        auth?.user
+            ? serverCartCount
+            : JSON.parse(localStorage.getItem("cart") || "[]")
+                .reduce((sum, item) => sum + item.quantity, 0)
+    );
+
+    useEffect(() => {
+        const updateCartCount = () => {
+            if (auth?.user) {
+                router.reload({
+                    only: ["cartCount"],
+                    preserveScroll: true,
+                    preserveState: true,
+                });
+            } else {
+                const cart =
+                    JSON.parse(localStorage.getItem("cart")) || [];
+
+                const total = cart.reduce(
+                    (sum, item) => sum + item.quantity,
+                    0
+                );
+
+                setCartCount(total);
+            }
+        };
+
+        window.addEventListener(
+            "cart-updated",
+            updateCartCount
+        );
+
+        return () => {
+            window.removeEventListener(
+                "cart-updated",
+                updateCartCount
+            );
+        };
+    }, [auth]);
+
+    useEffect(() => {
+        if (auth?.user) {
+            setCartCount(serverCartCount);
+        }
+    }, [serverCartCount]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -357,11 +454,12 @@ export default function Navbar({ auth }) {
                     </div>
 
                     <div className="hidden md:flex">
-                        <UserIcons auth={auth} />
+                        <UserIcons auth={auth} cartCount={cartCount} />
                     </div>
 
                     <div className="flex md:hidden">
-                        <UserIcons mobile />
+                        <UserIcons mobile auth={auth}
+                            cartCount={cartCount} />
                     </div>
                 </div>
             </header>
@@ -614,10 +712,12 @@ export default function Navbar({ auth }) {
                             )}
                         </div>
 
-                        <div className="relative ">
+                        <button className="relative " onClick={() => router.get("/cart")}>
+
                             <FiShoppingCart
+
                                 size={25}
-                                className="
+                                className={`
                         cursor-pointer
 
                         hover:text-[var(--primary)]
@@ -626,10 +726,13 @@ export default function Navbar({ auth }) {
                         active:scale-95
 
                         smooth-transition
-                    "
+                         ${isCart
+                                        ? "text-[var(--primary)]"
+                                        : "text-gray-700"}
+                    `}
                             />
 
-                            <span
+                            {/* <span
                                 className="
                         absolute -top-2 -left-3
                         animate-floating
@@ -647,8 +750,28 @@ export default function Navbar({ auth }) {
                     "
                             >
                                 0
-                            </span>
-                        </div>
+                            </span> */}
+                            {cartCount > 0 && (
+                                <span
+                                    className="
+            absolute -top-2 -left-2
+            bg-[var(--primary)]
+            text-white
+            text-[10px]
+            min-w-[16px]
+            h-4
+            px-1
+            rounded-full
+            flex
+            items-center
+            justify-center
+            font-medium
+        "
+                                >
+                                    {cartCount > 99 ? "99+" : cartCount}
+                                </span>
+                            )}
+                        </button>
                     </div>
                 </div>
             </div>

@@ -182,7 +182,7 @@ export default function WishlistCard({ product }) {
                         text-[var(--primary)]
                         leading-relaxed
                         line-clamp-2
-                        min-h-[64px]
+                        
                     "
                 >
                     {product.name}

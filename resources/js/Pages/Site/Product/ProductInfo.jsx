@@ -61,6 +61,10 @@ export default function ProductInfo({
         ) || [];
     const [selectedFrameColor, setSelectedFrameColor] =
         useState(null);
+    const [cartError, setCartError] = useState("");
+  
+
+ 
 
     useEffect(() => {
         if (
@@ -154,12 +158,66 @@ export default function ProductInfo({
             );
         }
     };
-    const orderViaWhatsapp = () => {
-    const phone =
-        footer?.whatsapp?.replace(/\D/g, "") ||
-        "201000000000";
 
-    const message = `
+   useEffect(() => {
+    if (
+        !selectedVariant?.frame?.colors?.length
+    ) {
+        setSelectedFrameColor(null);
+    }
+}, [selectedVariant]);
+    const addToCart = () => {
+        setCartError("");
+
+        if (!selectedSize) {
+            setCartError("يرجى اختيار المقاس");
+            return;
+        }
+
+        if (!selectedFrame) {
+            setCartError("يرجى اختيار نوع الإطار");
+            return;
+        }
+
+        if (
+            selectedVariant?.frame?.colors?.length > 0 &&
+            !selectedFrameColor
+        ) {
+            setCartError("يرجى اختيار لون الإطار");
+            return;
+        }
+        const colorData =
+    selectedVariant?.frame?.colors?.length > 0
+        ? {
+              frame_color_name:
+                  selectedFrameColor?.name,
+              frame_color_code:
+                  selectedFrameColor?.code,
+          }
+        : {
+              frame_color_name: null,
+              frame_color_code: null,
+          };
+
+        router.post(
+            route("cart.store"),
+            {
+                product_id: product.id,
+                variant_id: selectedVariant.id,
+                quantity: qty,
+                 ...colorData,
+            },
+            {
+                preserveScroll: true,
+            }
+        );
+    };
+    const orderViaWhatsapp = () => {
+        const phone =
+            footer?.whatsapp?.replace(/\D/g, "") ||
+            "201000000000";
+
+        const message = `
 مرحباً، أريد طلب هذا المنتج:
 
 📌 الاسم: ${product.name}
@@ -174,13 +232,13 @@ ${selectedFrameColor ? `🎨 لون الإطار: ${selectedFrameColor.name}` : 
 ${window.location.href}
 `;
 
-    window.open(
-        `https://wa.me/${phone}?text=${encodeURIComponent(
-            message
-        )}`,
-        "_blank"
-    );
-};
+        window.open(
+            `https://wa.me/${phone}?text=${encodeURIComponent(
+                message
+            )}`,
+            "_blank"
+        );
+    };
     return (
         <motion.div
             variants={containerVariants}
@@ -735,6 +793,7 @@ sm:px-3
                 </div>
 
                 <button
+                    onClick={addToCart}
                     className="
                         flex-1
                         h-12
@@ -754,7 +813,7 @@ sm:px-3
                     </span>
                 </button>
                 <button
-                     onClick={orderViaWhatsapp}
+                    onClick={orderViaWhatsapp}
                     className="
                         flex-1
                         h-12
@@ -800,6 +859,24 @@ sm:px-3
             </motion.div>
 
             {/* Meta */}
+
+            {cartError && (
+                <div
+                    className="
+            mt-4
+            p-3
+            rounded-xl
+            bg-red-50
+            border
+            border-red-200
+            text-red-600
+            text-sm
+            font-medium
+        "
+                >
+                    {cartError}
+                </div>
+            )}
 
             <motion.div variants={itemVariants}
                 className="

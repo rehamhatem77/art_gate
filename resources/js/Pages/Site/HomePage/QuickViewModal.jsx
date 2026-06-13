@@ -16,6 +16,7 @@ import { getImage } from "@/Utils/GetImage";
 import { useEffect } from "react";
 import { router, usePage } from "@inertiajs/react";
 import { FaHeart } from "react-icons/fa6";
+import toast from "react-hot-toast";
 export default function QuickViewModal({
     product,
     onClose,
@@ -44,7 +45,13 @@ export default function QuickViewModal({
     const [selectedFrame, setSelectedFrame] = useState(
         firstVariant?.frame?.type || ""
     );
+    const [selectedFrameColor, setSelectedFrameColor] =
+        useState(null);
 
+    const [cartError, setCartError] =
+        useState("");
+
+    const [addingToCart, setAddingToCart] = useState(false);
     const sizes = [
         ...new Set(
             product?.variants?.map(v => v.size?.label)
@@ -92,51 +99,205 @@ export default function QuickViewModal({
         }
     }, [selectedVariant]);
 
-
+    useEffect(() => {
+        setSelectedFrameColor(null);
+    }, [selectedFrame]);
     const [isWishlisted, setIsWishlisted] = useState(
-    product.isWishlisted
+        product.isWishlisted
+    );
+    useEffect(() => {
+        setIsWishlisted(product.isWishlisted);
+    }, [product]);
+
+    const toggleWishlist = () => {
+        if (!auth.user) {
+            router.visit(route("login"));
+            return;
+        }
+
+        setIsWishlisted(prev => !prev);
+
+        if (isWishlisted) {
+            router.delete(
+                route("wishlist.destroy", product.id),
+                {
+                    preserveScroll: true,
+                    preserveState: true,
+                    with: ["wishlistCount"],
+
+                    onError: () => {
+                        setIsWishlisted(true);
+                    },
+                }
+            );
+        } else {
+            router.post(
+                route("wishlist.store", product.id),
+                {},
+                {
+                    preserveScroll: true,
+                    preserveState: true,
+                    with: ["wishlistCount"],
+
+                    onError: () => {
+                        setIsWishlisted(false);
+                    },
+                }
+            );
+        }
+    };
+
+
+    const addToCart = () => {
+
+
+        if (!selectedVariant) {
+            toast.error("يرجى اختيار المقاس والإطار");
+            return;
+        }
+
+        if (selectedVariant.stock <= 0) {
+            toast.error("هذا المنتج غير متوفر حالياً");
+            return;
+        }
+
+        if (qty > selectedVariant.stock) {
+            toast.error(
+                `المتاح فقط ${selectedVariant.stock} قطعة`
+            );
+            return;
+        }
+        if (
+            selectedVariant?.frame?.colors?.length > 0 &&
+            !selectedFrameColor
+        ) {
+            toast.error(
+                "يرجى اختيار لون الإطار"
+            );
+
+            return;
+        }
+
+        // Logged User
+        if (auth.user) {
+
+            router.post(
+                route("cart.store"),
+                {
+                    product_id: product.id,
+                    variant_id: selectedVariant.id,
+                    quantity: qty,
+                    frame_color_name:
+                        selectedFrameColor?.name,
+
+                    frame_color_code:
+                        selectedFrameColor?.code,
+                },
+                {
+                    preserveScroll: true,
+                    preserveState: true,
+
+                    onSuccess: () => {
+
+                        window.dispatchEvent(
+                            new CustomEvent("cart-updated")
+                        );
+
+
+                    },
+
+                    onError: (errors) => {
+
+                        const message =
+                            errors.message ||
+                            Object.values(errors)[0];
+
+                    },
+                }
+            );
+
+            return;
+        }
+
+        // Guest User
+        const cart =
+            JSON.parse(
+                localStorage.getItem("cart")
+            ) || [];
+
+       const existingItem = cart.find(
+    item =>
+        item.product_id === product.id &&
+        item.variant_id === selectedVariant.id &&
+        item.frame_color_code ===
+            selectedFrameColor?.code
 );
-useEffect(() => {
-    setIsWishlisted(product.isWishlisted);
-}, [product]);
 
-   const toggleWishlist = () => {
-    if (!auth.user) {
-        router.visit(route("login"));
-        return;
-    }
+        if (existingItem) {
 
-    setIsWishlisted(prev => !prev);
+            const newQty =
+                existingItem.quantity + qty;
 
-    if (isWishlisted) {
-        router.delete(
-            route("wishlist.destroy", product.id),
-            {
-                preserveScroll: true,
-                preserveState: true,
-                with: ["wishlistCount"],
+            if (newQty > selectedVariant.stock) {
 
-                onError: () => {
-                    setIsWishlisted(true);
-                },
+                toast.error(
+                    `المتاح فقط ${selectedVariant.stock} قطعة`
+                );
+
+                return;
             }
-        );
-    } else {
-        router.post(
-            route("wishlist.store", product.id),
-            {},
-            {
-                preserveScroll: true,
-                preserveState: true,
-                with: ["wishlistCount"],
 
-                onError: () => {
-                    setIsWishlisted(false);
-                },
-            }
+            existingItem.quantity = newQty;
+
+        } else {
+
+           cart.push({
+    id: crypto.randomUUID(),
+
+    product_id: product.id,
+    variant_id: selectedVariant.id,
+
+    name: product.name,
+    image:
+        product.main_image ||
+        product.images?.[0]?.image,
+
+    slug: product.slug,
+
+    price: selectedVariant.price,
+
+    size: selectedSize,
+
+    frame: selectedFrame,
+
+    frame_color_name:
+        selectedFrameColor?.name || null,
+
+    frame_color_code:
+        selectedFrameColor?.code || null,
+
+    quantity: qty,
+
+    stock: selectedVariant.stock,
+});
+        }
+
+        localStorage.setItem(
+            "cart",
+            JSON.stringify(cart)
         );
-    }
-};
+
+        window.dispatchEvent(
+            new CustomEvent("cart-updated")
+        );
+
+        toast.success(
+            "تمت إضافة المنتج إلى السلة بنجاح"
+        );
+
+
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0 }}
@@ -145,7 +306,7 @@ useEffect(() => {
             transition={{ duration: 0.25 }}
             className="
         fixed inset-0
-        z-[9999]
+        z-[99]
         flex items-center justify-center
         p-4
         bg-black/50
@@ -412,6 +573,72 @@ text-sm
                                     ))}
                                 </div>
                             </div>
+                            {selectedVariant?.frame?.colors?.length > 0 && (
+                                <div className="mt-4">
+                                    <h3 className="font-medium text-[var(--text-dark)] mb-3">
+                                        لون الإطار
+                                    </h3>
+
+                                    <div className="flex flex-wrap gap-4">
+                                        {selectedVariant.frame.colors.map(
+                                            (color) => {
+                                                const isSelected =
+                                                    selectedFrameColor?.code ===
+                                                    color.code;
+
+                                                return (
+                                                    <button
+                                                        key={color.code}
+                                                        type="button"
+                                                        onClick={() =>
+                                                            setSelectedFrameColor(
+                                                                color
+                                                            )
+                                                        }
+                                                        className="
+                                flex
+                                flex-col
+                                items-center
+                                gap-2
+                            "
+                                                    >
+                                                        <div
+                                                            className={`
+                                    w-10
+                                    h-10
+                                    rounded-full
+                                    border-2
+                                    transition
+
+                                    ${isSelected
+                                                                    ? "border-[var(--primary)] ring-2 ring-[var(--primary)]"
+                                                                    : "border-gray-300"
+                                                                }
+                                `}
+                                                            style={{
+                                                                backgroundColor:
+                                                                    color.code,
+                                                            }}
+                                                        />
+
+                                                        <span
+                                                            className={`
+                                    text-xs
+                                    ${isSelected
+                                                                    ? "text-[var(--primary)] font-medium"
+                                                                    : "text-gray-500"
+                                                                }
+                                `}
+                                                        >
+                                                            {color.name}
+                                                        </span>
+                                                    </button>
+                                                );
+                                            }
+                                        )}
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Quantity */}
                             <div className="mt-4">
@@ -520,10 +747,10 @@ bg-white
                         >
                             <div className="flex gap-3">
                                 <button
-                                 onClick={(e) => {
-                        
-                            toggleWishlist(product);
-                        }}
+                                    onClick={(e) => {
+
+                                        toggleWishlist(product);
+                                    }}
 
                                     className="
                                         w-10
@@ -547,6 +774,7 @@ bg-white
                                 </button>
 
                                 <button
+                                    onClick={addToCart}
                                     disabled={
                                         !selectedVariant ||
                                         selectedVariant.stock <= 0

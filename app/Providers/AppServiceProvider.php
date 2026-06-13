@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Admin\HomePage;
 use App\Models\Admin\Service;
+use App\Models\Cart;
 use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Vite;
@@ -43,26 +44,30 @@ class AppServiceProvider extends ServiceProvider
                     ->get();
             }),
             'footer' => fn() => cache()->remember('global_footer', 3600, function () {
-            $contact = \App\Models\Admin\ContactPage::first();
+                $contact = \App\Models\Admin\ContactPage::first();
 
-            return [
-                'description' => $contact?->footer_description,
-                'facebook'    => $contact?->facebook,
-                'instagram'   => $contact?->instagram,
-                'pinterest'   => $contact?->pinterest,
-                'tiktok'      => $contact?->tiktok,
-                'x'            => $contact?->x,
-                'phone'       => $contact?->phone,
-                'email'       => $contact?->email,
-                'whatsapp'    => $contact?->whatsapp,
-                'address'     => $contact?->address,
-            ];
-        }),
-        'wishlistCount' => fn() =>
-    Auth::check()
-        ? Wishlist::where('user_id', Auth::id())->count()
-        : 0,
+                return [
+                    'description' => $contact?->footer_description,
+                    'facebook'    => $contact?->facebook,
+                    'instagram'   => $contact?->instagram,
+                    'pinterest'   => $contact?->pinterest,
+                    'tiktok'      => $contact?->tiktok,
+                    'x'            => $contact?->x,
+                    'phone'       => $contact?->phone,
+                    'email'       => $contact?->email,
+                    'whatsapp'    => $contact?->whatsapp,
+                    'address'     => $contact?->address,
+                ];
+            }),
+            'wishlistCount' => fn() =>
+            Auth::check()
+                ? Wishlist::where('user_id', Auth::id())->count()
+                : 0,
+
+            'cartCount' => fn() => Auth::check()
+                ? Cart::where('user_id', Auth::id())
+                ->sum('quantity')
+                : 0,
         ]);
-        
     }
 }

@@ -6,6 +6,9 @@ import { FiFilter } from "react-icons/fi";
 import { router } from "@inertiajs/react";
 import { motion, AnimatePresence } from "framer-motion";
 import QuickViewModal from "../HomePage/QuickViewModal";
+import { FaPalette, FaPallet } from "react-icons/fa6";
+import { MdPallet } from "react-icons/md";
+import { IoColorPaletteOutline } from "react-icons/io5";
 
 export default function ProductsSection({
     products,
@@ -328,7 +331,7 @@ h-11 rounded-xl focus:ring-1
                 mb-5
             "
                     >
-                        <span className="text-4xl">🎨</span>
+                        <span ><IoColorPaletteOutline size={38}/></span>
                     </div>
 
                     <h3
