@@ -13,10 +13,12 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { getImage } from "@/Utils/GetImage";
 
+
 import { useEffect } from "react";
 import { router, usePage } from "@inertiajs/react";
 import { FaHeart } from "react-icons/fa6";
 import toast from "react-hot-toast";
+import { addToAuthCart, addToGuestCart } from "@/Utils/Cart";
 export default function QuickViewModal({
     product,
     onClose,
@@ -149,155 +151,51 @@ export default function QuickViewModal({
 
 
     const addToCart = () => {
+        if (!selectedVariant) return toast.error("اختر المقاس والإطار");
 
+        if (selectedVariant.stock <= 0)
+            return toast.error("غير متوفر");
 
-        if (!selectedVariant) {
-            toast.error("يرجى اختيار المقاس والإطار");
-            return;
-        }
-
-        if (selectedVariant.stock <= 0) {
-            toast.error("هذا المنتج غير متوفر حالياً");
-            return;
-        }
-
-        if (qty > selectedVariant.stock) {
-            toast.error(
-                `المتاح فقط ${selectedVariant.stock} قطعة`
-            );
-            return;
-        }
+        if (qty > selectedVariant.stock)
+            return toast.error(`المتاح فقط ${selectedVariant.stock}`);
+        // FRAME COLOR VALIDATION
         if (
             selectedVariant?.frame?.colors?.length > 0 &&
             !selectedFrameColor
         ) {
-            toast.error(
-                "يرجى اختيار لون الإطار"
-            );
-
-            return;
+            setCartError("يرجى اختيار لون الإطار");
+            return toast.error("يرجى اختيار لون الإطار");
         }
 
-        // Logged User
+
+        const payload = {
+            product_id: product.id,
+            variant_id: selectedVariant.id,
+            quantity: qty,
+            frame_color_name: selectedFrameColor?.name,
+            frame_color_code: selectedFrameColor?.code,
+            price: selectedVariant.price,
+            name: product.name,
+            image: product.main_image || product.images?.[0]?.image,
+            slug: product.slug,
+            size: selectedSize,
+            frame: selectedFrame,
+            stock: selectedVariant.stock,
+        };
+
         if (auth.user) {
+            addToAuthCart({
+                ...payload,
+                onSuccess: () => {
+                    window.dispatchEvent(new CustomEvent("cart-updated"));
 
-            router.post(
-                route("cart.store"),
-                {
-                    product_id: product.id,
-                    variant_id: selectedVariant.id,
-                    quantity: qty,
-                    frame_color_name:
-                        selectedFrameColor?.name,
-
-                    frame_color_code:
-                        selectedFrameColor?.code,
                 },
-                {
-                    preserveScroll: true,
-                    preserveState: true,
-
-                    onSuccess: () => {
-
-                        window.dispatchEvent(
-                            new CustomEvent("cart-updated")
-                        );
-
-
-                    },
-
-                    onError: (errors) => {
-
-                        const message =
-                            errors.message ||
-                            Object.values(errors)[0];
-
-                    },
-                }
-            );
-
-            return;
-        }
-
-        // Guest User
-        const cart =
-            JSON.parse(
-                localStorage.getItem("cart")
-            ) || [];
-
-       const existingItem = cart.find(
-    item =>
-        item.product_id === product.id &&
-        item.variant_id === selectedVariant.id &&
-        item.frame_color_code ===
-            selectedFrameColor?.code
-);
-
-        if (existingItem) {
-
-            const newQty =
-                existingItem.quantity + qty;
-
-            if (newQty > selectedVariant.stock) {
-
-                toast.error(
-                    `المتاح فقط ${selectedVariant.stock} قطعة`
-                );
-
-                return;
-            }
-
-            existingItem.quantity = newQty;
-
+            });
         } else {
-
-           cart.push({
-    id: crypto.randomUUID(),
-
-    product_id: product.id,
-    variant_id: selectedVariant.id,
-
-    name: product.name,
-    image:
-        product.main_image ||
-        product.images?.[0]?.image,
-
-    slug: product.slug,
-
-    price: selectedVariant.price,
-
-    size: selectedSize,
-
-    frame: selectedFrame,
-
-    frame_color_name:
-        selectedFrameColor?.name || null,
-
-    frame_color_code:
-        selectedFrameColor?.code || null,
-
-    quantity: qty,
-
-    stock: selectedVariant.stock,
-});
+            addToGuestCart(payload);
+            toast.success("تم إضافة المنتج إلي السلة");
         }
-
-        localStorage.setItem(
-            "cart",
-            JSON.stringify(cart)
-        );
-
-        window.dispatchEvent(
-            new CustomEvent("cart-updated")
-        );
-
-        toast.success(
-            "تمت إضافة المنتج إلى السلة بنجاح"
-        );
-
-
     };
-
     return (
         <motion.div
             initial={{ opacity: 0 }}
@@ -733,7 +631,26 @@ text-sm
                             </div>
 
 
+
+
                         </div>
+                        {cartError && (
+                            <div
+                                className="
+            mt-3
+            p-3
+            rounded-xl
+            bg-red-50
+            border
+            border-red-200
+            text-red-600
+            text-sm
+            font-medium
+        "
+                            >
+                                {cartError}
+                            </div>
+                        )}
 
                         {/* Sticky Footer */}
                         <div

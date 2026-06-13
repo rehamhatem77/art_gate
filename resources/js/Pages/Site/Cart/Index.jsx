@@ -7,6 +7,13 @@ import EmptyCart from "./EmptyCart";
 import { motion } from "framer-motion";
 import { FiShoppingBag, FiTruck } from "react-icons/fi";
 import { useEffect, useState } from "react";
+import {
+    removeAuthCartItem,
+    removeGuestCartItem,
+    updateAuthCartItem,
+    updateGuestCartItem
+} from "@/Utils/Cart";
+import toast from "react-hot-toast";
 
 export default function Index({ cartItems = [], announcement }) {
 
@@ -48,46 +55,21 @@ export default function Index({ cartItems = [], announcement }) {
 
     /* ================= AUTH CART ================= */
     const updateQuantity = (item, quantity) => {
-        if (quantity < 1) return;
-
-        router.patch(
-            route("cart.update", item.id),
-            { quantity },
-            { preserveScroll: true }
-        );
+        if (auth.user) {
+            updateAuthCartItem(item.id, quantity);
+        } else {
+            updateGuestCartItem(item.id, quantity);
+        }
     };
 
     const removeItem = (id) => {
-        router.delete(route("cart.destroy", id), {
-            preserveScroll: true,
-        });
-    };
-
-    /* ================= GUEST CART ================= */
-    const updateGuestQuantity = (item, quantity) => {
-        if (quantity < 1) return;
-
-        const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-        const updated = cart.map((c) =>
-            c.id === item.id ? { ...c, quantity } : c
-        );
-
-        localStorage.setItem("cart", JSON.stringify(updated));
-        setGuestCartItems(updated);
-
-        window.dispatchEvent(new Event("cart-updated"));
-    };
-
-    const removeGuestItem = (key) => {
-        const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-        const updated = cart.filter((c) => c.id !== key);
-
-        localStorage.setItem("cart", JSON.stringify(updated));
-        setGuestCartItems(updated);
-
-        window.dispatchEvent(new Event("cart-updated"));
+        if (auth.user) {
+            removeAuthCartItem(id);
+           
+        } else {
+            removeGuestCartItem(id);
+            toast.success("تم حذف المنتج من السلة");
+        }
     };
 
     /* ================= MOTION ================= */
@@ -142,7 +124,7 @@ export default function Index({ cartItems = [], announcement }) {
         <SiteLayout title="سلة التسوق" announcement={announcement}>
             <CartHeader />
 
-            <section className="min-h-screen ">
+            <section className="min-h-screen py-5">
                 <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-10">
 
                     {items.length ? (
@@ -235,14 +217,10 @@ export default function Index({ cartItems = [], announcement }) {
                                 {/* PRODUCTS */}
                                 <motion.div
                                     variants={container}
-                                    className="space-y-5"
+                                    className="space-y-5  "
                                 >
                                     {items.map((itemData, index) => {
-                                        const key =
-                                            auth.user
-                                                ? itemData.id
-                                                : itemData.id ||
-                                                `${itemData.product_id}-${itemData.variant_id}-${index}`;
+                                        const key = itemData.id ?? `${itemData.product_id}-${itemData.variant_id}-${index}`;
                                         return (
                                             <motion.div
                                                 key={key}
@@ -253,16 +231,8 @@ export default function Index({ cartItems = [], announcement }) {
                                                 <CartItem
                                                     item={itemData}
                                                     auth={auth}
-                                                    updateQuantity={
-                                                        auth.user
-                                                            ? updateQuantity
-                                                            : updateGuestQuantity
-                                                    }
-                                                    removeItem={
-                                                        auth.user
-                                                            ? removeItem
-                                                            : removeGuestItem
-                                                    }
+                                                    updateQuantity={updateQuantity}
+                                                    removeItem={removeItem}
                                                 />
                                             </motion.div>
                                         )

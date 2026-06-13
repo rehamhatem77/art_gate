@@ -14,6 +14,8 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import { router, usePage } from "@inertiajs/react";
 import { FaHeart } from "react-icons/fa6";
+import { addToAuthCart, addToGuestCart } from "@/Utils/Cart";
+import toast from "react-hot-toast";
 export default function ProductInfo({
     product,
 }) {
@@ -62,9 +64,9 @@ export default function ProductInfo({
     const [selectedFrameColor, setSelectedFrameColor] =
         useState(null);
     const [cartError, setCartError] = useState("");
-  
 
- 
+
+
 
     useEffect(() => {
         if (
@@ -159,24 +161,27 @@ export default function ProductInfo({
         }
     };
 
-   useEffect(() => {
-    if (
-        !selectedVariant?.frame?.colors?.length
-    ) {
-        setSelectedFrameColor(null);
-    }
-}, [selectedVariant]);
+    useEffect(() => {
+        if (
+            !selectedVariant?.frame?.colors?.length
+        ) {
+            setSelectedFrameColor(null);
+        }
+    }, [selectedVariant]);
     const addToCart = () => {
         setCartError("");
 
-        if (!selectedSize) {
-            setCartError("يرجى اختيار المقاس");
-            return;
+        if (!selectedVariant) {
+            setCartError("يرجى اختيار المقاس والإطار");
+            return toast.error("يرجى اختيار المقاس والإطار");
         }
 
-        if (!selectedFrame) {
-            setCartError("يرجى اختيار نوع الإطار");
-            return;
+        if (selectedVariant.stock <= 0) {
+            return toast.error("المنتج غير متوفر حالياً");
+        }
+
+        if (qty > selectedVariant.stock) {
+            return toast.error(`المتاح فقط ${selectedVariant.stock}`);
         }
 
         if (
@@ -184,33 +189,58 @@ export default function ProductInfo({
             !selectedFrameColor
         ) {
             setCartError("يرجى اختيار لون الإطار");
-            return;
+            return toast.error("يرجى اختيار لون الإطار");
         }
-        const colorData =
-    selectedVariant?.frame?.colors?.length > 0
-        ? {
-              frame_color_name:
-                  selectedFrameColor?.name,
-              frame_color_code:
-                  selectedFrameColor?.code,
-          }
-        : {
-              frame_color_name: null,
-              frame_color_code: null,
-          };
 
-        router.post(
-            route("cart.store"),
-            {
-                product_id: product.id,
-                variant_id: selectedVariant.id,
-                quantity: qty,
-                 ...colorData,
-            },
-            {
-                preserveScroll: true,
-            }
-        );
+        const payload = {
+            product_id: product.id,
+            variant_id: selectedVariant.id,
+            quantity: qty,
+
+            frame_color_name:
+                selectedFrameColor?.name || null,
+
+            frame_color_code:
+                selectedFrameColor?.code || null,
+
+            price: selectedVariant.price,
+            name: product.name,
+
+            image:
+                product.main_image ||
+                product.images?.[0]?.image,
+
+            slug: product.slug,
+
+            size: selectedSize,
+            frame: selectedFrame,
+
+            stock: selectedVariant.stock,
+        };
+
+        if (auth.user) {
+            addToAuthCart({
+                ...payload,
+
+                onSuccess: () => {
+                    window.dispatchEvent(
+                        new CustomEvent("cart-updated")
+                    );
+
+
+                },
+            });
+        } else {
+            addToGuestCart(payload);
+
+            window.dispatchEvent(
+                new CustomEvent("cart-updated")
+            );
+
+            toast.success(
+                "تم إضافة المنتج إلى السلة"
+            );
+        }
     };
     const orderViaWhatsapp = () => {
         const phone =
@@ -582,13 +612,15 @@ sm:px-3
                                                     whileTap={{
                                                         scale: 0.95,
                                                     }}
-                                                    onClick={() =>
+                                                    onClick={() => {
                                                         setSelectedFrameColor(
                                                             selectedFrameColor?.code === color.code
                                                                 ? null
                                                                 : color
-                                                        )
-                                                    }
+                                                        );
+
+                                                        setCartError("");
+                                                    }}
                                                     className="
                                 flex
                                 flex-col
