@@ -118,7 +118,7 @@ function UserIcons({ auth, mobile = false, cartCount = 0, }) {
     const wishlistCount = props.wishlistCount || 0;
 
     const isWishlist = url.startsWith("/wishlist");
-    const isCart = url.startsWith("/cart");
+    const isCart = url.startsWith("/cart")||url.startsWith("/checkout");
     const iconClass =
         "cursor-pointer transition-all duration-300 hover:text-[var(--primary)] hover:scale-110 active:scale-95";
 
@@ -339,7 +339,7 @@ export default function Navbar({ auth }) {
     const { url, props } = usePage();
     const wishlistCount = props.wishlistCount || 0;
     const isWishlist = url.startsWith("/wishlist");
-    const isCart = url.startsWith("/cart");
+    const isCart = url.startsWith("/cart")||url.startsWith("/checkout");
     const serverCartCount = props.cartCount || 0;
 
     const [cartCount, setCartCount] = useState(

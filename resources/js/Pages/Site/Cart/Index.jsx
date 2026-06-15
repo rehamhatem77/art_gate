@@ -122,7 +122,7 @@ export default function Index({ cartItems = [], announcement }) {
     }
     return (
         <SiteLayout title="سلة التسوق" announcement={announcement}>
-            <CartHeader />
+            <CartHeader currentStep = {1}  />
 
             <section className="min-h-screen py-5">
                 <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-10">

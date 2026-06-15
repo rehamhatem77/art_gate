@@ -6,6 +6,7 @@ use App\Models\Admin\Product;
 use App\Models\Admin\ProductVariant;
 use App\Models\Cart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class CartController extends Controller
@@ -18,7 +19,7 @@ class CartController extends Controller
             'variant.size',
             'variant.frameType'
         ])
-            ->where('user_id', auth()->id())
+            ->where('user_id', Auth::id())
             ->get()
             ->map(function ($item) {
 
@@ -88,7 +89,7 @@ class CartController extends Controller
         );
 
         $cartItem = Cart::firstOrNew([
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'product_id' => $request->product_id,
             'variant_id' => $request->variant_id,
             'frame_color_name' => $request->frame_color_name,
@@ -121,7 +122,7 @@ class CartController extends Controller
             'quantity' => ['required', 'integer', 'min:1']
         ]);
 
-        if ($cart->user_id !== auth()->id()) {
+        if ($cart->user_id !== Auth::id()) {
             abort(403);
         }
 
@@ -143,7 +144,7 @@ class CartController extends Controller
     }
     public function destroy(Cart $cart)
     {
-        if ($cart->user_id !== auth()->id()) {
+        if ($cart->user_id !== Auth::id()) {
             abort(403);
         }
 
@@ -172,7 +173,7 @@ class CartController extends Controller
 
             Cart::updateOrCreate(
                 [
-                    'user_id' => auth()->id(),
+                    'user_id' => Auth::id(),
                     'product_id' => $product->id
                 ],
                 [

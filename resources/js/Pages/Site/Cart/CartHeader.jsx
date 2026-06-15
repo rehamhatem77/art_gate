@@ -1,27 +1,27 @@
 import { motion } from "framer-motion";
-import {
-    FiShoppingCart,
-    FiCreditCard,
-    FiCheckCircle,
-} from "react-icons/fi";
+import { FiShoppingCart, FiCreditCard, FiCheckCircle } from "react-icons/fi";
 import { router } from "@inertiajs/react";
 
-export default function CartHeader() {
+export default function CartHeader({ currentStep}) {
+
     const steps = [
         {
             title: "السلة",
             icon: FiShoppingCart,
-            active: true,
+            active: currentStep === 1,
+            route: "cart.index",
         },
         {
-            title: "الدفع",
+            title: "الطلب",
             icon: FiCreditCard,
-            active: false,
+            active: currentStep === 2,
+            route: "checkout.index",
         },
         {
             title: "التأكيد",
             icon: FiCheckCircle,
-            active: false,
+            active: currentStep === 3,
+            route: null,
         },
     ];
 
@@ -29,7 +29,6 @@ export default function CartHeader() {
         <>
             {/* ================= HERO ================= */}
             <section className="relative h-[420px] overflow-hidden">
-
                 {/* IMAGE */}
                 <motion.img
                     initial={{ scale: 1.1, opacity: 0 }}
@@ -57,7 +56,6 @@ export default function CartHeader() {
 
                 {/* CONTENT */}
                 <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
-
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -113,7 +111,7 @@ export default function CartHeader() {
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                 viewport={{ once: false, amount: 0.2 }} 
+                viewport={{ once: false, amount: 0.2 }}
                 className="relative z-20 -mt-14 md:-mt-16 mb-14 px-4"
             >
                 <div
@@ -131,17 +129,27 @@ export default function CartHeader() {
                 >
                     <div className="flex justify-center">
                         <div className="flex items-center gap-4 md:gap-8">
-
                             {steps.map((step, index) => {
                                 const Icon = step.icon;
 
                                 return (
-                                    <div key={step.title} className="flex items-center">
-
-                                        <motion.div
+                                    <div
+                                        key={step.title}
+                                        className="flex items-center"
+                                    >
+                                        <motion.button
+                                            onClick={() => {
+                                                if (step.route==='cart.index') {
+                                                    router.visit(
+                                                        route(step.route),
+                                                    );
+                                                }
+                                            }}
                                             initial={{ opacity: 0, scale: 0.9 }}
                                             animate={{ opacity: 1, scale: 1 }}
-                                            transition={{ delay: 0.5 + index * 0.1 }}
+                                            transition={{
+                                                delay: 0.5 + index * 0.1,
+                                            }}
                                             className="flex flex-col items-center"
                                         >
                                             <div
@@ -176,7 +184,7 @@ export default function CartHeader() {
                                             >
                                                 {step.title}
                                             </span>
-                                        </motion.div>
+                                        </motion.button>
 
                                         {/* connector */}
                                         {index < steps.length - 1 && (
@@ -187,7 +195,6 @@ export default function CartHeader() {
                                     </div>
                                 );
                             })}
-
                         </div>
                     </div>
                 </div>

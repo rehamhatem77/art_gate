@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\SizesController;
 use App\Http\Controllers\Admin\TableauNumbersController;
 use App\Http\Controllers\Admin\TagsController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactPageController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\ProductDetailsController;
@@ -40,10 +41,22 @@ Route::get('/shop/{slug}', [ProductDetailsController::class, 'show'])
 Route::get('/about-us', [AboutUsControllter::class, 'index'])->name('about-us');
 Route::get('/contact-us', [ContactPageController::class, 'index'])->name('contact-us');
 Route::post('/contact', [ContactPageController::class, 'store'])->name('contact.store');
-  Route::get(
-        '/cart',
-        [CartController::class, 'index']
-    )->name('cart.index');
+Route::get(
+    '/cart',
+    [CartController::class, 'index']
+)->name('cart.index');
+
+Route::get('/checkout', [CheckoutController::class, 'index'])
+    ->name('checkout.index');
+
+Route::post('/checkout', [CheckoutController::class, 'store'])
+    ->name('checkout.store');
+Route::post(
+    '/checkout/sync',
+    [CheckoutController::class, 'sync']
+)->name('checkout.sync');
+Route::get('/order/success/{order}', [CheckoutController::class, 'success'])
+    ->name('order.success');
 
 // Route::get('/dashboard', function () {
 //     return Inertia::render('Dashboard');
@@ -219,7 +232,7 @@ Route::middleware('auth')->group(function () {
         // Route::delete('/users/{user}', [DashboardController::class, 'deleteUser'])->name('users.destroy');
 
     });
-   
+
 
     Route::get(
         '/wishlist',
@@ -235,8 +248,8 @@ Route::middleware('auth')->group(function () {
         '/wishlist/{product}',
         [WishlistController::class, 'destroy']
     )->name('wishlist.destroy');
-    
-    
+
+
 
     Route::post(
         '/cart/store',

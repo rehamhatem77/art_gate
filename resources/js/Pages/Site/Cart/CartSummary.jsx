@@ -1,11 +1,31 @@
 import { FiArrowLeft } from "react-icons/fi";
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 
-export default function CartSummary({
-    subtotal,
-    shipping,
-    total,
-}) {
+export default function CartSummary({ subtotal, shipping, total }) {
+    const { auth } = usePage().props;
+    const goToCheckout = () => {
+        if (auth.user) {
+            router.visit(route("checkout.index"));
+
+            return;
+        }
+
+        const guestCart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        router.post(
+            route("checkout.sync"),
+
+            {
+                items: guestCart,
+            },
+
+            {
+                onSuccess: () => {
+                    router.visit(route("checkout.index"));
+                },
+            },
+        );
+    };
     return (
         <div
             className="
@@ -34,25 +54,15 @@ export default function CartSummary({
 
             <div className="space-y-4">
                 <div className="flex justify-between">
-                    <span className="text-gray-500">
-                        المجموع الفرعي
-                    </span>
+                    <span className="text-gray-500">المجموع الفرعي</span>
 
-                    <span>
-                        {subtotal.toLocaleString()} جنيه
-                    </span>
+                    <span>{subtotal.toLocaleString()} جنيه</span>
                 </div>
 
                 <div className="flex justify-between">
-                    <span className="text-gray-500">
-                        الشحن
-                    </span>
+                    <span className="text-gray-500">الشحن</span>
 
-                    <span>
-                        {shipping === 0
-                            ? "مجاني"
-                            : `${shipping} جنيه`}
-                    </span>
+                    <span>{shipping === 0 ? "مجاني" : `${shipping} جنيه`}</span>
                 </div>
 
                 <div
@@ -74,6 +84,7 @@ export default function CartSummary({
             </div>
 
             <button
+                onClick={goToCheckout}
                 className="
                     w-full
                     h-14
@@ -88,9 +99,7 @@ export default function CartSummary({
             </button>
 
             <button
-                onClick={() =>
-                    router.visit("/shop")
-                }
+                onClick={() => router.visit("/shop")}
                 className="
                     w-full
                     h-12
