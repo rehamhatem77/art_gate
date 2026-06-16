@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Http\Controllers\UserProfileController;
 use App\Models\Admin\Product;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -60,6 +61,20 @@ public function wishlistProducts()
     return $this->belongsToMany(
         Product::class,
         'wishlists'
+    );
+}
+
+public function profile()
+{
+    return $this->hasOne(
+        UserProfile::class
+    );
+}
+
+public function orders()
+{
+    return $this->hasMany(
+        Order::class
     );
 }
 }

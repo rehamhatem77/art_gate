@@ -212,7 +212,7 @@ function UserIcons({ auth, mobile = false, cartCount = 0, }) {
     return (
         <div className="flex items-center gap-5 text-gray-700">
             {auth?.user ? (
-                <a href="/profile">
+                <a  href= {auth.user.role==='admin'? "/admin/profile":"/profile"}>
                     <FiUser size={22} className={iconClass} />
                 </a>
             ) : (
