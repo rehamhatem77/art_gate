@@ -198,6 +198,46 @@ class UserProfileController extends Controller
         }
     }
 
+public function cancelOrder(Order $order)
+{
+    try {
+
+       
+        if ($order->user_id !== Auth::id()) {
+
+            abort(403, 'Unauthorized');
+        }
+
+       
+        if ($order->status !== 'pending') {
+
+            return back()->with(
+                'error',
+                'لا يمكن إلغاء هذا الطلب'
+            );
+        }
+
+        $order->update([
+
+            'status' => 'cancelled',
+
+            'cancelled_at' => now(),
+        ]);
+
+        return back()->with(
+            'success',
+            'تم إلغاء الطلب بنجاح'
+        );
+
+    } catch (\Throwable $e) {
+
+        return back()->with(
+            'error',
+            'حدث خطأ أثناء إلغاء الطلب'
+        );
+    }
+}
+
     public function destroy(
         Request $request
     ): RedirectResponse {

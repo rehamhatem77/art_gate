@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     //
- protected $fillable = [
+    protected $fillable = [
 
         'user_id',
 
@@ -38,6 +38,7 @@ class Order extends Model
         'payment_method',
 
         'status',
+        'cancelled_at',
 
         'items',
 
