@@ -747,7 +747,7 @@ export default function Navbar({ auth }) {
                     className={`
             absolute top-0 right-0
 
-            h-screen
+            h-[100%]
             w-[88%]
             max-w-[370px]
 

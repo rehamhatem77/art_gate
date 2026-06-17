@@ -173,7 +173,7 @@ export default function Index({ cartItems = [], announcement }) {
                                 </motion.div>
 
                                 {/* SHIPPING */}
-                                <motion.div
+                                {/* <motion.div
                                     variants={item}
                                     className="
                                         relative
@@ -212,7 +212,7 @@ export default function Index({ cartItems = [], announcement }) {
                                             </span>
                                         </p>
                                     </div>
-                                </motion.div>
+                                </motion.div> */}
 
                                 {/* PRODUCTS */}
                                 <motion.div
