@@ -95,6 +95,7 @@ class ShopPageController extends Controller
         ])
             ->where('is_active', true);
 
+
         /*
         |--------------------------------------------------------------------------
         | Place Filter
@@ -352,4 +353,26 @@ class ShopPageController extends Controller
             ],
         ]);
     }
+
+
+public function searchProducts(Request $request)
+{
+    $search = $request->search;
+
+    if (!$search) {
+        return response()->json([]);
+    }
+
+    $products = Product::where('is_active', true)
+        ->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+              ->orWhere('code', 'like', "%{$search}%")
+              ->orWhere('description', 'like', "%{$search}%");
+        })
+        ->select('id', 'name', 'slug', 'main_image')
+        ->take(8)
+        ->get();
+
+    return response()->json($products);
+}
 }

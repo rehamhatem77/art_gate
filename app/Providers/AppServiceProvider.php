@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Admin\HomePage;
 use App\Models\Admin\Service;
 use App\Models\Cart;
+use App\Models\User;
 use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Vite;
@@ -29,7 +30,9 @@ class AppServiceProvider extends ServiceProvider
         Vite::prefetch(concurrency: 3);
         Inertia::share([
             'auth' => fn() => [
-                'user' => Auth::user(),
+                'user' => Auth::check()
+                    ? User::with('profile')->find(Auth::id())
+                    : null,
             ],
             'flash' => fn() => [
                 'success' => session('success'),

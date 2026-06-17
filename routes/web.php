@@ -40,6 +40,7 @@ Route::get('/', [HomePageController::class, 'index'])->name('home');
 Route::get('/shop', [ShopPageController::class, 'index'])->name('shop');
 Route::get('/shop/{slug}', [ProductDetailsController::class, 'show'])
     ->name('shop.product.show');
+Route::get('/search/products', [ShopPageController::class, 'searchProducts']);
 Route::get('/about-us', [AboutUsControllter::class, 'index'])->name('about-us');
 Route::get('/contact-us', [ContactPageController::class, 'index'])->name('contact-us');
 Route::post('/contact', [ContactPageController::class, 'store'])->name('contact.store');

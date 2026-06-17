@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ApplicationLogo from "./ApplicationLogo";
 
 import {
@@ -8,8 +8,13 @@ import {
     FiSearch,
     FiMenu,
     FiX,
+    FiLogOut,
+    FiSettings,
+    FiChevronDown,
 } from "react-icons/fi";
 import { router, usePage } from "@inertiajs/react";
+import { getImage } from "@/Utils/GetImage";
+import axios from "axios";
 
 function NavLink({ active, children, onClick, mobile }) {
     return (
@@ -21,13 +26,14 @@ function NavLink({ active, children, onClick, mobile }) {
                 cursor-pointer
                 transition-all duration-300
                 
-                ${mobile
-                    ? `
+                ${
+                    mobile
+                        ? `
                             w-full
                             px-4 py-3
                             rounded-2xl
                           `
-                    : `
+                        : `
                             px-4 py-2
                             flex flex-col items-center
                           `
@@ -49,9 +55,10 @@ function NavLink({ active, children, onClick, mobile }) {
                         
                         ${mobile ? "text-base" : "text-lg"}
 
-                        ${active
-                            ? "text-[var(--primary)]"
-                            : "text-[var(--text-dark)] group-hover:text-[var(--primary)]"
+                        ${
+                            active
+                                ? "text-[var(--primary)]"
+                                : "text-[var(--text-dark)] group-hover:text-[var(--primary)]"
                         }
                     `}
                 >
@@ -67,9 +74,10 @@ function NavLink({ active, children, onClick, mobile }) {
                         origin-right
                         transition-transform duration-300 ease-out
 
-                        ${active
-                            ? "scale-x-100"
-                            : "scale-x-0 group-hover:scale-x-100"
+                        ${
+                            active
+                                ? "scale-x-100"
+                                : "scale-x-0 group-hover:scale-x-100"
                         }
                     `}
                 />
@@ -112,30 +120,35 @@ function NavigationMenu({ isMobile = false, onClose }) {
     );
 }
 
-function UserIcons({ auth, mobile = false, cartCount = 0, }) {
-
+function UserIcons({ auth, mobile = false, cartCount = 0 }) {
     const { url, props } = usePage();
     const wishlistCount = props.wishlistCount || 0;
 
+    const [openMenu, setOpenMenu] = useState(false);
+    const dropdownRef = useRef(null);
+    const [searchOpen, setSearchOpen] = useState(false);
+    const [search, setSearch] = useState("");
+    const searchRef = useRef(null);
+    const [results, setResults] = useState([]);
+    const [loading, setLoading] = useState(false);
+
     const isWishlist = url.startsWith("/wishlist");
-    const isCart = url.startsWith("/cart")||url.startsWith("/checkout");
+    const isCart = url.startsWith("/cart") || url.startsWith("/checkout");
     const iconClass =
         "cursor-pointer transition-all duration-300 hover:text-[var(--primary)] hover:scale-110 active:scale-95";
 
     if (mobile) {
         return (
             <div className="flex items-center gap-6">
-
                 <button
                     onClick={() => router.get("/wishlist")}
                     className="relative"
                 >
                     <FiHeart
                         size={22}
-                        className={`${iconClass} ${isWishlist
-                            ? "text-[var(--primary)]"
-                            : ""
-                            }`}
+                        className={`${iconClass} ${
+                            isWishlist ? "text-[var(--primary)]" : ""
+                        }`}
                     />
 
                     {wishlistCount > 0 && (
@@ -161,13 +174,16 @@ function UserIcons({ auth, mobile = false, cartCount = 0, }) {
                     )}
                 </button>
 
-
-                <button className="relative" onClick={() => router.get("/cart")}>
-
-                    <FiShoppingCart size={23} className={`${iconClass} ${isCart
-                        ? "text-[var(--primary)]"
-                        : ""
-                        }`} />
+                <button
+                    className="relative"
+                    onClick={() => router.get("/cart")}
+                >
+                    <FiShoppingCart
+                        size={23}
+                        className={`${iconClass} ${
+                            isCart ? "text-[var(--primary)]" : ""
+                        }`}
+                    />
 
                     {/* <span
                         className="
@@ -208,13 +224,146 @@ function UserIcons({ auth, mobile = false, cartCount = 0, }) {
             </div>
         );
     }
+    /* close dropdown outside click */
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(e.target)
+            ) {
+                setOpenMenu(false);
+            }
+        };
 
+        document.addEventListener("mousedown", handleClickOutside);
+        return () =>
+            document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (searchRef.current && !searchRef.current.contains(e.target)) {
+                setSearchOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () =>
+            document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+    useEffect(() => {
+        if (search.length < 2) {
+            setResults([]);
+            return;
+        }
+
+        const timeout = setTimeout(() => {
+            setLoading(true);
+
+            axios
+                .get("/search/products", {
+                    params: { search },
+                })
+                .then((res) => {
+                    setResults(res.data);
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        }, 300);
+
+        return () => clearTimeout(timeout);
+    }, [search]);
     return (
         <div className="flex items-center gap-5 text-gray-700">
+            {/* USER DROPDOWN (NEW PREMIUM UI) */}
             {auth?.user ? (
-                <a  href= {auth.user.role==='admin'? "/admin/profile":"/profile"}>
-                    <FiUser size={22} className={iconClass} />
-                </a>
+                <div ref={dropdownRef} className="relative">
+                    {/* TRIGGER */}
+                    <button
+                        onClick={() => setOpenMenu(!openMenu)}
+                        className="flex items-center gap-2"
+                    >
+                        {auth.user.profile?.avatar ? (
+                            <img
+                                src={getImage(auth.user.profile.avatar)}
+                                className="h-9 w-9 rounded-full object-cover border shadow-sm"
+                            />
+                        ) : (
+                            <div className="h-9 w-9 rounded-full bg-[var(--primary)] text-white flex items-center justify-center font-bold">
+                                {auth.user.name?.charAt(0)}
+                            </div>
+                        )}
+
+                        <FiChevronDown
+                            className={`transition-transform duration-200 ${
+                                openMenu ? "rotate-180" : ""
+                            }`}
+                        />
+                    </button>
+
+                    {/* DROPDOWN */}
+                    <div
+                        className={`absolute left-0 mt-3 w-64 z-50 transition-all duration-200
+                        ${openMenu ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-2"}`}
+                    >
+                        <div className="overflow-hidden rounded-xl border bg-white shadow-[0_10px_40px_rgba(0,0,0,0.08)]">
+                            {/* HEADER */}
+                            <div className="p-4 border-b bg-gradient-to-br from-[var(--primary)]/10 to-white">
+                                <div className="flex items-center gap-3">
+                                    {auth.user.profile?.avatar ? (
+                                        <img
+                                            src={getImage(
+                                                auth.user.profile.avatar,
+                                            )}
+                                            className="h-10 w-10 rounded-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="h-10 w-10 rounded-full bg-[var(--primary)] text-white flex items-center justify-center font-bold">
+                                            {auth.user.name?.charAt(0)}
+                                        </div>
+                                    )}
+
+                                    <div className="overflow-hidden">
+                                        <p className="font-semibold text-sm truncate">
+                                            {auth.user.name}
+                                        </p>
+                                        <p className="text-xs text-gray-500 truncate">
+                                            {auth.user.email}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* MENU */}
+                            <div className="p-2">
+                                <button
+                                    onClick={() => {
+                                        setOpenMenu(false);
+                                        router.get(
+                                            auth.user.role === "admin"
+                                                ? "/admin/profile"
+                                                : "/profile",
+                                        );
+                                    }}
+                                    className="w-full text-right px-4 py-3 text-sm rounded-xl hover:bg-gray-50 flex items-center gap-2"
+                                >
+                                    <FiSettings /> الإعدادات
+                                </button>
+
+                                <button
+                                    onClick={() => {
+                                        setOpenMenu(false);
+                                        router.post("/logout");
+                                    }}
+                                    className="w-full text-right px-4 py-3 text-sm rounded-xl hover:bg-red-50 text-red-600 flex items-center gap-2"
+                                >
+                                    <FiLogOut /> تسجيل الخروج
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             ) : (
                 <div className="flex items-center gap-2 text-sm md:text-base font-medium">
                     <a
@@ -235,8 +384,121 @@ function UserIcons({ auth, mobile = false, cartCount = 0, }) {
                 </div>
             )}
 
-            <FiSearch size={22} className={iconClass} />
+            <div
+                ref={searchRef}
+                className={`
+        relative overflow-visible transition-all duration-300
+        ${searchOpen ? "w-80" : "w-[22px]"}
+    `}
+            >
+                {searchOpen ? (
+                    <div className="relative flex items-center gap-2">
+                        <div className="relative flex-1">
+                            <input
+                                autoFocus
+                                type="text"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                placeholder="ابحث عن منتج..."
+                                className="
+                                    h-10
+                                    w-full
+                                    rounded-2xl
+                                    outline-none
+                                    transition
+                                    focus:border-[var(--primary)]
+                                    focus:ring-4
+                                    focus:ring-transparent
+                "
+                            />
 
+                            {(loading || results.length > 0) && (
+                                <div
+                                    className="
+                        absolute top-12 right-0
+                        w-[380px]
+                        bg-white
+                        rounded-3xl
+                        shadow-2xl
+                        border
+                        overflow-hidden
+                        z-50
+                    "
+                                >
+                                    {loading && (
+                                        <div className="p-5 text-center text-gray-400">
+                                            جاري البحث...
+                                        </div>
+                                    )}
+
+                                    {results.map((product) => (
+                                        <button
+                                            key={product.id}
+                                            onClick={() => {
+                                                setSearch("");
+                                                setResults([]);
+                                                setSearchOpen(false);
+
+                                                 router.visit(route("shop.product.show", product.slug))
+                                            }}
+                                            className="
+                                w-full
+                                p-3
+                                flex
+                                items-center
+                                gap-4
+                                hover:bg-gray-50
+                                transition
+                            "
+                                        >
+                                            <img
+                                                src={getImage(
+                                                    product.main_image,
+                                                )}
+                                                className="
+                                    w-16 h-16
+                                    rounded-2xl
+                                    object-cover
+                                "
+                                            />
+
+                                            <div className="flex-1 text-right">
+                                                <p className="font-medium line-clamp-1">
+                                                    {product.name}
+                                                </p>
+                                            </div>
+                                        </button>
+                                    ))}
+
+                                    {!loading &&
+                                        search.length > 1 &&
+                                        results.length === 0 && (
+                                            <div className="p-5 text-center text-gray-400">
+                                                لا توجد نتائج
+                                            </div>
+                                        )}
+                                </div>
+                            )}
+                        </div>
+
+                        <FiX
+                            size={20}
+                            className="cursor-pointer text-gray-500"
+                            onClick={() => {
+                                setSearchOpen(false);
+                                setSearch("");
+                                setResults([]);
+                            }}
+                        />
+                    </div>
+                ) : (
+                    <FiSearch
+                        size={22}
+                        className={iconClass}
+                        onClick={() => setSearchOpen(true)}
+                    />
+                )}
+            </div>
 
             <button
                 onClick={() => router.get("/wishlist")}
@@ -244,10 +506,9 @@ function UserIcons({ auth, mobile = false, cartCount = 0, }) {
             >
                 <FiHeart
                     size={22}
-                    className={`${iconClass} ${isWishlist
-                        ? "text-[var(--primary)]"
-                        : ""
-                        }`}
+                    className={`${iconClass} ${
+                        isWishlist ? "text-[var(--primary)]" : ""
+                    }`}
                 />
 
                 {wishlistCount > 0 && (
@@ -273,13 +534,13 @@ function UserIcons({ auth, mobile = false, cartCount = 0, }) {
                 )}
             </button>
 
-
             <button className="relative" onClick={() => router.get("/cart")}>
-
-                <FiShoppingCart size={22} className={`${iconClass} ${isCart
-                    ? "text-[var(--primary)]"
-                    : ""
-                    }`} />
+                <FiShoppingCart
+                    size={22}
+                    className={`${iconClass} ${
+                        isCart ? "text-[var(--primary)]" : ""
+                    }`}
+                />
 
                 {/* <span
                     className="
@@ -339,14 +600,16 @@ export default function Navbar({ auth }) {
     const { url, props } = usePage();
     const wishlistCount = props.wishlistCount || 0;
     const isWishlist = url.startsWith("/wishlist");
-    const isCart = url.startsWith("/cart")||url.startsWith("/checkout");
+    const isCart = url.startsWith("/cart") || url.startsWith("/checkout");
     const serverCartCount = props.cartCount || 0;
 
     const [cartCount, setCartCount] = useState(
         auth?.user
             ? serverCartCount
-            : JSON.parse(localStorage.getItem("cart") || "[]")
-                .reduce((sum, item) => sum + item.quantity, 0)
+            : JSON.parse(localStorage.getItem("cart") || "[]").reduce(
+                  (sum, item) => sum + item.quantity,
+                  0,
+              ),
     );
 
     useEffect(() => {
@@ -358,28 +621,21 @@ export default function Navbar({ auth }) {
                     preserveState: true,
                 });
             } else {
-                const cart =
-                    JSON.parse(localStorage.getItem("cart")) || [];
+                const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
                 const total = cart.reduce(
                     (sum, item) => sum + item.quantity,
-                    0
+                    0,
                 );
 
                 setCartCount(total);
             }
         };
 
-        window.addEventListener(
-            "cart-updated",
-            updateCartCount
-        );
+        window.addEventListener("cart-updated", updateCartCount);
 
         return () => {
-            window.removeEventListener(
-                "cart-updated",
-                updateCartCount
-            );
+            window.removeEventListener("cart-updated", updateCartCount);
         };
     }, [auth]);
 
@@ -458,8 +714,7 @@ export default function Navbar({ auth }) {
                     </div>
 
                     <div className="flex md:hidden">
-                        <UserIcons mobile auth={auth}
-                            cartCount={cartCount} />
+                        <UserIcons mobile auth={auth} cartCount={cartCount} />
                     </div>
                 </div>
             </header>
@@ -680,9 +935,7 @@ export default function Navbar({ auth }) {
             hover:scale-110
             active:scale-95
             smooth-transition
-            ${isWishlist
-                                        ? "text-[var(--primary)]"
-                                        : "text-gray-700"}
+            ${isWishlist ? "text-[var(--primary)]" : "text-gray-700"}
         `}
                             />
 
@@ -712,10 +965,11 @@ export default function Navbar({ auth }) {
                             )}
                         </div>
 
-                        <button className="relative " onClick={() => router.get("/cart")}>
-
+                        <button
+                            className="relative "
+                            onClick={() => router.get("/cart")}
+                        >
                             <FiShoppingCart
-
                                 size={25}
                                 className={`
                         cursor-pointer
@@ -726,9 +980,7 @@ export default function Navbar({ auth }) {
                         active:scale-95
 
                         smooth-transition
-                         ${isCart
-                                        ? "text-[var(--primary)]"
-                                        : "text-gray-700"}
+                         ${isCart ? "text-[var(--primary)]" : "text-gray-700"}
                     `}
                             />
 
