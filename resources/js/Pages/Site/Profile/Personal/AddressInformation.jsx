@@ -29,7 +29,7 @@ export default function AddressInformation({
             icon: FiMap,
         },
         {
-            name: "area",
+            name: "city",
             label: "المنطقة",
             placeholder: "مدينة نصر",
             icon: FiMapPin,

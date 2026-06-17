@@ -2,13 +2,16 @@ import { useForm } from "@inertiajs/react";
 import { useState } from "react";
 import { FiChevronDown } from "react-icons/fi";
 
-export default function CheckoutForm({ user,  data,
+export default function CheckoutForm({
+    user,
+    data,
 
-   setData,
+    setData,
 
-   frontendErrors,
+    frontendErrors,
 
-   errors, }) {
+    errors,
+}) {
     // const { data, setData, post, processing, errors } = useForm({
     //     name: user?.name || "",
     //     email: user?.email || "",
@@ -103,7 +106,7 @@ block
 
     return (
         // <form onSubmit={submit}>
-<div>
+        <div>
             <div
                 className="
 bg-white/40
@@ -152,13 +155,12 @@ text-start
                         placeholder="اسمك بالكامل"
                         className={inputStyle}
                     />
- {frontendErrors.name && (
-                    <p className="mt-2 text-xs text-red-500">
-                        {frontendErrors.name}
-                    </p>
-                )}
+                    {frontendErrors.name && (
+                        <p className="mt-2 text-xs text-red-500">
+                            {frontendErrors.name}
+                        </p>
+                    )}
                 </div>
-               
 
                 {/* PHONES */}
 
@@ -184,17 +186,12 @@ md:gap-5
                             placeholder="رقم الهاتف للتواصل"
                             className={inputStyle}
                         />
-{frontendErrors.phone && (
-
-<p className="mt-2 text-xs text-red-500">
-
-{frontendErrors.phone}
-
-</p>
-
-)}
+                        {frontendErrors.phone && (
+                            <p className="mt-2 text-xs text-red-500">
+                                {frontendErrors.phone}
+                            </p>
+                        )}
                     </div>
-
 
                     <div>
                         <label className={labelStyle}>رقم هاتف إضافي</label>
@@ -207,17 +204,12 @@ md:gap-5
                             placeholder="رقم هاتف احتياطي"
                             className={inputStyle}
                         />
-{frontendErrors.second_phone && (
-
-<p className="mt-2 text-xs text-red-500">
-
-{frontendErrors.second_phone}
-
-</p>
-
-)}
+                        {frontendErrors.second_phone && (
+                            <p className="mt-2 text-xs text-red-500">
+                                {frontendErrors.second_phone}
+                            </p>
+                        )}
                     </div>
-
                 </div>
 
                 {/* EMAIL */}
@@ -231,17 +223,12 @@ md:gap-5
                         placeholder="البريد الإلكتروني"
                         className={inputStyle}
                     />
-{frontendErrors.email && (
-
-<p className="mt-2 text-xs text-red-500">
-
-{frontendErrors.email}
-
-</p>
-
-)}
+                    {frontendErrors.email && (
+                        <p className="mt-2 text-xs text-red-500">
+                            {frontendErrors.email}
+                        </p>
+                    )}
                 </div>
-
 
                 {/* COUNTRY + GOVERNORATE */}
 
@@ -303,17 +290,12 @@ pointer-events-none
 
                             <option>الإسكندرية</option>
                         </select>
-{frontendErrors.governorate && (
-
-<p className="mt-2 text-xs text-red-500">
-
-{frontendErrors.governorate}
-
-</p>
-
-)}
+                        {frontendErrors.governorate && (
+                            <p className="mt-2 text-xs text-red-500">
+                                {frontendErrors.governorate}
+                            </p>
+                        )}
                     </div>
-
                 </div>
 
                 {/* AREA */}
@@ -327,17 +309,12 @@ pointer-events-none
                         placeholder="المنطقة"
                         className={inputStyle}
                     />
-{frontendErrors.area && (
-
-<p className="mt-2 text-xs text-red-500">
-
-{frontendErrors.area}
-
-</p>
-
-)}
+                    {frontendErrors.area && (
+                        <p className="mt-2 text-xs text-red-500">
+                            {frontendErrors.area}
+                        </p>
+                    )}
                 </div>
-
 
                 {/* ADDRESS */}
 
@@ -350,17 +327,12 @@ pointer-events-none
                         placeholder="العنوان بالتفصيل (اسم الشارع ورقم العقار وأي علامات مميزة لتسهيل التوصيل)"
                         className={inputStyle}
                     />
-{frontendErrors.address && (
-
-<p className="mt-2 text-xs text-red-500">
-
-{frontendErrors.address}
-
-</p>
-
-)}
+                    {frontendErrors.address && (
+                        <p className="mt-2 text-xs text-red-500">
+                            {frontendErrors.address}
+                        </p>
+                    )}
                 </div>
-
 
                 {/* ACCOUNT */}
 
@@ -497,8 +469,7 @@ transition
                 </button>
 
             </div> */}
-        {/* </form> */}
-</div>
-
+            {/* </form> */}
+        </div>
     );
 }

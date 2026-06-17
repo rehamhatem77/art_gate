@@ -39,19 +39,19 @@ export default function Checkout({
 
         email: user?.email || "",
 
-        phone: user?.phone || "",
+        phone: user?.profile.phone || "",
 
-        second_phone: "",
+        second_phone: user?.profile.second_phone||"",
 
-        country: "مصر",
+        country: user?.profile.country||"مصر",
 
-        governorate: "",
+        governorate:user?.profile.governorate|| "",
 
-        area: "",
+        area:user?.profile.city|| "",
 
-        address: "",
+        address:user?.profile.address|| "",
 
-        notes: "",
+        notes: user?.profile.notes||"",
 
         payment: "cod",
     });

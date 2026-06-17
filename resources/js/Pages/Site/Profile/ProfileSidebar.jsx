@@ -1,4 +1,5 @@
 import { getImage } from "@/Utils/GetImage";
+import { router } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import {
     FiUser,
@@ -143,9 +144,7 @@ export default function ProfileSidebar({
                         text-center
                     "
                     >
-                        <div className="text-xl font-bold">
-                            {orders.length}
-                        </div>
+                        <div className="text-xl font-bold">{orders.length}</div>
 
                         <div className="text-xs text-gray-500 mt-1">
                             إجمالي الطلبات
@@ -221,6 +220,7 @@ export default function ProfileSidebar({
 
                 <div className="border-t mt-4 pt-4">
                     <button
+                        onClick={() => router.post("logout")}
                         className="
                         w-full
                         h-14

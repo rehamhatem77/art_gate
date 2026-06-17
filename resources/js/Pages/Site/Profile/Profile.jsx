@@ -43,7 +43,7 @@ export default function Profile({
         avatar: profile?.avatar || null,
         country: profile?.country || "",
         governorate: profile?.governorate || "",
-        area: profile?.area || "",
+        city: profile?.city || "",
         address: profile?.address || "",
         current_password: "",
         password: "",
@@ -191,7 +191,7 @@ export default function Profile({
                     section: "address",
                     country: data.country,
                     governorate: data.governorate,
-                    area: data.area,
+                    city: data.city,
                     address: data.address,
                 };
 

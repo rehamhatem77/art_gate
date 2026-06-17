@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Admin\ProductVariant;
 use App\Models\Cart;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -76,6 +77,9 @@ class CheckoutController extends Controller
         );
 
         $shipping = 100;
+        $user = User::find(Auth::id());
+if (Auth::check()) {
+        $user->load('profile');}
 
         return Inertia::render(
 
@@ -83,8 +87,8 @@ class CheckoutController extends Controller
 
             [
 
-                'user' => Auth::user(),
-
+                // 'user' => Auth::user(),
+                'user' => $user,
                 'cartItems'
                 => $cartItems,
 
