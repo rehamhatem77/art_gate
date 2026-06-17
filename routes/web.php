@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FrameTypesController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductsController;
 use App\Http\Controllers\Admin\ServicesController;
 use App\Http\Controllers\Admin\ShapesController;
@@ -154,6 +155,9 @@ Route::middleware('auth')->group(function () {
                 [ProductsController::class, 'forceDelete']
             )->name('products.forceDelete');
 
+
+            Route::get('/orders',[OrderController::class, 'index'])->name('orders.index');
+            Route::patch('/orders/{order}/status',[OrderController::class, 'updateStatus'])->name('orders.status');
 
 
             Route::get('/homepage', [AdminHomePageController::class, 'index'])

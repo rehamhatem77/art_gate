@@ -84,7 +84,7 @@ export default function AuthenticatedLayout({ children }) {
         {
             name: "الطلبات ",
             icon: <FaMoneyBillTrendUp />,
-            path: "/admin/trip-types",
+            path: "/admin/orders",
         },
     ];
 
