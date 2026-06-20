@@ -11,7 +11,7 @@ import {
 import { usePage } from "@inertiajs/react";
 
 export default function Footer() {
-        const { footer } = usePage().props;
+    const { footer } = usePage().props;
     const socialConfig = {
         instagram: FaInstagram,
         facebook: FaFacebookF,
@@ -19,13 +19,13 @@ export default function Footer() {
         tiktok: FaTiktok,
         x: FaXTwitter, // 
     };
-const socialLinks = Object.entries(socialConfig)
-    .map(([key, Icon]) => ({
-        key,
-        icon: Icon,
-        link: footer?.[key],
-    }))
-    .filter(item => item.link && item.link.trim() !== "");
+    const socialLinks = Object.entries(socialConfig)
+        .map(([key, Icon]) => ({
+            key,
+            icon: Icon,
+            link: footer?.[key],
+        }))
+        .filter(item => item.link && item.link.trim() !== "");
     return (
         <footer className="bg-[#1d1916] opacity-90 text-white">
             {/* Top */}
@@ -219,12 +219,21 @@ const socialLinks = Object.entries(socialConfig)
                             </p>
                         </div>
 
-                        <div className="flex w-full lg:w-auto gap-3">
+                        <div className=" flex
+    flex-col
+    sm:flex-row
+
+    w-full
+    lg:w-auto
+
+    gap-3">
                             <input
                                 type="email"
                                 placeholder="البريد الإلكتروني"
                                 className="
-                                    min-w-[280px]
+                                    w-full
+
+                                  sm:min-w-[280px]
                                     px-5
                                     py-4
                                     rounded-full

@@ -40,7 +40,7 @@ export default function CategoriesSection({ categories, categoriesSection }) {
                     className="text-center mb-14"
                 >
                     <span className="block text-[#b4a79a] text-sm md:text-lg font-medium mb-3">
-                        {categoriesSection?.category_section_subtitle? categoriesSection.category_section_subtitle : " استمتع بتصفح مرن لاستكشاف أقسام موقعنا بسهولة"}
+                        {categoriesSection?.category_section_subtitle ? categoriesSection.category_section_subtitle : " استمتع بتصفح مرن لاستكشاف أقسام موقعنا بسهولة"}
                     </span>
 
                     <h2 className="text-3xl md:text-5xl font-bold text-[var(--primary)] mb-5">
@@ -61,17 +61,18 @@ export default function CategoriesSection({ categories, categoriesSection }) {
                         once: false,
                         amount: 0.15,
                     }}
-                    className="
-                        grid
-                        grid-cols-2
-                        md:grid-cols-3
-                        lg:grid-cols-4
-                        xl:grid-cols-5
-                        gap-y-8
-                        lg:gap-y-10
-                        gap-x-4
-                        lg:gap-x-6
-                    "
+                   className="
+grid
+grid-cols-2
+md:grid-cols-3
+lg:grid-cols-4
+xl:grid-cols-5
+
+gap-4
+lg:gap-6
+
+justify-items-center
+"
                 >
                     {categories.map((category, index) => (
                         <motion.div
@@ -82,21 +83,18 @@ export default function CategoriesSection({ categories, categoriesSection }) {
                                 group
                                 flex
                                 justify-center
+                                w-full
+min-w-0
                             "
                         >
                             <button
-                            onClick={() => window.location.href = `/shop?category=${category.id}`}
+                                onClick={() => window.location.href = `/shop?category=${category.id}`}
                                 className="
                                     relative
 
-                                    w-[190px]
-                                    h-[190px]
-
-                                    sm:w-[200px]
-                                    sm:h-[200px]
-
-                                    lg:w-[240px]
-                                    lg:h-[240px]
+                                    w-full
+aspect-square
+max-w-[240px]
 
                                     rounded-full
                                     overflow-hidden

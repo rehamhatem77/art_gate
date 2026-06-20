@@ -81,8 +81,9 @@ export default function RecentlyViewedSection({ recentProducts = [] }) {
     group
     cursor-pointer
     w-full
-    max-w-full
-    lg:max-w-[360px]
+  
+    
+    min-w-0
                             "
                                 >
 
