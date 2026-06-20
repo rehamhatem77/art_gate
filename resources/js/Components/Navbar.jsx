@@ -602,6 +602,12 @@ export default function Navbar({ auth }) {
     const isWishlist = url.startsWith("/wishlist");
     const isCart = url.startsWith("/cart") || url.startsWith("/checkout");
     const serverCartCount = props.cartCount || 0;
+    const [search, setSearch] = useState("");
+
+const [results, setResults] = useState([]);
+
+const [loading, setLoading] = useState(false);
+
 
     const [cartCount, setCartCount] = useState(
         auth?.user
@@ -668,7 +674,30 @@ export default function Navbar({ auth }) {
             document.body.style.overflow = "auto";
         };
     }, [open]);
+useEffect(() => {
+    if (search.length < 2) {
+        setResults([]);
+        return;
+    }
 
+    const timeout = setTimeout(() => {
+        setLoading(true);
+
+        axios
+            .get("/search/products", {
+                params: { search },
+            })
+            .then((res) => {
+                setResults(res.data);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, 300);
+
+    return () => clearTimeout(timeout);
+
+}, [search]);
     return (
         <>
             <header
@@ -801,31 +830,205 @@ export default function Navbar({ auth }) {
                     </div>
 
                     {/* SEARCH */}
-                    <div className="p-5 border-b border-white/50">
+                   {/* MOBILE SEARCH */}
+
+<div className="p-5 border-b border-white/50">
+    <div className="relative">
+
+        <div
+            className="
+            flex
+            items-center
+            gap-3
+
+            h-12
+
+            px-4
+
+            rounded-2xl
+
+           
+
+            border
+
+            border-gray-200
+
+          
+
+
+           rounded-2xl py-3 smooth-transition 
+        "
+        >
+            <FiSearch
+                className="
+                text-gray-400
+                shrink-0
+            "
+                size={18}
+            />
+
+            <input
+                type="text"
+                value={search}
+                onChange={(e) =>
+                    setSearch(e.target.value)
+                }
+                placeholder="ابحث عن منتج..."
+                className="text-sm focus:border-none transition duration-200 w-full h-10 px-4 bg-[var(--bg-light)] border border-gray-300 rounded-2xl focus:ring-1 focus:ring-[var(--primary)] outline-none"
+            />
+
+            {search && (
+                <button
+                    onClick={() => {
+                        setSearch("");
+                        setResults([]);
+                    }}
+                >
+                    <FiX
+                        size={18}
+                        className="text-gray-400"
+                    />
+                </button>
+            )}
+        </div>
+
+        {/* RESULTS */}
+
+        {(loading ||
+            results.length > 0 ||
+            (search.length > 1 &&
+                results.length === 0)) && (
+            <div
+                className="
+                mt-3
+
+                overflow-hidden
+
+                rounded-3xl
+
+                bg-white
+
+                border
+
+                shadow-xl
+
+                max-h-[350px]
+
+                overflow-y-auto
+            "
+            >
+                {loading && (
+                    <div
+                        className="
+                        p-6
+
+                        text-center
+
+                        text-sm
+
+                        text-gray-400
+                    "
+                    >
+                        جاري البحث...
+                    </div>
+                )}
+
+                {!loading &&
+                    results.map((product) => (
+                        <button
+                            key={product.id}
+                            onClick={() => {
+                                setOpen(false);
+
+                                setSearch("");
+
+                                setResults([]);
+
+                                router.visit(
+                                    route(
+                                        "shop.product.show",
+                                        product.slug
+                                    )
+                                );
+                            }}
+                            className="
+                            w-full
+
+                            p-3
+
+                            flex
+
+                            items-center
+
+                            gap-3
+
+                            hover:bg-gray-50
+
+                            transition
+                        "
+                        >
+                            <img
+                                src={getImage(
+                                    product.main_image
+                                )}
+                                className="
+                                w-14
+
+                                h-14
+
+                                rounded-2xl
+
+                                object-cover
+
+                                shrink-0
+                            "
+                            />
+
+                            <div
+                                className="
+                                flex-1
+
+                                text-right
+
+                                min-w-0
+                            "
+                            >
+                                <p
+                                    className="
+                                    text-sm
+
+                                    font-medium
+
+                                    line-clamp-2
+                                "
+                                >
+                                    {product.name}
+                                </p>
+                            </div>
+                        </button>
+                    ))}
+
+                {!loading &&
+                    search.length > 1 &&
+                    results.length === 0 && (
                         <div
                             className="
-                    flex items-center gap-3
+                            p-6
 
-                   
+                            text-center
 
-                    rounded-2xl
+                            text-sm
 
-                    px-4 py-3
-
-                    smooth-transition
-
-                    hover:bg-white/80
-                "
+                            text-gray-400
+                        "
                         >
-                            <FiSearch className="text-gray-500 text-lg" />
-
-                            <input
-                                type="text"
-                                placeholder="ابحث هنا..."
-                                className="text-sm focus:border-none transition duration-200 w-full h-10 px-4 bg-[var(--bg-light)] border border-gray-300 rounded-2xl focus:ring-1 focus:ring-[var(--primary)] outline-none"
-                            />
+                            لا توجد نتائج
                         </div>
-                    </div>
+                    )}
+            </div>
+        )}
+    </div>
+</div>
 
                     <div
                         className="
