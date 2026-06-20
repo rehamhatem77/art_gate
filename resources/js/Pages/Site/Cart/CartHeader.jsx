@@ -128,14 +128,26 @@ export default function CartHeader({ currentStep}) {
                     "
                 >
                     <div className="flex justify-center">
-                        <div className="flex items-center gap-4 md:gap-8">
+                        <div className="flex
+    flex-wrap
+
+    justify-center
+
+    items-center
+
+    gap-4
+
+    md:gap-8
+
+    w-full
+    ">
                             {steps.map((step, index) => {
                                 const Icon = step.icon;
 
                                 return (
                                     <div
                                         key={step.title}
-                                        className="flex items-center"
+                                        className="flex items-center min-w-0"
                                     >
                                         <motion.button
                                             onClick={() => {
@@ -188,7 +200,7 @@ export default function CartHeader({ currentStep}) {
 
                                         {/* connector */}
                                         {index < steps.length - 1 && (
-                                            <div className="w-12 md:w-24 h-[2px] bg-gray-200 mx-3 md:mx-6">
+                                            <div className=" w-6 sm:w-10 md:w-24 h-[2px] bg-gray-200 mx-1 sm:mx-3 md:mx-6">
                                                 <div className="h-full w-full bg-[var(--primary)]" />
                                             </div>
                                         )}

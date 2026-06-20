@@ -235,12 +235,24 @@ export default function QuickViewModal({
                 }}
                 className="
 relative
+
 w-full
-max-w-4xl
-h-[85vh]
+
+max-w-[95vw]
+sm:max-w-[90vw]
+lg:max-w-4xl
+
+h-[95vh]
+sm:h-[90vh]
+lg:h-[85vh]
+
 overflow-hidden
+
 bg-white
-rounded-[28px]
+
+rounded-2xl
+lg:rounded-[28px]
+
 shadow-[0_25px_80px_rgba(0,0,0,.18)]
 "
             >
@@ -271,28 +283,82 @@ shadow-[0_25px_80px_rgba(0,0,0,.18)]
 
                 <div
                     className="
-                        grid
-                        lg:grid-cols-2
-                        h-full
-                        max-h-[92vh]
+                       grid
+
+grid-cols-1
+
+lg:grid-cols-2
+
+h-full
+
+max-h-[92vh]
                     "
                 >
                     {/* LEFT SIDE */}
                     <div
                         className="
 bg-[#faf8f5]
-p-4
-h-full
+
+p-3
+sm:p-4
+
+h-auto
+lg:h-full
 "
                     >
-                        <div className="grid grid-cols-[60px_1fr] gap-4">
+                        <div className="
+grid
+
+grid-cols-1
+
+sm:grid-cols-[60px_1fr]
+
+gap-3
+sm:gap-4
+">
                             {/* Thumbs */}
-                            <div className="space-y-3 overflow-y-auto pr-1">
+                            <div className="
+flex
+
+sm:block
+
+gap-2
+
+sm:space-y-3
+
+overflow-x-auto
+
+sm:overflow-y-auto
+
+pb-2
+
+sm:pb-0
+
+pr-0
+
+sm:pr-1
+">
                                 {images?.map((image, index) => (
                                     <button
                                         key={index}
                                         onClick={() => setSelectedImage(image)}
-                                        className="w-14 h-14 overflow-hidden rounded-2xl border"
+                                        className="
+w-12
+h-12
+
+sm:w-14
+sm:h-14
+
+shrink-0
+
+overflow-hidden
+
+rounded-xl
+
+sm:rounded-2xl
+
+border
+"
                                     >
                                         <img
                                             src={getImage(image)}
@@ -326,15 +392,24 @@ h-full
                                     src={getImage(selectedImage)}
                                     alt={product.name}
                                     className="
-                                        w-full
-                                        h-[360px]
-lg:h-[520px]
-                                        object-cover
+w-full
 
-                                        transition-all
-                                        duration-700
-                                        hover:scale-105
-                                    "
+h-[220px]
+
+sm:h-[300px]
+
+md:h-[380px]
+
+lg:h-[520px]
+
+object-cover
+
+transition-all
+
+duration-700
+
+hover:scale-105
+"
                                 />
                             </div>
                         </div>
@@ -351,19 +426,27 @@ overflow-hidden
                     >
                         <div
                             className="
-        flex-1
-        overflow-y-auto
-        p-5
-        lg:p-7
-    "
+flex-1
+
+overflow-y-auto
+
+p-4
+
+sm:p-5
+
+lg:p-7
+"
                         >
 
 
                             {/* Title */}
                             <h2
                                 className="
-                                    text-xl
-                                    lg:text-2xl
+                                    text-lg
+
+sm:text-xl
+
+lg:text-2xl
                                     font-bold
                                     text-[var(--primary)]
                                     leading-relaxed
@@ -391,10 +474,18 @@ overflow-hidden
                             {/* Description */}
                             <p
                                 className="
-                                    mt-4
+                                    mt-3
+
+text-xs
+
+sm:text-sm
+
+leading-6
+
+sm:leading-7
                                     text-gray-600
-                                    text-sm
-leading-7
+                                  
+
                                 "
                             >
                                 {product.description || "لا يوجد وصف متاح لهذا المنتج."}
@@ -416,9 +507,17 @@ leading-7
                                                 )
                                             }
                                             className={`
-                                                h-8
-px-3
-text-sm
+                                               h-7
+
+sm:h-8
+
+px-2.5
+
+sm:px-3
+
+text-xs
+
+sm:text-sm
                                                 rounded-full
                                                 border-1
                                                 transition
@@ -452,9 +551,17 @@ text-sm
                                                 )
                                             }
                                             className={`
-                                                h-8
-px-3
-text-sm
+                                               h-7
+
+sm:h-8
+
+px-2.5
+
+sm:px-3
+
+text-xs
+
+sm:text-sm
                                                 rounded-full
                                                 border-1
                                                 transition
@@ -550,8 +657,11 @@ text-sm
                                         items-center
                                         justify-between
 
-                                        w-24
-                                        h-8
+                                        w-20
+
+sm:w-24
+
+h-8
 
                                         border
                                         rounded-full
@@ -655,41 +765,47 @@ text-sm
                         {/* Sticky Footer */}
                         <div
                             className="
-shrink-0
-border-t
-p-5
-bg-white
-
-"
+        shrink-0
+        border-t
+        p-3 sm:p-5
+        bg-white
+    "
                         >
-                            <div className="flex gap-3">
+                            <div className="flex items-center gap-2 sm:gap-3">
+
+                                {/* Wishlist */}
                                 <button
-                                    onClick={(e) => {
-
-                                        toggleWishlist(product);
-                                    }}
-
+                                    onClick={() => toggleWishlist(product)}
                                     className="
-                                        w-10
-                                        h-10
-                                        rounded-full
-                                        border
-                                        flex
-                                        items-center
-                                        justify-center
-                                    "
-                                >
+                w-10 h-10
+                sm:w-11 sm:h-11
 
+                rounded-full
+                border
+
+                flex
+                items-center
+                justify-center
+
+                shrink-0
+
+                transition
+            "
+                                >
                                     {isWishlisted ? (
                                         <FaHeart
-                                            size={20}
-                                            className=" text-[var(--primary)]"
+                                            size={18}
+                                            className="text-[var(--primary)]"
                                         />
                                     ) : (
-                                        <FiHeart size={20} className="hover:text-[var(--primary)]" />
+                                        <FiHeart
+                                            size={18}
+                                            className="hover:text-[var(--primary)]"
+                                        />
                                     )}
                                 </button>
 
+                                {/* Add To Cart */}
                                 <button
                                     onClick={addToCart}
                                     disabled={
@@ -697,56 +813,88 @@ bg-white
                                         selectedVariant.stock <= 0
                                     }
                                     className={`
-        flex-1
-        h-10
-        rounded-full
-        text-white
-        font-medium
-        text-md
-        transition
+                flex-1
 
-        ${selectedVariant?.stock > 0
+                h-10
+                sm:h-11
+
+                rounded-full
+
+                flex
+                items-center
+                justify-center
+
+                gap-2
+
+                text-white
+                font-medium
+
+                transition
+
+                ${selectedVariant?.stock > 0
                                             ? "bg-[var(--primary)] hover:opacity-90"
                                             : "bg-gray-400 cursor-not-allowed"
                                         }
-    `}
+            `}
                                 >
-                                    <BiCartAdd
-                                        size={22}
-                                        className="inline-block ml-5"
-                                    />
+                                    <BiCartAdd size={20} />
 
-                                    {selectedVariant?.stock > 0
-                                        ? "أضف إلى السلة"
-                                        : "نفدت الكمية"}
+                                    {/* Desktop text only */}
+                                    <span className="hidden sm:inline">
+                                        {selectedVariant?.stock > 0
+                                            ? "أضف إلى السلة"
+                                            : "نفدت الكمية"}
+                                    </span>
                                 </button>
+
+                                {/* View Product */}
                                 <button
-                                    onClick={() => {
+                                    onClick={() =>
                                         router.visit(
                                             route(
                                                 "shop.product.show",
                                                 product.slug
                                             )
                                         )
-                                    }}
+                                    }
                                     className="
-                                        h-10
-                                        rounded-full
-                                        text-[var(--primary)]
-                                            border-2 border-[var(--border)]
-                                            px-6
-                                    font-medium
-                                      transition
-                                      hover:opacity-80
-                                    "
+                h-10
+                sm:h-11
+
+                px-3
+                sm:px-6
+
+                rounded-full
+
+                border-2
+                border-[var(--border)]
+
+                text-[var(--primary)]
+
+                font-medium
+
+                flex
+                items-center
+                justify-center
+
+                gap-2
+
+                shrink-0
+
+                transition
+
+                hover:opacity-80
+            "
                                 >
-                                    <BsEyeFill size={18} className="inline-block ml-3" />
-                                    عرض المنتج
+                                    <BsEyeFill size={18} />
+
+                                    {/* Desktop text only */}
+                                    <span className="hidden sm:inline">
+                                        عرض المنتج
+                                    </span>
                                 </button>
 
                             </div>
-
-
                         </div>
                     </div>
                 </div>

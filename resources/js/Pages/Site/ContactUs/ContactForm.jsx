@@ -96,7 +96,8 @@ export default function ContactForm() {
             transition={{ duration: 0.7 }}
             className="bg-white/20 rounded-[32px] border border-[#ece5dc] p-8 lg:p-10 shadow-[0_15px_50px_rgba(0,0,0,.04)]"
         >
-            <h3 className="text-3xl font-bold text-[var(--text-dark)] mt-3">
+             <h3 className="mt-3 text-2xl
+sm:text-3xl font-bold leading-tight">
                 أرسل رسالتك
             </h3>
 

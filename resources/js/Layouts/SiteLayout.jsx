@@ -19,7 +19,7 @@ export default function SiteLayout({ children, title ,announcement }) {
         
         <Navbar auth={auth}/>
 
-        <main className="flex-grow">
+        <main className="flex-grow  overflow-hidden">
           <FlashToast />
           {children}
         </main>

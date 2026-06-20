@@ -1,172 +1,157 @@
 import { getImage } from "@/Utils/GetImage";
-import { useForm } from "@inertiajs/react";
-import { FiCheckCircle, FiCreditCard, FiTruck, FiShield } from "react-icons/fi";
+
+import {
+    FiCheckCircle,
+    FiCreditCard,
+    FiTruck,
+    FiShield,
+} from "react-icons/fi";
 
 export default function OrderSummary({
     items = [],
     subtotal = 0,
     shipping = 0,
     submitOrder,
-
     processing,
 }) {
     const total = subtotal + shipping;
 
-    // const { post, processing } = useForm();
-
     return (
-        // <div className="lg:sticky lg:top-28">
-        <div className=" order-summary-shell">
+        <div
+            className="
+                order-summary-shell
+
+                
+            "
+        >
             <div
                 className="
-                overflow-hidden
-                bg-[#f3f0ee]
+                    w-full
 
-                border
+                    overflow-hidden
 
-                border-gray-100
+                    rounded-[24px]
+                    sm:rounded-[28px]
 
-               
+                    bg-[#f3f0ee]
+
+                    border
+
+                    border-gray-100
                 "
             >
                 {/* HEADER */}
 
                 <div
                     className="
-                    px-5
+                        px-4
+                        sm:px-6
+                        md:px-8
 
-                    md:px-8
-
-                    pt-5
-
-                    md:pt-7
-
-
-                   
+                        pt-5
+                        md:pt-7
                     "
                 >
-                    <div
-                        className="
-                        flex
-
-                        items-center
-
-                        justify-center
-                        "
-                    >
+                    <div className="flex justify-center">
                         <div>
-                            {/* <p
-                                className="
-                                text-xs
-
-                                md:text-sm
-
-                                text-[var(--primary)]
-
-                                font-semibold
-
-                                mb-1
-                                "
-                            >
-                                ملخص الشراء
-                            </p> */}
-
                             <h2
                                 className="
-                                text-2xl
+                                    text-2xl
+                                    md:text-3xl
 
-                                md:text-3xl
-
-                                font-bold
+                                    font-bold
                                 "
                             >
                                 طلبك
                             </h2>
                         </div>
-
-                        {/* <div
-                            className="
-                            w-11
-
-                            h-11
-
-                            md:w-14
-
-                            md:h-14
-
-                            rounded-2xl
-
-                            bg-[var(--primary)]/10
-
-                            text-[var(--primary)]
-
-                            flex
-
-                            items-center
-
-                            justify-center
-                            "
-                        >
-                            <FiCheckCircle size={24} />
-                        </div> */}
                     </div>
                 </div>
-                <div
-                    className=" bg-white p-3 m-8 rounded-3xl border
 
-                border-gray-100"
+                {/* BODY */}
+
+                <div
+                    className="
+                        bg-white
+
+                        p-3
+
+                        mx-3
+                        my-5
+
+                        sm:mx-5
+
+                        md:mx-8
+
+                        rounded-3xl
+
+                        border
+
+                        border-gray-100
+                    "
                 >
                     {/* PRODUCTS */}
 
                     <div
                         className="
-                    px-4
+                            px-1
 
-                    md:px-6
+                            sm:px-3
 
-                    py-5
+                            md:px-6
 
-                    space-y-3
-                    "
+                            py-4
+
+                            space-y-3
+                        "
                     >
                         {items.map((item, index) => (
                             <div
-                                key={item.id ?? `${item.variant_id}-${index}`}
+                                key={
+                                    item.id ??
+                                    `${item.variant_id}-${index}`
+                                }
                                 className="
-                            flex
+                                    flex
 
-                            gap-3
+                                    items-start
 
-                            p-3
+                                    gap-3
 
-                            rounded-2xl
+                                    p-3
 
-                            bg-[#fafafa]
+                                    rounded-2xl
 
-                            border
+                                    bg-[#fafafa]
 
-                            border-gray-100
-                            "
+                                    border
+
+                                    border-gray-100
+
+                                    overflow-hidden
+                                "
                             >
                                 {/* IMAGE */}
 
                                 <img
                                     src={getImage(item.image)}
+                                    alt={item.name}
                                     className="
-                                w-16
+                                        w-14
+                                        h-14
 
-                                h-16
+                                        sm:w-16
+                                        sm:h-16
 
-                                md:w-20
+                                        md:w-20
+                                        md:h-20
 
-                                md:h-20
+                                        rounded-xl
 
-                                rounded-xl
+                                        object-cover
 
-                                object-cover
-
-                                shrink-0
-                                "
+                                        shrink-0
+                                    "
                                 />
 
                                 {/* INFO */}
@@ -174,72 +159,84 @@ export default function OrderSummary({
                                 <div className="flex-1 min-w-0">
                                     <div
                                         className="
-                                    flex
+                                            flex
 
-                                    justify-between
+                                            justify-between
 
-                                    gap-3
-                                    "
+                                            items-start
+
+                                            gap-3
+                                        "
                                     >
                                         <h3
                                             className="
-                                        text-sm
+                                                flex-1
 
-                                        md:text-base
+                                                min-w-0
 
-                                        font-semibold
+                                                text-sm
 
-                                        truncate
-                                        "
+                                                md:text-base
+
+                                                font-semibold
+
+                                                truncate
+                                            "
                                         >
                                             {item.name}
                                         </h3>
 
                                         <span
                                             className="
-                                        text-sm
+                                                shrink-0
 
-                                        md:text-base
+                                                text-sm
 
-                                        font-bold
+                                                md:text-base
 
-                                        text-[var(--primary)]
+                                                font-bold
 
-                                        whitespace-nowrap
-                                        "
+                                                text-[var(--primary)]
+
+                                                whitespace-nowrap
+                                            "
                                         >
-                                            {item.quantity * item.price} ج
+                                            {item.quantity *
+                                                item.price}{" "}
+                                            ج
                                         </span>
                                     </div>
 
+                                    {/* OPTIONS */}
+
                                     <div
                                         className="
-                                    flex
+                                            flex
 
-                                    flex-wrap
+                                            flex-wrap
 
-                                    gap-2
+                                            gap-2
 
-                                    mt-2
-                                    "
+                                            mt-2
+                                        "
                                     >
                                         {item.size && (
                                             <span
                                                 className="
-                                            text-[10px]
+                                                    text-[10px]
 
-                                            md:text-[11px]
+                                                    md:text-[11px]
 
-                                            px-2
+                                                    px-2
 
-                                            py-1
+                                                    py-1
 
-                                            rounded-full
+                                                    rounded-full
 
-                                            bg-white
+                                                    bg-white
 
-                                            border
-                                            "
+                                                    border
+                                                "
                                             >
                                                 {item.size}
                                             </span>
@@ -248,20 +245,20 @@ export default function OrderSummary({
                                         {item.frame && (
                                             <span
                                                 className="
-                                            text-[10px]
+                                                    text-[10px]
 
-                                            md:text-[11px]
+                                                    md:text-[11px]
 
-                                            px-2
+                                                    px-2
 
-                                            py-1
+                                                    py-1
 
-                                            rounded-full
+                                                    rounded-full
 
-                                            bg-white
+                                                    bg-white
 
-                                            border
-                                            "
+                                                    border
+                                                "
                                             >
                                                 {item.frame}
                                             </span>
@@ -270,36 +267,39 @@ export default function OrderSummary({
                                         {item.frame_color_name && (
                                             <span
                                                 className="
-                                            text-[10px]
+                                                    text-[10px]
 
-                                            md:text-[11px]
+                                                    md:text-[11px]
 
-                                            px-2
+                                                    px-2
 
-                                            py-1
+                                                    py-1
 
-                                            rounded-full
+                                                    rounded-full
 
-                                            bg-white
+                                                    bg-white
 
-                                            border
-                                            "
+                                                    border
+                                                "
                                             >
-                                                {item.frame_color_name}
+                                                {
+                                                    item.frame_color_name
+                                                }
                                             </span>
                                         )}
                                     </div>
 
                                     <p
                                         className="
-                                    mt-2
+                                            mt-2
 
-                                    text-xs
+                                            text-xs
 
-                                    text-gray-500
-                                    "
+                                            text-gray-500
+                                        "
                                     >
-                                        {item.quantity}×{item.price} ج
+                                        {item.quantity} ×{" "}
+                                        {item.price} ج
                                     </p>
                                 </div>
                             </div>
@@ -310,29 +310,31 @@ export default function OrderSummary({
 
                     <div
                         className="
-                    mx-5
+                            mx-2
 
-                    md:mx-8
+                            sm:mx-4
 
-                    border-t
+                            md:mx-8
 
-                    border-dashed
+                            border-t
 
-                    pt-5
+                            border-dashed
 
-                    space-y-4
-                    "
+                            pt-5
+
+                            space-y-4
+                        "
                     >
                         <div
                             className="
-                        flex
+                                flex
 
-                        justify-between
+                                justify-between
 
-                        text-sm
+                                text-sm
 
-                        md:text-base
-                        "
+                                md:text-base
+                            "
                         >
                             <span className="text-gray-500">
                                 المجموع الفرعي
@@ -345,25 +347,25 @@ export default function OrderSummary({
 
                         <div
                             className="
-                        flex
+                                flex
 
-                        justify-between
+                                justify-between
 
-                        text-sm
+                                text-sm
 
-                        md:text-base
-                        "
+                                md:text-base
+                            "
                         >
                             <div
                                 className="
-                            flex
+                                    flex
 
-                            items-center
+                                    items-center
 
-                            gap-2
+                                    gap-2
 
-                            text-gray-500
-                            "
+                                    text-gray-500
+                                "
                             >
                                 <FiTruck />
 
@@ -371,58 +373,74 @@ export default function OrderSummary({
                             </div>
 
                             <span className="font-semibold">
-                                {shipping === 0 ? "مجاني" : `${shipping} جنيه`}
+                                {shipping === 0
+                                    ? "مجاني"
+                                    : `${shipping} جنيه`}
                             </span>
                         </div>
                     </div>
 
                     {/* TOTAL CARD */}
 
-                    <div className="p-5 md:p-8">
+                    <div
+                        className="
+                            p-4
+
+                            sm:p-5
+
+                            md:p-8
+                        "
+                    >
                         <div
                             className="
-                        flex
+                                flex
 
-                        items-center
+                                flex-col
+                                sm:flex-row
 
-                        justify-between
+                                items-start
+                                sm:items-center
 
-                        bg-[#fafafa]
+                                justify-between
 
-                        border
+                                gap-4
 
-                        rounded-2xl
+                                bg-[#fafafa]
 
-                        px-5
+                                border
 
-                        py-4
+                                rounded-2xl
 
-                        mb-5
-                        "
+                                px-5
+
+                                py-4
+
+                                mb-5
+                            "
                         >
                             <div>
                                 <p
                                     className="
-                                text-xs
+                                        text-xs
 
-                                md:text-sm
+                                        md:text-sm
 
-                                text-gray-500
-                                "
+                                        text-gray-500
+                                    "
                                 >
                                     الإجمالي
                                 </p>
 
                                 <h3
                                     className="
-                                text-2xl
+                                        text-2xl
 
-                                md:text-3xl
+                                        md:text-3xl
 
-                                font-bold
+                                        font-bold
 
-                                text-[var(--primary)]
-                                "
+                                        text-[var(--primary)]
+                                    "
                                 >
                                     {total} جنيه
                                 </h3>
@@ -430,9 +448,7 @@ export default function OrderSummary({
 
                             <FiCheckCircle
                                 size={32}
-                                className="
-                            text-[var(--primary)]
-                            "
+                                className="text-[var(--primary)]"
                             />
                         </div>
 
@@ -440,68 +456,72 @@ export default function OrderSummary({
 
                         <div
                             className="
-                        flex
+                                flex
 
-                        gap-3
+                                items-start
 
-                        p-4
+                                gap-3
 
-                        rounded-2xl
+                                p-4
 
-                        bg-[#fafafa]
+                                rounded-2xl
 
-                        border
+                                bg-[#fafafa]
 
-                        mb-5
-                        "
+                                border
+
+                                mb-5
+
+                                overflow-hidden
+                            "
                         >
                             <div
                                 className="
-                            w-10
+                                    w-10
 
-                            h-10
+                                    h-10
 
-                            rounded-full
+                                    rounded-full
 
-                            bg-green-100
+                                    bg-green-100
 
-                            text-green-700
+                                    text-green-700
 
-                            flex
+                                    flex
 
-                            items-center
+                                    items-center
 
-                            justify-center
+                                    justify-center
 
-                            shrink-0
-                            "
+                                    shrink-0
+                                "
                             >
                                 <FiCreditCard size={18} />
                             </div>
 
-                            <div>
+                            <div className="min-w-0">
                                 <h4
                                     className="
-                                font-semibold
+                                        font-semibold
 
-                                text-sm
+                                        text-sm
 
-                                md:text-base
-                                "
+                                        md:text-base
+                                    "
                                 >
                                     الدفع عند الاستلام
                                 </h4>
 
                                 <p
                                     className="
-                                text-xs
+                                        text-xs
 
-                                md:text-sm
+                                        md:text-sm
 
-                                text-gray-500
+                                        text-gray-500
 
-                                mt-1
-                                "
+                                        mt-1
+                                    "
                                 >
                                     يمكنك الدفع نقداً عند استلام الطلب.
                                 </p>
@@ -512,24 +532,26 @@ export default function OrderSummary({
 
                         <div
                             className="
-                        flex
+                                flex
 
-                        items-center
+                                items-center
 
-                        gap-2
+                                gap-2
 
-                        text-xs
+                                text-xs
 
-                        md:text-sm
+                                md:text-sm
 
-                        text-gray-500
+                                text-gray-500
 
-                        mb-5
-                        "
+                                mb-5
+                            "
                         >
                             <FiShield />
 
-                            <span>يتم مراجعة جميع الطلبات قبل الشحن.</span>
+                            <span>
+                                يتم مراجعة جميع الطلبات قبل الشحن.
+                            </span>
                         </div>
 
                         {/* BUTTON */}
@@ -538,32 +560,32 @@ export default function OrderSummary({
                             onClick={submitOrder}
                             disabled={processing}
                             className="
-                        w-full
+                                w-full
 
-                        h-12
+                                h-12
+                                sm:h-14
 
-                        md:h-14
+                                rounded-full
 
-                        rounded-full
+                                bg-[var(--primary)]
 
-                        bg-[var(--primary)]
+                                text-white
 
-                        text-white
+                                text-sm
+                                sm:text-base
 
-                        text-sm
+                                font-bold
 
-                        md:text-base
+                                shadow-md
 
-                        font-bold
+                                hover:opacity-90
 
-                        shadow-md
-
-                        hover:opacity-90
-
-                        transition
-                        "
+                                transition
+                            "
                         >
-                            {processing ? "جاري تأكيد الطلب..." : "تأكيد الطلب"}
+                            {processing
+                                ? "جاري تأكيد الطلب..."
+                                : "تأكيد الطلب"}
                         </button>
                     </div>
                 </div>

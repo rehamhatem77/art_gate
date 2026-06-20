@@ -20,7 +20,7 @@ export default function ContactInfo({ contactInfo }) {
         facebook: FaFacebookF,
         pinterest: FaPinterestP,
         tiktok: FaTiktok,
-        x: FaXTwitter, 
+        x: FaXTwitter,
     };
 
     const socialLinks = Object.entries(socialConfig)
@@ -43,8 +43,9 @@ export default function ContactInfo({ contactInfo }) {
                 from-[#1f1f1f]
                 via-[#242424]
                 to-[#2b2b2b]
-                p-8
-                lg:p-10
+                p-5
+sm:p-7
+lg:p-10
                 text-white
                 shadow-[0_20px_60px_rgba(0,0,0,.25)]
             "
@@ -60,7 +61,8 @@ export default function ContactInfo({ contactInfo }) {
                     Contact
                 </span> */}
 
-                <h3 className="mt-3 text-3xl font-bold leading-tight">
+                <h3 className="mt-3 text-2xl
+sm:text-3xl font-bold leading-tight">
                     {contactInfo?.title || " دعنا نتواصل"}
                 </h3>
 
@@ -78,6 +80,7 @@ export default function ContactInfo({ contactInfo }) {
 
                     <ContactInfoItem
                         icon={FiPhone}
+                        dir="ltr"
                         title="الهاتف"
                         value={contactInfo?.phone || "+20 100 000 0000"}
                         href={`tel:${contactInfo?.phone || "+201000000000"}`}
@@ -91,6 +94,7 @@ export default function ContactInfo({ contactInfo }) {
                     />
 
                     <ContactInfoItem
+                        dir="ltr"
                         icon={FaWhatsapp}
                         title="واتساب"
                         value={contactInfo?.whatsapp || "+20 100 000 0000"}
@@ -124,7 +128,8 @@ export default function ContactInfo({ contactInfo }) {
                                     whileHover={{ y: -4 }}
                                     whileTap={{ scale: 0.95 }}
                                     className="
-                    w-11 h-11 rounded-full
+                    w-10 h-10
+sm:w-11 sm:h-11 rounded-full
                     bg-white/10 border border-white/10
                     flex items-center justify-center
                     hover:bg-[var(--primary)]
@@ -158,6 +163,7 @@ function ContactInfoItem({
     title,
     value,
     href = null,
+    dir = "rtl",
 }) {
     const ItemContent = (
         <motion.div
@@ -171,8 +177,11 @@ function ContactInfoItem({
                 group
                 flex
                 items-start
-                gap-4
-                p-5
+                p-4
+sm:p-5
+
+gap-3
+sm:gap-4
                 rounded-2xl
                 bg-white/5
                 border
@@ -186,8 +195,8 @@ function ContactInfoItem({
             {/* Icon */}
             <div
                 className="
-                    w-12
-                    h-12
+                   w-10 h-10
+sm:w-12 sm:h-12
                     rounded-xl
                     bg-white/10
                     flex
@@ -202,13 +211,14 @@ function ContactInfoItem({
                 <Icon
                     className="
                         text-[var(--primary)]
-                        text-xl
+                        text-lg
+sm:text-xl
                     "
                 />
             </div>
 
             {/* Content */}
-            <div className="flex-1 min-w-0">
+            <div  className="flex-1 min-w-0">
                 <p
                     className="
                         text-xs
@@ -221,16 +231,25 @@ function ContactInfoItem({
                 </p>
 
                 <p
+                dir={dir}
                     className="
-                        text-white
-                        leading-relaxed
-                        text-sm
-                        md:text-base
-                        break-words
-                    "
+text-white
+
+leading-relaxed
+
+text-sm
+sm:text-base
+
+break-words
+
+overflow-hidden
+
+max-w-full
+"
                 >
                     {value}
                 </p>
+
             </div>
 
             {href && (

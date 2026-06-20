@@ -166,6 +166,7 @@ export default function Checkout({
                             order-2
 
                             lg:order-2
+                            min-w-0
                             "
                         >
                             <OrderSummary
@@ -192,6 +193,7 @@ export default function Checkout({
                             order-1
 
                             lg:order-1
+                            min-w-0
                             "
                         >
                             <CheckoutForm
