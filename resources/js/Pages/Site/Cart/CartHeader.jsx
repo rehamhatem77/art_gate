@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
 import { FiShoppingCart, FiCreditCard, FiCheckCircle } from "react-icons/fi";
 import { router } from "@inertiajs/react";
+import { getImage } from "@/Utils/GetImage";
 
-export default function CartHeader({ currentStep}) {
+export default function CartHeader({ currentStep ,image}) {
 
     const steps = [
         {
@@ -34,7 +35,7 @@ export default function CartHeader({ currentStep}) {
                     initial={{ scale: 1.1, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 1 }}
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkuqPNq5vPIIH2Xr3V8WH1R6XrAX4goXHenpY4XLZUOCWMfSdMp-eH8eq9lHJdCkF3JlA6_03XCKSrl8CfvfET6c7RtYWwjnqbwHJn6Ul_nI2rQX-MSOApLfeT5DpQ2qoJICCK5fEcuz6XilxoWLU8ORJ3nfL6J55I2oJ-vhFAyztUkxAadCHKGP48-flmoBj_rbhgoyro8dpahHl724Bb8XvBdR_B5dhJiloVQ2l_42D91Ruxcpn9YBzGxIynlH7aiaFtjZk"
+                    src={image? getImage(image):"https://lh3.googleusercontent.com/aida-public/AB6AXuBkuqPNq5vPIIH2Xr3V8WH1R6XrAX4goXHenpY4XLZUOCWMfSdMp-eH8eq9lHJdCkF3JlA6_03XCKSrl8CfvfET6c7RtYWwjnqbwHJn6Ul_nI2rQX-MSOApLfeT5DpQ2qoJICCK5fEcuz6XilxoWLU8ORJ3nfL6J55I2oJ-vhFAyztUkxAadCHKGP48-flmoBj_rbhgoyro8dpahHl724Bb8XvBdR_B5dhJiloVQ2l_42D91Ruxcpn9YBzGxIynlH7aiaFtjZk"}
                     alt="Cart"
                     className="absolute inset-0 w-full h-full object-cover scale-105"
                 />

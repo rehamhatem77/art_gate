@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin\Category;
+use App\Models\Admin\PageSetting;
 use App\Models\Admin\Product;
 use App\Models\Admin\Shape;
 use App\Models\Admin\Tag;
@@ -11,8 +12,13 @@ use Inertia\Inertia;
 
 class ShopPageController extends Controller
 {
+    private function pageData($key)
+    {
+        return PageSetting::where('page_key', $key)->first()?->data ?? [];
+    }
     public function index(Request $request)
     {
+        $shopPage = $this->pageData('shop');
         $wishlistIds = auth()->check()
 
             ? auth()->user()
@@ -201,108 +207,64 @@ class ShopPageController extends Controller
 
         // $products = $query->get();
         $productsPaginated = $query->paginate(6, ['*'], 'page', $request->page);
-     
-
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Transform Products
-        |--------------------------------------------------------------------------
-        */
-
-        // $products = $productsPaginated->getCollection()->map(function ($product)use ($wishlistIds) {
-
-        //     return [
-        //         'id' => $product->id,
-        //         'name' => $product->name,
-        //         'code' => $product->code,
-        //         'main_image' => $product->main_image,
-        //         'slug'=>$product->slug,
-        //         'isWishlisted' => in_array(
-
-        //                 $product->id,
-
-        //                 $wishlistIds
-
-        //             ),
-
-        //         'place' => $product->place ?? [],
-        //         'design_colors' => $product->design_colors ?? [],
-        //         'pieces_count' => $product->pieces_count,
-
-        //         'shape' => $product->shape?->shape,
-
-        //         'price' => $product->variants->min('price'),
-
-        //         'category' => $product->category,
-
-        //         'images' => $product->images->map(function ($image) {
-        //             return [
-        //                 'id' => $image->id,
-        //                 'image' => $image->image,
-        //             ];
-        //         }),
-        //     ];
-        // });
 
         $products = $productsPaginated->getCollection()->map(function ($product) use ($wishlistIds) {
 
-    return [
-        'id' => $product->id,
-        'name' => $product->name,
-        'code' => $product->code,
-        'slug' => $product->slug,
-        'description' => $product->description,
-
-        'main_image' => $product->main_image,
-
-        'isWishlisted' => in_array($product->id, $wishlistIds),
-
-        'place' => $product->place ?? [],
-        'design_colors' => $product->design_colors ?? [],
-        'pieces_count' => $product->pieces_count,
-
-        'shape' => $product->shape?->shape,
-
-        'price' => $product->variants->min('price'),
-
-        'category' => $product->category,
-
-        'tags' => $product->tags, 
-
-      
-        'variants' => $product->variants->map(function ($variant) {
             return [
-                'id' => $variant->id,
+                'id' => $product->id,
+                'name' => $product->name,
+                'code' => $product->code,
+                'slug' => $product->slug,
+                'description' => $product->description,
 
-                'size' => [
-                    'id' => $variant->size->id,
-                    'width' => $variant->size->width,
-                    'height' => $variant->size->height,
-                    'label' => $variant->size->width . ' × ' . $variant->size->height,
-                ],
+                'main_image' => $product->main_image,
 
-                'frame' => [
-                    'id' => $variant->frameType->id,
-                    'type' => $variant->frameType->type,
-                    'colors' => $variant->frameType->colors,
-                ],
+                'isWishlisted' => in_array($product->id, $wishlistIds),
 
-                'price' => $variant->price,
-                'stock' => $variant->stock,
-                'image' => $variant->image,
+                'place' => $product->place ?? [],
+                'design_colors' => $product->design_colors ?? [],
+                'pieces_count' => $product->pieces_count,
+
+                'shape' => $product->shape?->shape,
+
+                'price' => $product->variants->min('price'),
+
+                'category' => $product->category,
+
+                'tags' => $product->tags,
+
+
+                'variants' => $product->variants->map(function ($variant) {
+                    return [
+                        'id' => $variant->id,
+
+                        'size' => [
+                            'id' => $variant->size->id,
+                            'width' => $variant->size->width,
+                            'height' => $variant->size->height,
+                            'label' => $variant->size->width . ' × ' . $variant->size->height,
+                        ],
+
+                        'frame' => [
+                            'id' => $variant->frameType->id,
+                            'type' => $variant->frameType->type,
+                            'colors' => $variant->frameType->colors,
+                        ],
+
+                        'price' => $variant->price,
+                        'stock' => $variant->stock,
+                        'image' => $variant->image,
+                    ];
+                }),
+
+                'images' => $product->images->map(function ($image) {
+                    return [
+                        'id' => $image->id,
+                        'image' => $image->image,
+                    ];
+                }),
             ];
-        }),
-
-        'images' => $product->images->map(function ($image) {
-            return [
-                'id' => $image->id,
-                'image' => $image->image,
-            ];
-        }),
-    ];
-});
+        });
         if ($request->header('X-Load-More') === 'true') {
 
             return response()->json([
@@ -327,6 +289,7 @@ class ShopPageController extends Controller
         return Inertia::render('Site/ShopPage/Shop', [
             'categories' => $categories,
             'tags' => $tags,
+            'shop' => $shopPage,
 
             'products' => $products,
 
@@ -355,97 +318,96 @@ class ShopPageController extends Controller
     }
 
 
-public function searchProducts(Request $request)
-{
-    $search = $request->search;
+    public function searchProducts(Request $request)
+    {
+        $search = $request->search;
 
-    if (!$search) {
-        return response()->json([]);
+        if (!$search) {
+            return response()->json([]);
+        }
+
+        $products = Product::where('is_active', true)
+            ->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('code', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            })
+            ->select('id', 'name', 'slug', 'main_image')
+            ->take(5)
+            ->get();
+
+        return response()->json($products);
     }
+    public function searchPage(Request $request)
+    {
+        $search = $request->search;
+        $searchPage = $this->pageData('search');
 
-    $products = Product::where('is_active', true)
-        ->where(function ($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%")
-              ->orWhere('code', 'like', "%{$search}%")
-              ->orWhere('description', 'like', "%{$search}%");
-        })
-        ->select('id', 'name', 'slug', 'main_image')
-        ->take(5)
-        ->get();
+        $products = Product::with([
+            'variants',
+            'images',
+            'category'
+        ])
+            ->where('is_active', true)
 
-    return response()->json($products);
-}
-public function searchPage(Request $request)
-{
-    $search = $request->search;
+            ->when($search, function ($query) use ($search) {
 
-    $products = Product::with([
-        'variants',
-        'images',
-        'category'
-    ])
-    ->where('is_active', true)
+                $query->where(function ($q) use ($search) {
 
-    ->when($search, function ($query) use ($search) {
+                    $q->where(
+                        'name',
+                        'like',
+                        "%{$search}%"
+                    )
 
-        $query->where(function ($q) use ($search) {
+                        ->orWhere(
+                            'code',
+                            'like',
+                            "%{$search}%"
+                        )
 
-            $q->where(
-                'name',
-                'like',
-                "%{$search}%"
-            )
+                        ->orWhere(
+                            'description',
+                            'like',
+                            "%{$search}%"
+                        );
+                });
+            })
 
-            ->orWhere(
-                'code',
-                'like',
-                "%{$search}%"
-            )
+            ->get()
 
-            ->orWhere(
-                'description',
-                'like',
-                "%{$search}%"
-            );
+            ->map(function ($product) {
 
-        });
+                return [
 
-    })
+                    'id' => $product->id,
 
-    ->get()
+                    'name' => $product->name,
 
-    ->map(function ($product) {
+                    'slug' => $product->slug,
 
-        return [
+                    'main_image' => $product->main_image,
 
-            'id' => $product->id,
+                    'price' => $product
+                        ->variants
+                        ->min('price'),
 
-            'name' => $product->name,
+                    'category' => $product->category,
 
-            'slug' => $product->slug,
+                ];
+            });
 
-            'main_image' => $product->main_image,
+        return Inertia::render(
+            'Site/Search/Index',
+            [
 
-            'price' => $product
-                ->variants
-                ->min('price'),
+                'search' => $search,
 
-            'category' => $product->category,
+                'products' => $products,
+                'total' => $products->count(),
+                'searchPage' => $searchPage
 
-        ];
-
-    });
-
-    return Inertia::render(
-        'Site/Search/Index',
-        [
-
-            'search' => $search,
-
-            'products' => $products,
-'total' => $products->count(),
-
-        ]
-    );
-}
+            ]
+        );
+    }
 }

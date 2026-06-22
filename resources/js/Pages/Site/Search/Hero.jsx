@@ -8,10 +8,12 @@ import {
 } from "react-icons/fi";
 
 import { useState } from "react";
+import { getImage } from "@/Utils/GetImage";
 
 export default function Hero({
     search,
     total,
+image
 }) {
     const [value, setValue] =
         useState(search);
@@ -48,7 +50,7 @@ export default function Hero({
             <div className="absolute inset-0">
 
                 <img
-                    src="https://images.unsplash.com/photo-1513694203232-719a280e022f"
+                    src={image? getImage(image):"https://images.unsplash.com/photo-1513694203232-719a280e022f"}
 
                     alt=""
 

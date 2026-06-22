@@ -31,6 +31,7 @@ export default function Profile({
     profile,
 
     announcement,
+profilePage
 }) {
     const [activeTab, setActiveTab] = useState("personal");
     const { data, setData, errors, processing } = useForm({
@@ -233,7 +234,7 @@ export default function Profile({
         <SiteLayout title="حسابي" announcement={announcement}>
             <div dir="rtl" className="relative min-h-screen overflow-hidden">
                 {/* HERO */}
-                <ProfileHero />
+                <ProfileHero image={profilePage.bg_image} />
                 {/* CONTAINER */}
                 <div className="relative max-w-8xl mx-auto px-6 py-16">
                     {/* MAIN CONTENT */}

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin\PageSetting;
 use App\Models\Admin\Product;
 use App\Models\Admin\ProductVariant;
 use App\Models\Cart;
@@ -12,8 +13,19 @@ use Inertia\Inertia;
 class CartController extends Controller
 {
     //
+    private function pageData($key)
+    {
+        return PageSetting::where('page_key', $key)->first()?->data ?? [];
+    }
+    private function shippingAmount()
+    {
+        $shipping = $this->pageData('shipping');
+
+        return (float) ($shipping['shipping_amount'] ?? 0);
+    }
     public function index()
     {
+        $cartPage = $this->pageData('cart');
         $cartItems = Cart::with([
             'product.images',
             'variant.size',
@@ -65,11 +77,14 @@ class CartController extends Controller
                     ],
                 ];
             });
-
+        $shipping = $this->shippingAmount();
         return Inertia::render(
             'Site/Cart/Index',
             [
                 'cartItems' => $cartItems,
+                'cart' => $cartPage,
+                'shippingAmount' => $shipping
+
             ]
         );
     }
@@ -156,50 +171,50 @@ class CartController extends Controller
         ]);
     }
 
-   public function merge(Request $request)
-{
-    $request->validate([
-        'cart' => ['required', 'array'],
-    ]);
-
-    foreach ($request->cart as $item) {
-
-        $variant = ProductVariant::find(
-            $item['variant_id']
-        );
-
-        if (!$variant) {
-            continue;
-        }
-
-        $cartItem = Cart::firstOrNew([
-            'user_id' => Auth::id(),
-
-            'product_id' => $item['product_id'],
-
-            'variant_id' => $item['variant_id'],
-
-            'frame_color_name' =>
-                $item['frame_color_name'] ?? null,
-
-            'frame_color_code' =>
-                $item['frame_color_code'] ?? null,
+    public function merge(Request $request)
+    {
+        $request->validate([
+            'cart' => ['required', 'array'],
         ]);
 
-        $newQuantity =
-            ($cartItem->quantity ?? 0)
-            + $item['quantity'];
+        foreach ($request->cart as $item) {
 
-        $cartItem->quantity = min(
-            $newQuantity,
-            $variant->stock
-        );
+            $variant = ProductVariant::find(
+                $item['variant_id']
+            );
 
-        $cartItem->save();
+            if (!$variant) {
+                continue;
+            }
+
+            $cartItem = Cart::firstOrNew([
+                'user_id' => Auth::id(),
+
+                'product_id' => $item['product_id'],
+
+                'variant_id' => $item['variant_id'],
+
+                'frame_color_name' =>
+                $item['frame_color_name'] ?? null,
+
+                'frame_color_code' =>
+                $item['frame_color_code'] ?? null,
+            ]);
+
+            $newQuantity =
+                ($cartItem->quantity ?? 0)
+                + $item['quantity'];
+
+            $cartItem->quantity = min(
+                $newQuantity,
+                $variant->stock
+            );
+
+            $cartItem->save();
+        }
+
+        return response()->json([
+            'success' => true,
+        ]);
     }
-
-    return response()->json([
-        'success' => true,
-    ]);
-}
 }

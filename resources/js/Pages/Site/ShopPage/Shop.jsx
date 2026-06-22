@@ -12,7 +12,8 @@ import useRecentlyViewed from "@/Hooks/useRecentlyViewed";
 
 export default function Shop({ categories, tags, products, counts, shapes,
     filters: initialFilters,
-    total
+    total,
+shop
 }) {
     const [showFilters, setShowFilters] = useState(false);
     const { services } = usePage().props;
@@ -55,7 +56,7 @@ export default function Shop({ categories, tags, products, counts, shapes,
 
     return (
         <SiteLayout title="المتجر" announcement={announcement}>
-            <Hero categories={categories} tags={tags}
+            <Hero bgImage={shop.bg_image} categories={categories} tags={tags}
                 onSelect={(item) => {
                     updateFilters({
                         ...filters,

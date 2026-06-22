@@ -4,6 +4,7 @@ use App\Http\Controllers\AboutUsControllter;
 use App\Http\Controllers\Admin\AdminAboutPageController;
 use App\Http\Controllers\Admin\AdminContactPageController;
 use App\Http\Controllers\Admin\AdminHomePageController;
+use App\Http\Controllers\Admin\AdminPageSettingsController;
 use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -234,6 +235,14 @@ Route::middleware('auth')->group(function () {
 
             Route::delete('/newsletter/{id}', [SubscribtionController::class, 'destroy'])
                 ->name('newsletter.destroy');
+
+            Route::prefix('pages')->group(function () {
+                Route::get('/', [AdminPageSettingsController::class, 'index'])
+                    ->name('admin.pages.index');
+
+                Route::post('/{key}', [AdminPageSettingsController::class, 'update'])
+                    ->name('admin.pages.update');
+            });
 
 
 

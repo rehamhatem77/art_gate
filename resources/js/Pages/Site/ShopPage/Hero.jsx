@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { iconsMap } from "@/Components/IconPicker";
 import { FiGrid, FiX } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
+import { getImage } from "@/Utils/GetImage";
 
-export default function Hero({ categories, tags, onSelect }) {
+export default function Hero({ categories, tags, onSelect,bgImage }) {
     const [open, setOpen] = useState(false);
     const [selected, setSelected] = useState({
         type: null,
@@ -44,7 +45,7 @@ export default function Hero({ categories, tags, onSelect }) {
             {/* Background */}
             <div className="absolute inset-0">
                 <img
-                    src="https://images.unsplash.com/photo-1506744038136-46273834b3fb"
+                    src={bgImage?  getImage(bgImage):"https://images.unsplash.com/photo-1506744038136-46273834b3fb"}
                     className="w-full h-full object-cover"
                 />
                 {/* <div className="absolute inset-0 bg-[#243457]/80" /> */}

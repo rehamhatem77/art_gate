@@ -5,26 +5,13 @@ import { router } from "@inertiajs/react";
 import { getImage } from "@/Utils/GetImage";
 import Hero from "./Hero";
 
-export default function Index({
-    products,
-    search,
-total,
-}) {
-
+export default function Index({ products, search, total, searchPage }) {
     return (
-
         <SiteLayout title="نتائج البحث">
- <Hero
-
-                search={search}
-
-                total={total}
-
-            />
+            <Hero image={searchPage.bg_image} search={search} total={total} />
 
             <div className="max-w-7xl mx-auto py-10 px-5">
                 {products.length ? (
-
                     <div
                         className="
                             grid
@@ -36,23 +23,17 @@ total,
                             gap-6
                         "
                     >
-
-                        {products.map(
-                            (product) => (
-
+                        {products.map((product) => (
                             <button
-
                                 key={product.id}
-
                                 onClick={() =>
                                     router.visit(
                                         route(
                                             "shop.product.show",
-                                            product.slug
-                                        )
+                                            product.slug,
+                                        ),
                                     )
                                 }
-
                                 className="
                                     bg-white
 
@@ -69,13 +50,8 @@ total,
                                     transition
                                 "
                             >
-
                                 <img
-
-                                    src={getImage(
-                                        product.main_image
-                                    )}
-
+                                    src={getImage(product.main_image)}
                                     className="
                                         h-60
 
@@ -118,15 +94,10 @@ total,
                                 >
                                     {product.price} ج.م
                                 </p>
-
                             </button>
-
                         ))}
-
                     </div>
-
                 ) : (
-
                     <div
                         className="
                             py-20
@@ -136,16 +107,10 @@ total,
                             text-gray-400
                         "
                     >
-
                         لا توجد نتائج
-
                     </div>
-
                 )}
-
             </div>
-
         </SiteLayout>
-
     );
 }

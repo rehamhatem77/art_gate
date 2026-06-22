@@ -33,6 +33,7 @@ import { BsStars } from "react-icons/bs";
 import SidebarContent from "@/Components/Sidebar";
 import FlashToast from "@/Components/FlashToast";
 import Header from "@/Components/Header";
+import { ImPageBreak } from "react-icons/im";
 
 export default function AuthenticatedLayout({ children }) {
     const user = usePage().props.auth.user;
@@ -97,6 +98,7 @@ export default function AuthenticatedLayout({ children }) {
         { name: "الصفحة الرئيسية", icon: <FiHome />, path: "/admin/homepage" },
         { name: "من نحن", icon: <FiBriefcase />, path: "/admin/about-page" },
         { name: "تواصل معنا", icon: <FiGlobe />, path: "/admin/contact-page" },
+ { name: "باقي الصفحات", icon: <ImPageBreak />, path: "/admin/pages" },
         {
             name: "رسائل العملاء",
             icon: <FiMail />,

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin\PageSetting;
 use App\Models\Admin\ProductVariant;
 use App\Models\Cart;
 use App\Models\Order;
@@ -15,8 +16,19 @@ class CheckoutController extends Controller
 
 
 {
+ private function pageData($key)
+    {
+        return PageSetting::where('page_key', $key)->first()?->data ?? [];
+    }
+private function shippingAmount()
+{
+    $shipping = $this->pageData('shipping');
+
+    return (float) ($shipping['shipping_amount'] ?? 100);
+}
     public function index(Request $request)
     {
+
         if (Auth::check()) {
 
             $cartItems = Cart::with([
@@ -76,7 +88,7 @@ class CheckoutController extends Controller
 
         );
 
-        $shipping = 100;
+        $shipping = $this->shippingAmount();
         $user = User::find(Auth::id());
 if (Auth::check()) {
         $user->load('profile');}
@@ -194,7 +206,7 @@ if (Auth::check()) {
                 $item['price'] * $item['quantity']
             );
 
-            $shipping = 100;
+            $shipping = $this->shippingAmount();
             $total = $subtotal + $shipping;
 
             $order = Order::create([

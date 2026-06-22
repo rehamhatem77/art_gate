@@ -1,3 +1,4 @@
+import { getImage } from "@/Utils/GetImage";
 import { motion } from "framer-motion";
 
 import {
@@ -36,7 +37,7 @@ const fadeUp = {
     },
 };
 
-export default function ProfileHero({ user, orders }) {
+export default function ProfileHero({ user, orders , image }) {
     return (
         <section
             dir="rtl"
@@ -50,7 +51,7 @@ export default function ProfileHero({ user, orders }) {
                 className="absolute inset-0"
             >
                 <img
-                    src={
+                    src={image? getImage(image):
                         "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=2070&auto=format&fit=crop"
                     }
                     alt="ArtGateContact"

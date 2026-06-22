@@ -15,7 +15,7 @@ import {
 } from "@/Utils/Cart";
 import toast from "react-hot-toast";
 
-export default function Index({ cartItems = [], announcement }) {
+export default function Index({ cartItems = [], announcement ,cart ,shippingAmount}) {
 
     const { auth } = usePage().props;
 
@@ -50,7 +50,8 @@ export default function Index({ cartItems = [], announcement }) {
         return sum + item.quantity * price;
     }, 0);
 
-    const shipping = subtotal >= 2000 ? 0 : 100;
+    // const shipping = subtotal >= 2000 ? 0 : 100;
+    const shipping = shippingAmount? shippingAmount : 100;
     const total = subtotal + shipping;
 
     /* ================= AUTH CART ================= */
@@ -122,7 +123,7 @@ export default function Index({ cartItems = [], announcement }) {
     }
     return (
         <SiteLayout title="سلة التسوق" announcement={announcement}>
-            <CartHeader currentStep = {1}  />
+            <CartHeader currentStep = {1} image={cart.bg_image}  />
 
             <section className="min-h-screen py-5">
                 <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-10">
@@ -173,7 +174,8 @@ export default function Index({ cartItems = [], announcement }) {
                                 </motion.div>
 
                                 {/* SHIPPING */}
-                                {/* <motion.div
+{cart.shipping_notice &&(
+                                <motion.div
                                     variants={item}
                                     className="
                                         relative
@@ -201,19 +203,14 @@ export default function Index({ cartItems = [], announcement }) {
                                     </div>
 
                                     <div>
-                                        <h3 className="font-semibold text-gray-900">
-                                            شحن مجاني
-                                        </h3>
+                                        
 
                                         <p className="text-gray-500 text-sm mt-1">
-                                            للطلبات التي تتجاوز
-                                            <span className="font-semibold text-[var(--primary)] mx-2">
-                                                2000 جنيه
-                                            </span>
+                                          {cart.shipping_notice}
                                         </p>
                                     </div>
-                                </motion.div> */}
-
+                                </motion.div>
+)}
                                 {/* PRODUCTS */}
                                 <motion.div
                                     variants={container}

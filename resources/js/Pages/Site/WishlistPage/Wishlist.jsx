@@ -7,8 +7,9 @@ import FeaturesSection from "../Components/FeaturesSection";
 import RecentlyViewedSection from "../Components/RecentlyViewedSection";
 import useRecentlyViewed from "@/Hooks/useRecentlyViewed";
 import { useState } from "react";
+import { getImage } from "@/Utils/GetImage";
 
-export default function Wishlist({ products ,announcement }) {
+export default function Wishlist({ products ,announcement,wish }) {
        const { services } = usePage().props;
       
         const recentProducts =
@@ -23,7 +24,7 @@ export default function Wishlist({ products ,announcement }) {
                 {/* ================= HERO ================= */}
                 <section className="relative h-[420px] overflow-hidden">
                     <img
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCvauYajkBJ8x9Mh1sKxwJUTnWwSds_mnlN2ZsQJbEH25b4-ga-cb08MZOEoWImzMFFrVP-97f_dwKzg7Dxn19lk33Ii2y4E7DSiAcrbF5slrtClBORcObvhC5N-pCrmEejxex6VZSPdF3m0L1G4hpbKCraN-7M7XvfWiKjk5faiTmeZaW37gYO_NsG4xN_JCSNNuGSV0sWQs08Ej0FJs4SN_ZxptwZ7pLYpAKVCyaRePSHbg5rhG5LdCXBnLyuGdh0rCf0UA"
+                        src={wish? getImage(wish.bg_image) :"https://lh3.googleusercontent.com/aida-public/AB6AXuBCvauYajkBJ8x9Mh1sKxwJUTnWwSds_mnlN2ZsQJbEH25b4-ga-cb08MZOEoWImzMFFrVP-97f_dwKzg7Dxn19lk33Ii2y4E7DSiAcrbF5slrtClBORcObvhC5N-pCrmEejxex6VZSPdF3m0L1G4hpbKCraN-7M7XvfWiKjk5faiTmeZaW37gYO_NsG4xN_JCSNNuGSV0sWQs08Ej0FJs4SN_ZxptwZ7pLYpAKVCyaRePSHbg5rhG5LdCXBnLyuGdh0rCf0UA"}
                         alt="Wishlist"
                         className="
                             absolute

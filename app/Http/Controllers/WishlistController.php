@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin\PageSetting;
 use App\Models\Admin\Product;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
@@ -10,33 +11,39 @@ use Inertia\Inertia;
 class WishlistController extends Controller
 {
     //
-      public function index()
+    private function pageData($key)
     {
-    $products = auth()->user()
-    ->wishlistProducts()
-    ->with([
-        'category:id,name',
-        'images',
-        'variants:id,product_id,price'
-    ])
-    ->get()
-    ->map(function ($product) {
-        return [
-            'id' => $product->id,
-            'name' => $product->name,
-            'slug' => $product->slug,
-            'code'=>$product->code,
-            'main_image' => $product->main_image,
-            'price' => $product->variants->min('price'),
-            'isWishlisted' => true,
-            'category' => $product->category,
-            'images' => $product->images,
-            'tags' => $product->tags,
-        ];
-    });
+        return PageSetting::where('page_key', $key)->first()?->data ?? [];
+    }
+    public function index()
+    {
+        $wishpPage = $this->pageData('wishlist');
+        $products = auth()->user()
+            ->wishlistProducts()
+            ->with([
+                'category:id,name',
+                'images',
+                'variants:id,product_id,price'
+            ])
+            ->get()
+            ->map(function ($product) {
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'slug' => $product->slug,
+                    'code' => $product->code,
+                    'main_image' => $product->main_image,
+                    'price' => $product->variants->min('price'),
+                    'isWishlisted' => true,
+                    'category' => $product->category,
+                    'images' => $product->images,
+                    'tags' => $product->tags,
+                ];
+            });
 
         return Inertia::render('Site/WishlistPage/Wishlist', [
-            'products' => $products
+            'products' => $products,
+            'wish' => $wishpPage,
         ]);
     }
 

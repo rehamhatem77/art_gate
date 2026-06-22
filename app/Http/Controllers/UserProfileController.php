@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Admin\PageSetting;
 use App\Models\Admin\Product;
 use App\Models\Admin\ProductVariant;
 use App\Models\Order;
@@ -19,12 +20,17 @@ use Inertia\Response;
 
 class UserProfileController extends Controller
 {
+ private function pageData($key)
+    {
+        return PageSetting::where('page_key', $key)->first()?->data ?? [];
+    }
     public function edit(
         Request $request
     ): Response {
 
         $user = User::find(Auth::id());
         $user->load('profile');
+$profilePage = $this->pageData('account');
 
         $orders = Order::where('user_id', $user->id)
             ->latest()
@@ -83,7 +89,7 @@ class UserProfileController extends Controller
             'Site/Profile/Profile',
 
             [
-
+'profilePage'=>$profilePage,
                 'user' => $user,
                 'profile' => $user->profile,
 
