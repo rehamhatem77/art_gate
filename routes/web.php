@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\ProductsController;
 use App\Http\Controllers\Admin\ServicesController;
 use App\Http\Controllers\Admin\ShapesController;
 use App\Http\Controllers\Admin\SizesController;
+use App\Http\Controllers\Admin\SubscribtionController;
 use App\Http\Controllers\Admin\TableauNumbersController;
 use App\Http\Controllers\Admin\TagsController;
 use App\Http\Controllers\CartController;
@@ -65,6 +66,8 @@ Route::get(
     '/search',
     [ShopPageController::class, 'searchPage']
 )->name('search.page');
+Route::post('/newsletter/subscribe', [SubscribtionController::class, 'store'])
+    ->name('newsletter.subscribe');
 
 // Route::get('/dashboard', function () {
 //     return Inertia::render('Dashboard');
@@ -226,6 +229,13 @@ Route::middleware('auth')->group(function () {
             });
 
 
+            Route::get('/newsletter', [SubscribtionController::class, 'index'])
+                ->name('newsletter.index');
+
+            Route::delete('/newsletter/{id}', [SubscribtionController::class, 'destroy'])
+                ->name('newsletter.destroy');
+
+
 
             // Route::get('/tableau-numbers', [TableauNumbersController::class, 'index'])
             //         ->name('tableau-numbers.index');
@@ -241,6 +251,8 @@ Route::middleware('auth')->group(function () {
                 [DashboardController::class, 'changeRole']
 
             )->name('users.change-role');
+
+
 
             Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
             Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

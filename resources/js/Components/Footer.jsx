@@ -1,4 +1,10 @@
-import { FaFacebookF, FaInstagram, FaPinterestP, FaTiktok, FaXTwitter } from "react-icons/fa6";
+import {
+    FaFacebookF,
+    FaInstagram,
+    FaPinterestP,
+    FaTiktok,
+    FaXTwitter,
+} from "react-icons/fa6";
 import ApplicationLogo from "./ApplicationLogo";
 import {
     FiInstagram,
@@ -8,7 +14,8 @@ import {
     FiPhone,
     FiMapPin,
 } from "react-icons/fi";
-import { usePage } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
+import { useState } from "react";
 
 export default function Footer() {
     const { footer } = usePage().props;
@@ -17,7 +24,7 @@ export default function Footer() {
         facebook: FaFacebookF,
         pinterest: FaPinterestP,
         tiktok: FaTiktok,
-        x: FaXTwitter, // 
+        x: FaXTwitter, //
     };
     const socialLinks = Object.entries(socialConfig)
         .map(([key, Icon]) => ({
@@ -25,20 +32,79 @@ export default function Footer() {
             icon: Icon,
             link: footer?.[key],
         }))
-        .filter(item => item.link && item.link.trim() !== "");
+        .filter((item) => item.link && item.link.trim() !== "");
+
+    const { errors: serverErrors } = usePage().props;
+
+    const [email, setEmail] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+    const validate = () => {
+        let err = "";
+
+        if (!email.trim()) {
+            err = "البريد الإلكتروني مطلوب";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            err = "البريد الإلكتروني غير صحيح";
+        }
+
+        setError(err);
+
+        return !err;
+    };
+
+    const subscribe = () => {
+        if (!validate()) return;
+
+        setLoading(true);
+        setError("");
+
+        router.post(
+            route("newsletter.subscribe"),
+            {
+                email,
+            },
+            {
+                onSuccess: () => {
+                    setEmail("");
+
+                    toast.success("تم الاشتراك بنجاح 💌", {
+                        style: {
+                            background: "#1f1f1f",
+                            color: "#fff",
+                            borderRadius: "12px",
+                        },
+                    });
+                },
+
+                onError: (errors) => {
+                    if (errors.email) {
+                        setError(errors.email);
+                    } else {
+                        setError("حدث خطأ غير متوقع");
+                    }
+
+                    toast.error("فشل الاشتراك ❌");
+                },
+
+                onFinish: () => {
+                    setLoading(false);
+                },
+            },
+        );
+    };
     return (
         <footer className="bg-[#1d1916] opacity-90 text-white">
             {/* Top */}
             <div className="max-w-8xl mx-auto px-8 sm:px-12 lg:px-18 xl:px-28 py-12">
-
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
-
                     {/* Brand */}
                     <div className="lg:col-span-2">
                         <ApplicationLogo className="h-28 w-auto" />
 
                         <p className="mt-2 text-gray-400 leading-8 max-w-md">
-                            {footer?.description || `  نقدم مجموعة مميزة من اللوحات الفنية والتابلوهات
+                            {footer?.description ||
+                                `  نقدم مجموعة مميزة من اللوحات الفنية والتابلوهات
                             العصرية المصممة بعناية لتضيف لمسة من الأناقة
                             والجمال إلى منزلك أو مكان عملك.`}
                         </p>
@@ -74,9 +140,7 @@ export default function Footer() {
 
                     {/* Shop */}
                     <div>
-                        <h3 className="font-bold text-lg mb-4">
-                            المتجر
-                        </h3>
+                        <h3 className="font-bold text-lg mb-4">المتجر</h3>
 
                         <ul className="space-y-3 text-gray-400">
                             <li>
@@ -127,9 +191,7 @@ export default function Footer() {
 
                     {/* Support */}
                     <div>
-                        <h3 className="font-bold text-lg mb-4">
-                            الدعم
-                        </h3>
+                        <h3 className="font-bold text-lg mb-4">الدعم</h3>
 
                         <ul className="space-y-3 text-gray-400">
                             <li>
@@ -172,20 +234,21 @@ export default function Footer() {
 
                     {/* Contact */}
                     <div>
-                        <h3 className="font-bold text-lg mb-4">
-                            تواصل معنا
-                        </h3>
+                        <h3 className="font-bold text-lg mb-4">تواصل معنا</h3>
 
                         <div className="space-y-3 text-gray-400">
-
                             <div className="flex items-center gap-3">
                                 <FiMail />
-                                <span>{footer?.email || "info@artgate.com"}</span>
+                                <span>
+                                    {footer?.email || "info@artgate.com"}
+                                </span>
                             </div>
 
                             <div className="flex items-center gap-3">
                                 <FiPhone />
-                                <span>{footer?.phone || "+20 100 000 0000"}</span>
+                                <span>
+                                    {footer?.phone || "+20 100 000 0000"}
+                                </span>
                             </div>
 
                             <div className="flex items-center gap-3">
@@ -208,7 +271,6 @@ export default function Footer() {
                     "
                 >
                     <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-
                         <div>
                             <h3 className="text-2xl font-bold mb-2">
                                 اشترك في نشرتنا البريدية
@@ -219,16 +281,20 @@ export default function Footer() {
                             </p>
                         </div>
 
-                        <div className=" flex
+                        <div
+                            className=" flex
     flex-col
     sm:flex-row
 
     w-full
     lg:w-auto
 
-    gap-3">
+    gap-3"
+                        >
                             <input
                                 type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 placeholder="البريد الإلكتروني"
                                 className="
                                     w-full
@@ -252,34 +318,40 @@ export default function Footer() {
                                 "
                             />
 
-
                             <button
+                                onClick={subscribe}
+                                disabled={loading}
                                 className="
-                                    px-8
-                                    py-4
-                                    rounded-full
-                                    bg-[var(--primary)]
-                                    text-white
-                                    hover:scale-105
-                                    transition
-                                "
+        px-8 py-4 rounded-full
+        bg-[var(--primary)]
+        text-white
+        hover:scale-105 transition
+        disabled:opacity-50
+    "
                             >
-                                اشتراك
+                                {loading ? "جارٍ الاشتراك..." : "اشتراك"}
                             </button>
                         </div>
                     </div>
-                </div>
+                    {error && (
+                        <p className="text-red-400 text-sm mt-2">{error}</p>
+                    )}
 
+                    {serverErrors?.email && (
+                        <p className="text-red-400 text-sm mt-2">
+                            {serverErrors.email}
+                        </p>
+                    )}
+                </div>
             </div>
 
             {/* Bottom */}
             <div className="border-t border-white/10">
                 <div className="max-w-8xl mx-auto px-8 sm:px-12 lg:px-18 xl:px-28 py-6">
-
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-
                         <p className="text-gray-500 text-sm">
-                            © {new Date().getFullYear()} Art Gate. جميع الحقوق محفوظة.
+                            © {new Date().getFullYear()} Art Gate. جميع الحقوق
+                            محفوظة.
                         </p>
 
                         <div className="flex gap-6 text-sm text-gray-500">
@@ -296,7 +368,6 @@ export default function Footer() {
                             </a>
                         </div>
                     </div>
-
                 </div>
             </div>
         </footer>

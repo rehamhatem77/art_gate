@@ -86,6 +86,11 @@ export default function AuthenticatedLayout({ children }) {
             icon: <FaMoneyBillTrendUp />,
             path: "/admin/orders",
         },
+        {
+            name: "النشرة البريدية",
+            icon: <FiMail />,
+            path: "/admin/newsletter",
+        },
     ];
 
     const sitePages = [

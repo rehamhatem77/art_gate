@@ -237,4 +237,6 @@ class HomePageController extends Controller
             'categoryTabs'  => $categoryTabs,
         ]);
     }
+
+
 }
