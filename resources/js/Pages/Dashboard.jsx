@@ -11,6 +11,7 @@ import {
     FiEye,
     FiPlus,
     FiAlertTriangle,
+    FiClock,
 } from "react-icons/fi";
 
 import { IoColorPaletteOutline } from "react-icons/io5";
@@ -24,7 +25,7 @@ export default function Dashboard({
     latestProducts,
     lowStockProducts,
     categoryAnalytics,
-    chartData,
+    users,
     recentActivities,
 }) {
     const cards = [
@@ -76,6 +77,7 @@ export default function Dashboard({
             color: "text-green-600",
         },
     ];
+
 
     return (
         <AuthenticatedLayout>
@@ -263,70 +265,208 @@ duration-300
 
                 {/* Chart + Activities */}
                 <section className="grid grid-cols-1 xl:grid-cols-3 gap-5">
-                    {/* Chart */}
+                    {/* Users */}
+
                     <div
                         className="
-                            xl:col-span-2
-                            rounded-[30px]
-                            border border-gray-100
-                            bg-white
-                            p-6
-                            shadow-sm
-                        "
+            xl:col-span-2
+
+            rounded-[30px]
+
+            border
+
+            border-gray-100
+
+            bg-white
+
+            p-6
+
+            shadow-sm
+        "
                     >
-                        <div className="flex items-center justify-between mb-10">
+                        <div
+                            className="
+                mb-8
+
+                flex
+
+                items-center
+
+                justify-between
+            "
+                        >
                             <div>
-                                <h2 className="text-2xl font-black text-gray-800">
-                                    المنتجات المضافة شهرياً
+                                <h2
+                                    className="
+                        text-2xl
+
+                        font-black
+
+                        text-gray-800
+                    "
+                                >
+                                    المستخدمين
                                 </h2>
 
-                                <p className="text-sm text-gray-500 mt-1">
-                                    إحصائيات السنة الحالية
+                                <p
+                                    className="
+                        mt-1
+
+                        text-sm
+
+                        text-gray-500
+                    "
+                                >
+                                    إدارة صلاحيات المستخدمين
                                 </p>
                             </div>
 
                             <div
                                 className="
-                                    px-4 py-2
-                                    rounded-2xl
-                                    bg-[#F4ECE5]
-                                    text-[#8B5E3C]
-                                    font-bold
-                                    flex items-center gap-2
-                                "
+                    rounded-2xl
+
+                    bg-gray-100
+
+                    px-4
+
+                    py-2
+
+                    font-bold
+                "
                             >
-                                <FiArrowUpRight />
-                                نمو مستمر
+                                {users.length} مستخدم
                             </div>
                         </div>
 
-                        <div className="h-80 flex items-end justify-between gap-3">
-                            {chartData.map((item, index) => (
-                                <div
-                                    key={index}
-                                    className="flex-1 flex flex-col items-center gap-3"
-                                >
-                                    <div
-                                        className="
-                                            w-full rounded-t-[24px]
-                                            bg-gradient-to-t
-                                            from-[#7F5539]
-                                            to-[#D4A373]
-                                            hover:opacity-90
-                                            transition-all
-                                        "
-                                        style={{
-                                            height: `${Math.max(
-                                                item.total * 12,
-                                                20,
-                                            )}%`,
-                                            minHeight: "40px",
-                                        }}
-                                    />
+                        <div
+                            className="
+                max-h-[500px]
 
-                                    <span className="text-sm text-gray-500">
-                                        {item.month}
-                                    </span>
+                space-y-4
+
+                overflow-y-auto
+
+                pr-2
+            "
+                        >
+                            {users.map((user) => (
+                                <div
+                                    key={user.id}
+                                    className="
+                        flex
+
+                        flex-col
+
+                        gap-4
+
+                        rounded-3xl
+
+                        border
+
+                        border-gray-100
+
+                        p-5
+
+                        md:flex-row
+
+                        md:items-center
+
+                        md:justify-between
+                    "
+                                >
+                                    <div>
+                                        <h3
+                                            className="
+                                text-lg
+
+                                font-black
+
+                                text-gray-800
+                            "
+                                        >
+                                            {user.name}
+                                        </h3>
+
+                                        <p
+                                            className="
+                                mt-1
+
+                                text-sm
+
+                                text-gray-500
+                            "
+                                        >
+                                            {user.email}
+                                        </p>
+
+                                      <div
+    className="
+        mt-3
+
+        flex
+
+        items-center
+
+        gap-2
+
+        text-sm
+
+        text-gray-500
+    "
+>
+    <FiClock />
+
+    <span>
+        انضم في {user.joined_at}
+    </span>
+
+    <span className="text-[var(--primary)]">
+        ({user.joined_since})
+    </span>
+</div>
+                                    </div>
+
+                                    <select
+                                        value={user.role}
+                                        onChange={(e) =>
+                                            router.patch(
+                                                route(
+                                                    "users.change-role",
+
+                                                    user.id,
+                                                ),
+
+                                                {
+                                                    role: e.target.value,
+                                                },
+                                            )
+                                        }
+                                        className="
+                            h-12
+
+                            rounded-2xl
+
+                            border
+
+                            border-gray-200
+
+                            px-8
+
+                            font-medium
+
+                            outline-none
+
+                            focus:border-[var(--primary)]
+
+                            focus:ring-1
+
+                            focus:ring-[var(--primary)]
+                        "
+                                    >
+                                        <option value="user">مستخدم</option>
+
+                                        <option value="admin">مدير</option>
+                                    </select>
                                 </div>
                             ))}
                         </div>
@@ -428,9 +568,7 @@ duration-300
                         </div>
 
                         <button
-                            onClick={() =>
-                                router.get(route("products.index"))
-                            }
+                            onClick={() => router.get(route("products.index"))}
                             className="
                                 h-11 px-5
                                 rounded-2xl
@@ -488,8 +626,7 @@ duration-300
                                             </span>
 
                                             <span className="font-black text-[var(--primary)]">
-                                                #
-                                                {product.code}
+                                                #{product.code}
                                             </span>
                                         </div>
 
@@ -630,7 +767,8 @@ duration-300
                                             </h3>
 
                                             <p className="text-sm text-gray-500 mt-1">
-                                                {variant.size?.height}x{variant.size?.width} /{" "}
+                                                {variant.size?.height}x
+                                                {variant.size?.width} /{" "}
                                                 {variant.frame_type?.type}
                                             </p>
                                         </div>

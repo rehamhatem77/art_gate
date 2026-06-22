@@ -162,8 +162,8 @@ Route::middleware('auth')->group(function () {
             )->name('products.forceDelete');
 
 
-            Route::get('/orders',[OrderController::class, 'index'])->name('orders.index');
-            Route::patch('/orders/{order}/status',[OrderController::class, 'updateStatus'])->name('orders.status');
+            Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+            Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status');
 
 
             Route::get('/homepage', [AdminHomePageController::class, 'index'])
@@ -235,6 +235,12 @@ Route::middleware('auth')->group(function () {
             //         ->name('tableau-numbers.update');
             //     Route::delete('/tableau-numbers/{tableauNumber}', [TableauNumbersController::class, 'destroy'])
             //         ->name('tableau-numbers.destroy');
+            Route::patch(
+                '/users/{user}/role',
+
+                [DashboardController::class, 'changeRole']
+
+            )->name('users.change-role');
 
             Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
             Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -265,7 +271,7 @@ Route::middleware('auth')->group(function () {
     )->name('wishlist.destroy');
 
 
- Route::post(
+    Route::post(
         '/cart/merge',
         [CartController::class, 'merge']
     )->name('cart.merge');

@@ -7,6 +7,8 @@ use App\Models\Admin\Category;
 use App\Models\Admin\Product;
 use App\Models\Admin\ProductVariant;
 use App\Models\Admin\Tag;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -39,10 +41,10 @@ class DashboardController extends Controller
         */
 
         $lowStockProducts = ProductVariant::with([
-                'product',
-                'size',
-                'frameType',
-            ])
+            'product',
+            'size',
+            'frameType',
+        ])
             ->where('stock', '<=', 5)
             ->orderBy('stock')
             ->take(5)
@@ -55,9 +57,9 @@ class DashboardController extends Controller
         */
 
         $latestProducts = Product::with([
-                'category',
-                'images',
-            ])
+            'category',
+            'images',
+        ])
             ->latest()
             ->take(4)
             ->get();
@@ -81,45 +83,40 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | PRODUCTS CREATED PER MONTH
+        |  USERS
         |--------------------------------------------------------------------------
         */
 
-        $productsPerMonth = Product::select(
-                DB::raw('MONTH(created_at) as month'),
-                DB::raw('COUNT(*) as total')
-            )
-            ->whereYear('created_at', now()->year)
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get();
+        $users = User::latest()
 
-        $months = [
-            1 => 'يناير',
-            2 => 'فبراير',
-            3 => 'مارس',
-            4 => 'أبريل',
-            5 => 'مايو',
-            6 => 'يونيو',
-            7 => 'يوليو',
-            8 => 'أغسطس',
-            9 => 'سبتمبر',
-            10 => 'أكتوبر',
-            11 => 'نوفمبر',
-            12 => 'ديسمبر',
-        ];
+            ->take(20)
 
-        $chartData = collect(range(1, 12))->map(function ($month) use (
-            $productsPerMonth,
-            $months
-        ) {
-            $found = $productsPerMonth->firstWhere('month', $month);
+            ->get()
 
-            return [
-                'month' => $months[$month],
-                'total' => $found ? $found->total : 0,
-            ];
-        });
+            ->map(function ($user) {
+
+                return [
+
+                    'id' => $user->id,
+
+                    'name' => $user->name,
+
+                    'email' => $user->email,
+
+                    'role' => $user->role,
+
+                    'joined_at' =>
+
+                    $user->created_at->format(
+                        'd M Y'
+                    ),
+
+                    'joined_since' =>
+
+                    $user->created_at
+                        ->diffForHumans(),
+                ];
+            });
 
         /*
         |--------------------------------------------------------------------------
@@ -154,9 +151,37 @@ class DashboardController extends Controller
 
             'categoryAnalytics' => $categoryAnalytics,
 
-            'chartData' => $chartData,
+            'users' => $users,
 
             'recentActivities' => $recentProducts,
+        ]);
+    }
+    public function changeRole(
+        Request $request,
+
+        User $user
+    ) {
+
+        $request->validate([
+
+            'role' => [
+
+                'required',
+
+                'in:user,admin',
+            ],
+        ]);
+
+        $user->update([
+
+            'role' => $request->role,
+        ]);
+
+        return back()->with([
+
+            'success' =>
+
+            'تم تحديث الصلاحية',
         ]);
     }
 }

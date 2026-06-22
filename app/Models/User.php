@@ -25,6 +25,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
 
     ];
 
@@ -52,29 +53,29 @@ class User extends Authenticatable
     }
 
     public function wishlists()
-{
-    return $this->hasMany(Wishlist::class);
-}
+    {
+        return $this->hasMany(Wishlist::class);
+    }
 
-public function wishlistProducts()
-{
-    return $this->belongsToMany(
-        Product::class,
-        'wishlists'
-    );
-}
+    public function wishlistProducts()
+    {
+        return $this->belongsToMany(
+            Product::class,
+            'wishlists'
+        );
+    }
 
-public function profile()
-{
-    return $this->hasOne(
-        UserProfile::class
-    );
-}
+    public function profile()
+    {
+        return $this->hasOne(
+            UserProfile::class
+        );
+    }
 
-public function orders()
-{
-    return $this->hasMany(
-        Order::class
-    );
-}
+    public function orders()
+    {
+        return $this->hasMany(
+            Order::class
+        );
+    }
 }
