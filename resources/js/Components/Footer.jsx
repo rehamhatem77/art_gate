@@ -81,7 +81,7 @@ export default function Footer() {
                         <ul className="space-y-3 text-gray-400">
                             <li>
                                 <a
-                                    href="#"
+                                    href="/"
                                     className="hover:text-white transition"
                                 >
                                     الرئيسية
@@ -90,25 +90,25 @@ export default function Footer() {
 
                             <li>
                                 <a
-                                    href="#"
+                                    href="/shop"
                                     className="hover:text-white transition"
                                 >
                                     جميع المنتجات
                                 </a>
                             </li>
 
-                            <li>
+                            {/* <li>
                                 <a
                                     href="#"
                                     className="hover:text-white transition"
                                 >
                                     المدونة
                                 </a>
-                            </li>
+                            </li> */}
 
                             <li>
                                 <a
-                                    href="#"
+                                    href="/about-us"
                                     className="hover:text-white transition"
                                 >
                                     من نحن
@@ -116,7 +116,7 @@ export default function Footer() {
                             </li>
                             <li>
                                 <a
-                                    href="#"
+                                    href="/contact-us"
                                     className="hover:text-white transition"
                                 >
                                     اتصل بنا

@@ -260,7 +260,10 @@ Route::middleware('auth')->group(function () {
     )->name('wishlist.destroy');
 
 
-
+ Route::post(
+        '/cart/merge',
+        [CartController::class, 'merge']
+    )->name('cart.merge');
     Route::post(
         '/cart/store',
         [CartController::class, 'store']

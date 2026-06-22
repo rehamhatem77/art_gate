@@ -156,30 +156,50 @@ class CartController extends Controller
         ]);
     }
 
-    public function mergeCart(array $guestCart)
-    {
-        foreach ($guestCart as $item) {
+   public function merge(Request $request)
+{
+    $request->validate([
+        'cart' => ['required', 'array'],
+    ]);
 
-            $product = Product::find($item['id']);
+    foreach ($request->cart as $item) {
 
-            if (!$product) {
-                continue;
-            }
+        $variant = ProductVariant::find(
+            $item['variant_id']
+        );
 
-            $quantity = min(
-                $item['quantity'],
-                $product->quantity
-            );
-
-            Cart::updateOrCreate(
-                [
-                    'user_id' => Auth::id(),
-                    'product_id' => $product->id
-                ],
-                [
-                    'quantity' => $quantity
-                ]
-            );
+        if (!$variant) {
+            continue;
         }
+
+        $cartItem = Cart::firstOrNew([
+            'user_id' => Auth::id(),
+
+            'product_id' => $item['product_id'],
+
+            'variant_id' => $item['variant_id'],
+
+            'frame_color_name' =>
+                $item['frame_color_name'] ?? null,
+
+            'frame_color_code' =>
+                $item['frame_color_code'] ?? null,
+        ]);
+
+        $newQuantity =
+            ($cartItem->quantity ?? 0)
+            + $item['quantity'];
+
+        $cartItem->quantity = min(
+            $newQuantity,
+            $variant->stock
+        );
+
+        $cartItem->save();
     }
+
+    return response()->json([
+        'success' => true,
+    ]);
+}
 }
