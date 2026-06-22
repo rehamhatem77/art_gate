@@ -1,4 +1,5 @@
 import { getImage } from "@/Utils/GetImage";
+import { router } from "@inertiajs/react";
 import { motion } from "framer-motion";
 
 import {
@@ -8,6 +9,9 @@ import {
     FiTruck,
     FiArrowUpLeft,
     FiCheckCircle,
+    FiKey,
+    FiLock,
+    FiEye,
 } from "react-icons/fi";
 
 const container = {
@@ -36,8 +40,37 @@ const fadeUp = {
         },
     },
 };
+const securityIcons = {
+    FiShield,
+    FiLock,
+    FiCheckCircle,
+    FiKey,
+    FiEye,
+    FiTruck,
+    FiPackage,
+    FiUser,
+};
 
-export default function ProfileHero({ user, orders , image }) {
+export default function ProfileHero({ user, orders, image, security }) {
+    const securityItems = Array.isArray(security)
+        ? security
+        : typeof security === "string"
+          ? JSON.parse(security || "[]")
+          : [];
+    const securityIconColors = {
+        FiShield: "text-green-400",
+
+        FiLock: "text-sky-400",
+
+        FiCheckCircle: "text-emerald-400",
+
+        FiKey: "text-amber-400",
+
+        FiEye: "text-violet-400",
+
+        FiTruck: "text-blue-400",
+        FiUser: "text-pink-400",
+    };
     return (
         <section
             dir="rtl"
@@ -51,8 +84,10 @@ export default function ProfileHero({ user, orders , image }) {
                 className="absolute inset-0"
             >
                 <img
-                    src={image? getImage(image):
-                        "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=2070&auto=format&fit=crop"
+                    src={
+                        image
+                            ? getImage(image)
+                            : "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=2070&auto=format&fit=crop"
                     }
                     alt="ArtGateContact"
                     className="w-full h-full object-cover"
@@ -153,17 +188,77 @@ export default function ProfileHero({ user, orders , image }) {
                             لتوفر لك تجربة تسوق احترافية.
                         </p>
                         {/* Trust chips */}
-                        <motion.div
-                            variants={fadeUp}
-                            className="
+
+                        {!!securityItems?.length ? (
+                            <motion.div
+                                variants={fadeUp}
+                                className="
+            mt-10
+            flex
+            flex-wrap
+            gap-4
+        "
+                            >
+                                {securityItems.map((item, index) => {
+                                    const iconName = item.icon;
+                                    const Icon =
+                                        securityIcons[item.icon] || FiShield;
+                                    const iconColor =
+                                        securityIconColors[iconName] ||
+                                        "text-[var(--primary)]";
+
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="
+                        h-12
+                        px-5
+                        rounded-full
+                        border
+                        border-white/10
+                        bg-white/10
+                        backdrop-blur-xl
+
+                        flex
+                        items-center
+                        gap-3
+
+                        hover:bg-white/15
+
+                        transition
+                    "
+                                        >
+                                            <Icon
+                                                className={`
+                    ${iconColor}
+                    text-lg
+                `}
+                                            />
+
+                                            <span
+                                                className="
+                            text-white/80
+                            text-sm
+                        "
+                                            >
+                                                {item.title}
+                                            </span>
+                                        </div>
+                                    );
+                                })}
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                variants={fadeUp}
+                                className="
                             mt-10
                             flex
                             flex-wrap
                             gap-4
                         "
-                        >
-                            <div
-                                className="
+                            >
+                                <div
+                                    className="
                                 h-12
                                 px-5
                                 rounded-full
@@ -175,16 +270,16 @@ export default function ProfileHero({ user, orders , image }) {
                                 items-center
                                 gap-3
                             "
-                            >
-                                <FiShield className="text-green-400" />
+                                >
+                                    <FiShield className="text-green-400" />
 
-                                <span className="text-white/80 text-sm">
-                                    بياناتك محمية وآمنة
-                                </span>
-                            </div>
+                                    <span className="text-white/80 text-sm">
+                                        بياناتك محمية وآمنة
+                                    </span>
+                                </div>
 
-                            <div
-                                className="
+                                <div
+                                    className="
                                 h-12
                                 px-5
                                 rounded-full
@@ -196,16 +291,16 @@ export default function ProfileHero({ user, orders , image }) {
                                 items-center
                                 gap-3
                             "
-                            >
-                                <FiPackage className="text-[var(--primary)]" />
+                                >
+                                    <FiPackage className="text-[var(--primary)]" />
 
-                                <span className="text-white/80 text-sm">
-                                    متابعة الطلبات بسهولة
-                                </span>
-                            </div>
+                                    <span className="text-white/80 text-sm">
+                                        متابعة الطلبات بسهولة
+                                    </span>
+                                </div>
 
-                            <div
-                                className="
+                                <div
+                                    className="
                                 h-12
                                 px-5
                                 rounded-full
@@ -217,14 +312,15 @@ export default function ProfileHero({ user, orders , image }) {
                                 items-center
                                 gap-3
                             "
-                            >
-                                <FiCheckCircle className="text-emerald-400" />
+                                >
+                                    <FiCheckCircle className="text-emerald-400" />
 
-                                <span className="text-white/80 text-sm">
-                                    تجربة تسوق موثوقة
-                                </span>
-                            </div>
-                        </motion.div>
+                                    <span className="text-white/80 text-sm">
+                                        تجربة تسوق موثوقة
+                                    </span>
+                                </div>
+                            </motion.div>
+                        )}
                     </motion.div>
                 </div>
             </div>

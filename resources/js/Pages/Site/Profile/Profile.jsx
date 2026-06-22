@@ -234,7 +234,7 @@ profilePage
         <SiteLayout title="حسابي" announcement={announcement}>
             <div dir="rtl" className="relative min-h-screen overflow-hidden">
                 {/* HERO */}
-                <ProfileHero image={profilePage.bg_image} />
+                <ProfileHero image={profilePage.bg_image} security={profilePage.security_json} />
                 {/* CONTAINER */}
                 <div className="relative max-w-8xl mx-auto px-6 py-16">
                     {/* MAIN CONTENT */}

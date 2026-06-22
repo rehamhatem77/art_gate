@@ -65,14 +65,29 @@ export default function Index({ pages }) {
     const [formData, setFormData] = useState({});
 
     const handleOpen = (page) => {
-        const isSame = open === page.key;
-        setOpen(isSame ? null : page.key);
+    const isSame = open === page.key;
 
-        if (!isSame) {
-            const target = pages.find((p) => p.page_key === page.key);
-            setFormData(target?.data || {});
+    setOpen(isSame ? null : page.key);
+
+    if (!isSame) {
+        const target =
+            pages.find((p) => p.page_key === page.key);
+
+        const data = target?.data || {};
+
+        if (typeof data.security_json === "string") {
+            try {
+                data.security_json = JSON.parse(
+                    data.security_json
+                );
+            } catch {
+                data.security_json = [];
+            }
         }
-    };
+
+        setFormData(data);
+    }
+};
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;
