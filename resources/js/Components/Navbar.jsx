@@ -405,6 +405,7 @@ function UserIcons({ auth, mobile = false, cartCount = 0 }) {
                                     w-full
                                     rounded-2xl
                                     outline-none
+                                    bg-[var(--bg-lighter)]
                                     transition
                                     focus:border-[var(--primary)]
                                     focus:ring-4
@@ -439,7 +440,12 @@ function UserIcons({ auth, mobile = false, cartCount = 0 }) {
                                                 setResults([]);
                                                 setSearchOpen(false);
 
-                                                 router.visit(route("shop.product.show", product.slug))
+                                                router.visit(
+                                                    route(
+                                                        "shop.product.show",
+                                                        product.slug,
+                                                    ),
+                                                );
                                             }}
                                             className="
                                 w-full
@@ -469,6 +475,34 @@ function UserIcons({ auth, mobile = false, cartCount = 0 }) {
                                             </div>
                                         </button>
                                     ))}
+                                    {results.length > 0 && (
+                                        <button
+                                            onClick={() => {
+                                                setSearchOpen(false);
+
+                                                router.visit(
+                                                    route("search.page", {
+                                                        search,
+                                                    }),
+                                                );
+                                            }}
+                                            className="
+            w-full
+
+            p-4
+
+            border-t
+
+            font-semibold
+
+            text-[var(--primary)]
+
+            hover:bg-gray-50
+        "
+                                        >
+                                            عرض جميع النتائج ({results.length}+)
+                                        </button>
+                                    )}
 
                                     {!loading &&
                                         search.length > 1 &&
@@ -603,11 +637,11 @@ export default function Navbar({ auth }) {
     const isCart = url.startsWith("/cart") || url.startsWith("/checkout");
     const serverCartCount = props.cartCount || 0;
     const [search, setSearch] = useState("");
+ const [searchOpen, setSearchOpen] = useState(false);
 
-const [results, setResults] = useState([]);
+    const [results, setResults] = useState([]);
 
-const [loading, setLoading] = useState(false);
-
+    const [loading, setLoading] = useState(false);
 
     const [cartCount, setCartCount] = useState(
         auth?.user
@@ -674,30 +708,29 @@ const [loading, setLoading] = useState(false);
             document.body.style.overflow = "auto";
         };
     }, [open]);
-useEffect(() => {
-    if (search.length < 2) {
-        setResults([]);
-        return;
-    }
+    useEffect(() => {
+        if (search.length < 2) {
+            setResults([]);
+            return;
+        }
 
-    const timeout = setTimeout(() => {
-        setLoading(true);
+        const timeout = setTimeout(() => {
+            setLoading(true);
 
-        axios
-            .get("/search/products", {
-                params: { search },
-            })
-            .then((res) => {
-                setResults(res.data);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    }, 300);
+            axios
+                .get("/search/products", {
+                    params: { search },
+                })
+                .then((res) => {
+                    setResults(res.data);
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        }, 300);
 
-    return () => clearTimeout(timeout);
-
-}, [search]);
+        return () => clearTimeout(timeout);
+    }, [search]);
     return (
         <>
             <header
@@ -830,76 +863,59 @@ useEffect(() => {
                     </div>
 
                     {/* SEARCH */}
-                   {/* MOBILE SEARCH */}
+                    {/* MOBILE SEARCH */}
 
-<div className="p-5 border-b border-white/50">
-    <div className="relative">
-
-        <div
-            className="
+                    <div className="p-5 border-b border-white/50">
+                        <div className="relative">
+                            <div
+                                className="
             flex
             items-center
             gap-3
-
             h-12
-
             px-4
-
-            rounded-2xl
-
-           
-
-            border
-
-            border-gray-200
-
-          
-
-
-           rounded-2xl py-3 smooth-transition 
+            py-3 smooth-transition 
         "
-        >
-            <FiSearch
-                className="
+                            >
+                                <FiSearch
+                                    className="
                 text-gray-400
                 shrink-0
             "
-                size={18}
-            />
+                                    size={18}
+                                />
 
-            <input
-                type="text"
-                value={search}
-                onChange={(e) =>
-                    setSearch(e.target.value)
-                }
-                placeholder="ابحث عن منتج..."
-                className="text-sm focus:border-none transition duration-200 w-full h-10 px-4 bg-[var(--bg-light)] border border-gray-300 rounded-2xl focus:ring-1 focus:ring-[var(--primary)] outline-none"
-            />
+                                <input
+                                    type="text"
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    placeholder="ابحث عن منتج..."
+                                    className="text-sm focus:border-none transition duration-200 w-full h-10 px-4 bg-[var(--bg-lighter)] border border-gray-300 rounded-2xl focus:ring-1 focus:ring-[var(--primary)] outline-none"
+                                />
 
-            {search && (
-                <button
-                    onClick={() => {
-                        setSearch("");
-                        setResults([]);
-                    }}
-                >
-                    <FiX
-                        size={18}
-                        className="text-gray-400"
-                    />
-                </button>
-            )}
-        </div>
+                                {search && (
+                                    <button
+                                        onClick={() => {
+                                            setSearch("");
+                                            setResults([]);
+                                        }}
+                                    >
+                                        <FiX
+                                            size={18}
+                                            className="text-gray-400"
+                                        />
+                                    </button>
+                                )}
+                            </div>
 
-        {/* RESULTS */}
+                            {/* RESULTS */}
 
-        {(loading ||
-            results.length > 0 ||
-            (search.length > 1 &&
-                results.length === 0)) && (
-            <div
-                className="
+                            {(loading ||
+                                results.length > 0 ||
+                                (search.length > 1 &&
+                                    results.length === 0)) && (
+                                <div
+                                    className="
                 mt-3
 
                 overflow-hidden
@@ -916,10 +932,10 @@ useEffect(() => {
 
                 overflow-y-auto
             "
-            >
-                {loading && (
-                    <div
-                        className="
+                                >
+                                    {loading && (
+                                        <div
+                                            className="
                         p-6
 
                         text-center
@@ -928,30 +944,30 @@ useEffect(() => {
 
                         text-gray-400
                     "
-                    >
-                        جاري البحث...
-                    </div>
-                )}
+                                        >
+                                            جاري البحث...
+                                        </div>
+                                    )}
 
-                {!loading &&
-                    results.map((product) => (
-                        <button
-                            key={product.id}
-                            onClick={() => {
-                                setOpen(false);
+                                    {!loading &&
+                                        results.map((product) => (
+                                            <button
+                                                key={product.id}
+                                                onClick={() => {
+                                                    setOpen(false);
 
-                                setSearch("");
+                                                    setSearch("");
 
-                                setResults([]);
+                                                    setResults([]);
 
-                                router.visit(
-                                    route(
-                                        "shop.product.show",
-                                        product.slug
-                                    )
-                                );
-                            }}
-                            className="
+                                                    router.visit(
+                                                        route(
+                                                            "shop.product.show",
+                                                            product.slug,
+                                                        ),
+                                                    );
+                                                }}
+                                                className="
                             w-full
 
                             p-3
@@ -966,12 +982,12 @@ useEffect(() => {
 
                             transition
                         "
-                        >
-                            <img
-                                src={getImage(
-                                    product.main_image
-                                )}
-                                className="
+                                            >
+                                                <img
+                                                    src={getImage(
+                                                        product.main_image,
+                                                    )}
+                                                    className="
                                 w-14
 
                                 h-14
@@ -982,37 +998,65 @@ useEffect(() => {
 
                                 shrink-0
                             "
-                            />
+                                                />
 
-                            <div
-                                className="
+                                                <div
+                                                    className="
                                 flex-1
 
                                 text-right
 
                                 min-w-0
                             "
-                            >
-                                <p
-                                    className="
+                                                >
+                                                    <p
+                                                        className="
                                     text-sm
 
                                     font-medium
 
                                     line-clamp-2
                                 "
-                                >
-                                    {product.name}
-                                </p>
-                            </div>
-                        </button>
-                    ))}
+                                                    >
+                                                        {product.name}
+                                                    </p>
+                                                </div>
+                                            </button>
+                                        ))}
+                                    {results.length > 0 && (
+                                        <button
+                                            onClick={() => {
+                                                setSearchOpen(false);
 
-                {!loading &&
-                    search.length > 1 &&
-                    results.length === 0 && (
-                        <div
-                            className="
+                                                router.visit(
+                                                    route("search.page", {
+                                                        search,
+                                                    }),
+                                                );
+                                            }}
+                                            className="
+            w-full
+
+            p-4
+
+            border-t
+
+            font-semibold
+
+            text-[var(--primary)]
+
+            hover:bg-gray-50
+        "
+                                        >
+                                            عرض جميع النتائج ({results.length}+)
+                                        </button>
+                                    )}
+
+                                    {!loading &&
+                                        search.length > 1 &&
+                                        results.length === 0 && (
+                                            <div
+                                                className="
                             p-6
 
                             text-center
@@ -1021,14 +1065,14 @@ useEffect(() => {
 
                             text-gray-400
                         "
-                        >
-                            لا توجد نتائج
+                                            >
+                                                لا توجد نتائج
+                                            </div>
+                                        )}
+                                </div>
+                            )}
                         </div>
-                    )}
-            </div>
-        )}
-    </div>
-</div>
+                    </div>
 
                     <div
                         className="

@@ -61,6 +61,11 @@ Route::post(
 Route::get('/order/success/{order}', [CheckoutController::class, 'success'])
     ->name('order.success');
 
+Route::get(
+    '/search',
+    [ShopPageController::class, 'searchPage']
+)->name('search.page');
+
 // Route::get('/dashboard', function () {
 //     return Inertia::render('Dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');

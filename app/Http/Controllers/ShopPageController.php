@@ -370,9 +370,82 @@ public function searchProducts(Request $request)
               ->orWhere('description', 'like', "%{$search}%");
         })
         ->select('id', 'name', 'slug', 'main_image')
-        ->take(8)
+        ->take(5)
         ->get();
 
     return response()->json($products);
+}
+public function searchPage(Request $request)
+{
+    $search = $request->search;
+
+    $products = Product::with([
+        'variants',
+        'images',
+        'category'
+    ])
+    ->where('is_active', true)
+
+    ->when($search, function ($query) use ($search) {
+
+        $query->where(function ($q) use ($search) {
+
+            $q->where(
+                'name',
+                'like',
+                "%{$search}%"
+            )
+
+            ->orWhere(
+                'code',
+                'like',
+                "%{$search}%"
+            )
+
+            ->orWhere(
+                'description',
+                'like',
+                "%{$search}%"
+            );
+
+        });
+
+    })
+
+    ->get()
+
+    ->map(function ($product) {
+
+        return [
+
+            'id' => $product->id,
+
+            'name' => $product->name,
+
+            'slug' => $product->slug,
+
+            'main_image' => $product->main_image,
+
+            'price' => $product
+                ->variants
+                ->min('price'),
+
+            'category' => $product->category,
+
+        ];
+
+    });
+
+    return Inertia::render(
+        'Site/Search/Index',
+        [
+
+            'search' => $search,
+
+            'products' => $products,
+'total' => $products->count(),
+
+        ]
+    );
 }
 }
