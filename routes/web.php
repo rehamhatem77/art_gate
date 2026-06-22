@@ -298,5 +298,10 @@ Route::middleware('auth')->group(function () {
         [UserProfileController::class, 'cancelOrder']
     )->name('profile.orders.cancel');
 });
+Route::fallback(function () {
+    return Inertia::render('Site/NotFound/NotFound')
+        ->toResponse(request())
+        ->setStatusCode(404);
+});
 
 require __DIR__ . '/auth.php';
