@@ -93,8 +93,8 @@ xl:h-[600px]
                                             px-4
                                             md:px-8
                                             bg-gradient-to-br
-                                            from-slate-50
-                                            to-blue-50
+                                            from-[#fcfbf8]
+                                            to-[#cbb8ab]
                                         "
                                     >
                                         {/* Decorative Number */}

@@ -1,7 +1,11 @@
 import { iconsMap } from "@/Components/IconPicker";
 import { motion } from "framer-motion";
-import { FiTruck, FiPhoneCall, FiCreditCard, FiPlay } from "react-icons/fi";
 
+import { useState } from "react";
+
+import { AnimatePresence } from "framer-motion";
+
+import { FiPlay, FiX } from "react-icons/fi";
 const containerVariants = {
     hidden: {},
     show: {
@@ -25,79 +29,114 @@ const itemVariants = {
         },
     },
 };
+function getYouTubeId(url) {
+    if (!url) return "";
 
+    const match = url.match(
+        /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([^&?/]+)/
+    );
+
+    return match ? match[1] : "";
+}
 export default function AboutSection({ services, aboutSection }) {
+const [openVideo, setOpenVideo] = useState(false);
+
+const videoId = getYouTubeId(
+    aboutSection?.about_section_video
+);
     return (
         <section className="py-12 lg:py-20 overflow-hidden">
             <div className="max-w-8xl mx-auto px-8 sm:px-12 md:px-12 lg:px-18 xl:px-28">
                 <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
                     {/* Image / Video */}
                     <motion.div
-                        className="order-1"
-                        initial={{ opacity: 0, x: -60 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: false, amount: 0.3 }}
-                        transition={{
-                            duration: 0.8,
-                            ease: "easeOut",
-                        }}
-                    >
-                        <div className="relative h-[280px] sm:h-[320px] md:h-[380px] lg:h-[420px] overflow-hidden rounded-[24px] shadow-lg group">
-                            <img
-                                src={
-                                    aboutSection?.about_section_image
-                                        ? `/storage/${aboutSection.about_section_image}`
-                                        : aboutSection?.about_section_video
-                                          ? `/storage/${aboutSection.about_section_video}`
-                                          : "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=2000"
-                                }
-                                alt="Art Collection"
-                                className="
-                                    w-full
-                                    h-full
-                                    object-cover
-                                    transition-transform
-                                    duration-700
-                                    group-hover:scale-105
-                                "
-                            />
+    className="order-1"
+    initial={{ opacity: 0, x: -60 }}
+    whileInView={{ opacity: 1, x: 0 }}
+    viewport={{ once: false, amount: 0.3 }}
+    transition={{
+        duration: 0.8,
+        ease: "easeOut",
+    }}
+>
+    <div
+        className="
+            relative
+            h-[280px]
+            sm:h-[320px]
+            md:h-[380px]
+            lg:h-[420px]
+            overflow-hidden
+            rounded-[24px]
+            shadow-lg
+            group
+        "
+    >
+        {/* IMAGE */}
 
-                            {/* Overlay */}
-                            <div className="absolute inset-0 bg-black/20" />
+        <img
+            src={
+                aboutSection?.about_section_image
+                    ? `/storage/${aboutSection.about_section_image}`
+                    : "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=2000"
+            }
+            alt="Art Collection"
+            className="
+                w-full
+                h-full
+                object-cover
+                transition-transform
+                duration-700
+                group-hover:scale-105
+            "
+        />
 
-                            {/* Play Button */}
-                            {aboutSection?.about_section_video && (
-                                <motion.button
-                                    whileHover={{
-                                        scale: 1.1,
-                                    }}
-                                    whileTap={{
-                                        scale: 0.95,
-                                    }}
-                                    className="
-                                    absolute
-                                    inset-0
-                                    m-auto
-                                    w-20
-                                    h-20
-                                    rounded-full
-                                    bg-white/20
-                                    backdrop-blur-sm
-                                    border
-                                    border-white/50
-                                    flex
-                                    items-center
-                                    justify-center
-                                "
-                                >
-                                    <FiPlay
-                                        size={34}
-                                        className="text-white ml-1"
-                                    />
-                                </motion.button>
-                            )}
-                        </div>
-                    </motion.div>
+        {/* OVERLAY */}
+
+        <div className="absolute inset-0 bg-black/30" />
+
+        {/* PLAY BUTTON */}
+
+        {videoId && (
+            <motion.button
+                onClick={() => setOpenVideo(true)}
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.95 }}
+                className="
+                    absolute
+                    inset-0
+                    m-auto
+
+                    w-20
+                    h-20
+
+                    rounded-full
+
+                    bg-white/20
+
+                    backdrop-blur-md
+
+                    border
+
+                    border-white/50
+
+                    flex
+
+                    items-center
+
+                    justify-center
+
+                    shadow-xl
+                "
+            >
+                <FiPlay
+                    size={34}
+                    className="text-white ml-1"
+                />
+            </motion.button>
+        )}
+    </div>
+</motion.div>
 
                     {/* Content */}
                     <motion.div
@@ -258,6 +297,78 @@ export default function AboutSection({ services, aboutSection }) {
                     </motion.div>
                 </div>
             </div>
+<AnimatePresence>
+    {openVideo && (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setOpenVideo(false)}
+            className="
+                fixed
+                inset-0
+                z-[9999]
+
+                bg-black/95
+
+                flex
+
+                items-center
+
+                justify-center
+
+                p-4
+            "
+        >
+            <button
+                onClick={() => setOpenVideo(false)}
+                className="
+                    absolute
+
+                    top-6
+
+                    right-6
+
+                    text-white
+
+                    text-4xl
+                "
+            >
+                <FiX />
+            </button>
+
+            <motion.div
+                initial={{ scale: 0.95 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0.95 }}
+                transition={{ duration: 0.25 }}
+                onClick={(e) => e.stopPropagation()}
+                className="
+                    w-full
+
+                    max-w-5xl
+
+                    aspect-video
+                "
+            >
+                <iframe
+                    className="
+                        w-full
+
+                        h-full
+
+                        rounded-2xl
+                    "
+                    src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+                    title="About Video"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                />
+            </motion.div>
+        </motion.div>
+    )}
+</AnimatePresence>
         </section>
     );
 }
