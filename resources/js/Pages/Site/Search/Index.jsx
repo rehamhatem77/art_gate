@@ -5,9 +5,9 @@ import { router } from "@inertiajs/react";
 import { getImage } from "@/Utils/GetImage";
 import Hero from "./Hero";
 
-export default function Index({ products, search, total, searchPage }) {
+export default function Index({ products, search, total, searchPage ,announcement}) {
     return (
-        <SiteLayout title="نتائج البحث">
+        <SiteLayout title="نتائج البحث" announcement={announcement}>
             <Hero image={searchPage.bg_image} search={search} total={total} />
 
             <div className="max-w-7xl mx-auto py-10 px-5">
