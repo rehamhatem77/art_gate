@@ -108,13 +108,13 @@ export default function Checkout({
 
         post(route("checkout.store"), {
 
-    onSuccess: () => {
+    // onSuccess: () => {
 
-        localStorage.removeItem("cart");
+    //     localStorage.removeItem("cart");
 
-        localStorage.removeItem("checkout_items");
+    //     localStorage.removeItem("checkout_items");
 
-    },
+    // },
 
 });
     };

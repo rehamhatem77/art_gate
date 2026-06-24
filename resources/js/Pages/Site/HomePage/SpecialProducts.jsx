@@ -48,7 +48,7 @@ export default function SpecialProducts({
         { key: "latest", name: "أخر ماتم اضافته" },
         ...categoryProducts.map((cat) => ({
             key: cat.key,
-            name: ` تابلوهات ${cat.name}`,
+            name: `${cat.name}`,
         })),
 
     ];

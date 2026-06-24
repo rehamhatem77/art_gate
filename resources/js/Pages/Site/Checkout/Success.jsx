@@ -11,6 +11,7 @@ import {
     FiTruck,
 } from "react-icons/fi";
 import { router } from "@inertiajs/react";
+import { useEffect } from "react";
 
 const fadeUp = {
     hidden: { opacity: 0, y: 24 },
@@ -22,6 +23,10 @@ const fadeUp = {
 };
 
 export default function Success({ order, announcement, footer }) {
+useEffect(() => {
+    localStorage.removeItem("cart");
+    localStorage.removeItem("checkout_items");
+}, []);
     return (
         <SiteLayout title="تم تأكيد الطلب" announcement={announcement}>
             <CartHeader currentStep={3} />

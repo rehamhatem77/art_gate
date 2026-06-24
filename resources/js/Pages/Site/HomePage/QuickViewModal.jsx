@@ -12,101 +12,77 @@ import {
 } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 import { getImage } from "@/Utils/GetImage";
-
-
+import { getGuestCartItemQuantity } from "@/Utils/Cart";
 import { useEffect } from "react";
 import { router, usePage } from "@inertiajs/react";
 import { FaHeart } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import { addToAuthCart, addToGuestCart } from "@/Utils/Cart";
-export default function QuickViewModal({
-    product,
-    onClose,
-}) {
-
+export default function QuickViewModal({ product, onClose }) {
     const [qty, setQty] = useState(1);
     const { auth } = usePage().props;
 
+    const images = product.images?.length
+        ? product.images.map((img) => img.image)
+        : product.main_image
+          ? [product.main_image]
+          : [];
 
-    const images =
-        product.images?.length
-            ? product.images.map(img => img.image)
-            : product.main_image
-                ? [product.main_image]
-                : [];
-
-    const [selectedImage, setSelectedImage] = useState(
-        images[0] || null
-    );
+    const [selectedImage, setSelectedImage] = useState(images[0] || null);
     const firstVariant = product?.variants?.[0];
 
     const [selectedSize, setSelectedSize] = useState(
-        firstVariant?.size?.label || ""
+        firstVariant?.size?.label || "",
     );
 
     const [selectedFrame, setSelectedFrame] = useState(
-        firstVariant?.frame?.type || ""
+        firstVariant?.frame?.type || "",
     );
-    const [selectedFrameColor, setSelectedFrameColor] =
-        useState(null);
+    const [selectedFrameColor, setSelectedFrameColor] = useState(null);
 
-    const [cartError, setCartError] =
-        useState("");
+    const [cartError, setCartError] = useState("");
 
     const [addingToCart, setAddingToCart] = useState(false);
-    const sizes = [
-        ...new Set(
-            product?.variants?.map(v => v.size?.label)
-        ),
-    ];
+    const sizes = [...new Set(product?.variants?.map((v) => v.size?.label))];
 
     const availableFrames =
         product?.variants
-            ?.filter(
-                v =>
-                    v.size?.label === selectedSize
-            )
-            .map(v => v.frame?.type) || [];
+            ?.filter((v) => v.size?.label === selectedSize)
+            .map((v) => v.frame?.type) || [];
 
     useEffect(() => {
-        const firstFrameForSize =
-            product?.variants?.find(
-                v =>
-                    v.size?.label === selectedSize
-            );
+        const firstFrameForSize = product?.variants?.find(
+            (v) => v.size?.label === selectedSize,
+        );
 
         if (firstFrameForSize) {
-            setSelectedFrame(
-                firstFrameForSize.frame?.type
-            );
+            setSelectedFrame(firstFrameForSize.frame?.type);
         }
     }, [selectedSize]);
 
-    const selectedVariant =
-        product?.variants?.find(
-            variant =>
-                variant.size?.label === selectedSize &&
-                variant.frame?.type === selectedFrame
-        );
+    const selectedVariant = product?.variants?.find(
+        (variant) =>
+            variant.size?.label === selectedSize &&
+            variant.frame?.type === selectedFrame,
+    );
+    const alreadyInCart = getGuestCartItemQuantity({
+        product_id: product.id,
+        variant_id: selectedVariant?.id,
+        frame_color_code: selectedFrameColor?.code || null,
+    });
+
+    const availableQuantity = (selectedVariant?.stock || 0) - alreadyInCart;
+
     useEffect(() => {
-        if (
-            selectedVariant &&
-            qty > selectedVariant.stock
-        ) {
-            setQty(
-                selectedVariant.stock > 0
-                    ? selectedVariant.stock
-                    : 1
-            );
+        if (selectedVariant && qty > selectedVariant.stock) {
+            setQty(selectedVariant.stock > 0 ? selectedVariant.stock : 1);
         }
     }, [selectedVariant]);
 
     useEffect(() => {
         setSelectedFrameColor(null);
     }, [selectedFrame]);
-    const [isWishlisted, setIsWishlisted] = useState(
-        product.isWishlisted
-    );
+    const [isWishlisted, setIsWishlisted] = useState(product.isWishlisted);
     useEffect(() => {
         setIsWishlisted(product.isWishlisted);
     }, [product]);
@@ -117,21 +93,18 @@ export default function QuickViewModal({
             return;
         }
 
-        setIsWishlisted(prev => !prev);
+        setIsWishlisted((prev) => !prev);
 
         if (isWishlisted) {
-            router.delete(
-                route("wishlist.destroy", product.id),
-                {
-                    preserveScroll: true,
-                    preserveState: true,
-                    with: ["wishlistCount"],
+            router.delete(route("wishlist.destroy", product.id), {
+                preserveScroll: true,
+                preserveState: true,
+                with: ["wishlistCount"],
 
-                    onError: () => {
-                        setIsWishlisted(true);
-                    },
-                }
-            );
+                onError: () => {
+                    setIsWishlisted(true);
+                },
+            });
         } else {
             router.post(
                 route("wishlist.store", product.id),
@@ -144,36 +117,30 @@ export default function QuickViewModal({
                     onError: () => {
                         setIsWishlisted(false);
                     },
-                }
+                },
             );
         }
     };
 
-
     const addToCart = () => {
         if (!selectedVariant) return toast.error("اختر المقاس والإطار");
 
-        if (selectedVariant.stock <= 0)
-            return toast.error("غير متوفر");
+        if (selectedVariant.stock <= 0) return toast.error("غير متوفر");
 
         if (qty > selectedVariant.stock)
             return toast.error(`المتاح فقط ${selectedVariant.stock}`);
         // FRAME COLOR VALIDATION
-        if (
-            selectedVariant?.frame?.colors?.length > 0 &&
-            !selectedFrameColor
-        ) {
+        if (selectedVariant?.frame?.colors?.length > 0 && !selectedFrameColor) {
             setCartError("يرجى اختيار لون الإطار");
             return toast.error("يرجى اختيار لون الإطار");
         }
-
 
         const payload = {
             product_id: product.id,
             variant_id: selectedVariant.id,
             quantity: qty,
-            frame_color_name: selectedFrameColor?.name,
-            frame_color_code: selectedFrameColor?.code,
+            frame_color_name: selectedFrameColor?.name || null,
+            frame_color_code: selectedFrameColor?.code || null,
             price: selectedVariant.price,
             name: product.name,
             image: product.main_image || product.images?.[0]?.image,
@@ -186,14 +153,19 @@ export default function QuickViewModal({
         if (auth.user) {
             addToAuthCart({
                 ...payload,
+
                 onSuccess: () => {
                     window.dispatchEvent(new CustomEvent("cart-updated"));
-
                 },
             });
         } else {
-            addToGuestCart(payload);
-            toast.success("تم إضافة المنتج إلي السلة");
+            const result = addToGuestCart(payload);
+
+            if (!result.success) {
+                return toast.error(result.message);
+            }
+
+            toast.success("تم إضافة المنتج إلى السلة");
         }
     };
     return (
@@ -306,7 +278,8 @@ h-auto
 lg:h-full
 "
                     >
-                        <div className="
+                        <div
+                            className="
 grid
 
 grid-cols-1
@@ -315,9 +288,11 @@ sm:grid-cols-[60px_1fr]
 
 gap-3
 sm:gap-4
-">
+"
+                        >
                             {/* Thumbs */}
-                            <div className="
+                            <div
+                                className="
 flex
 
 sm:block
@@ -337,7 +312,8 @@ sm:pb-0
 pr-0
 
 sm:pr-1
-">
+"
+                            >
                                 {images?.map((image, index) => (
                                     <button
                                         key={index}
@@ -437,8 +413,6 @@ sm:p-5
 lg:p-7
 "
                         >
-
-
                             {/* Title */}
                             <h2
                                 className="
@@ -465,11 +439,8 @@ lg:text-2xl
                                 "
                             >
                                 {selectedVariant?.price || product.price}
-                                <span className="mr-2 text-xl">
-                                    جنيه
-                                </span>
+                                <span className="mr-2 text-xl">جنيه</span>
                             </div>
-
 
                             {/* Description */}
                             <p
@@ -488,7 +459,8 @@ sm:leading-7
 
                                 "
                             >
-                                {product.description || "لا يوجد وصف متاح لهذا المنتج."}
+                                {product.description ||
+                                    "لا يوجد وصف متاح لهذا المنتج."}
                             </p>
 
                             {/* Size */}
@@ -502,9 +474,7 @@ sm:leading-7
                                         <button
                                             key={size}
                                             onClick={() =>
-                                                setSelectedSize(
-                                                    size
-                                                )
+                                                setSelectedSize(size)
                                             }
                                             className={`
                                                h-7
@@ -522,10 +492,10 @@ sm:text-sm
                                                 border-1
                                                 transition
 
-                                                ${selectedSize ===
-                                                    size
-                                                    ? "border-[var(--primary)] bg-[var(--primary)] text-white"
-                                                    : "border-gray-200"
+                                                ${
+                                                    selectedSize === size
+                                                        ? "border-[var(--primary)] bg-[var(--primary)] text-white"
+                                                        : "border-gray-200"
                                                 }
                                             `}
                                         >
@@ -546,9 +516,7 @@ sm:text-sm
                                         <button
                                             key={frame}
                                             onClick={() =>
-                                                setSelectedFrame(
-                                                    frame
-                                                )
+                                                setSelectedFrame(frame)
                                             }
                                             className={`
                                                h-7
@@ -566,10 +534,10 @@ sm:text-sm
                                                 border-1
                                                 transition
 
-                                                ${selectedFrame ===
-                                                    frame
-                                                    ? "border-[var(--primary)] bg-[var(--primary)] text-white"
-                                                    : "border-gray-200"
+                                                ${
+                                                    selectedFrame === frame
+                                                        ? "border-[var(--primary)] bg-[var(--primary)] text-white"
+                                                        : "border-gray-200"
                                                 }
                                             `}
                                         >
@@ -597,7 +565,7 @@ sm:text-sm
                                                         type="button"
                                                         onClick={() =>
                                                             setSelectedFrameColor(
-                                                                color
+                                                                color,
                                                             )
                                                         }
                                                         className="
@@ -615,10 +583,11 @@ sm:text-sm
                                     border-2
                                     transition
 
-                                    ${isSelected
-                                                                    ? "border-[var(--primary)] ring-2 ring-[var(--primary)]"
-                                                                    : "border-gray-300"
-                                                                }
+                                    ${
+                                        isSelected
+                                            ? "border-[var(--primary)] ring-2 ring-[var(--primary)]"
+                                            : "border-gray-300"
+                                    }
                                 `}
                                                             style={{
                                                                 backgroundColor:
@@ -629,17 +598,18 @@ sm:text-sm
                                                         <span
                                                             className={`
                                     text-xs
-                                    ${isSelected
-                                                                    ? "text-[var(--primary)] font-medium"
-                                                                    : "text-gray-500"
-                                                                }
+                                    ${
+                                        isSelected
+                                            ? "text-[var(--primary)] font-medium"
+                                            : "text-gray-500"
+                                    }
                                 `}
                                                         >
                                                             {color.name}
                                                         </span>
                                                     </button>
                                                 );
-                                            }
+                                            },
                                         )}
                                     </div>
                                 </div>
@@ -670,12 +640,7 @@ h-8
                                 >
                                     <button
                                         onClick={() =>
-                                            setQty(
-                                                Math.max(
-                                                    1,
-                                                    qty - 1
-                                                )
-                                            )
+                                            setQty(Math.max(1, qty - 1))
                                         }
                                     >
                                         <FiMinus />
@@ -693,16 +658,17 @@ h-8
                                             setQty((prev) =>
                                                 Math.min(
                                                     prev + 1,
-                                                    selectedVariant?.stock || 1
-                                                )
+                                                    selectedVariant?.stock || 1,
+                                                ),
                                             )
                                         }
                                         className={`
         transition
-        ${qty >= (selectedVariant?.stock || 0)
-                                                ? "opacity-40 cursor-not-allowed"
-                                                : ""
-                                            }
+        ${
+            qty >= (selectedVariant?.stock || 0)
+                ? "opacity-40 cursor-not-allowed"
+                : ""
+        }
     `}
                                     >
                                         <FiPlus />
@@ -736,13 +702,7 @@ h-8
                                             : ""}
                                     </span>
                                 </div>
-
-
                             </div>
-
-
-
-
                         </div>
                         {cartError && (
                             <div
@@ -772,7 +732,6 @@ h-8
     "
                         >
                             <div className="flex items-center gap-2 sm:gap-3">
-
                                 {/* Wishlist */}
                                 <button
                                     onClick={() => toggleWishlist(product)}
@@ -831,10 +790,11 @@ h-8
 
                 transition
 
-                ${selectedVariant?.stock > 0
-                                            ? "bg-[var(--primary)] hover:opacity-90"
-                                            : "bg-gray-400 cursor-not-allowed"
-                                        }
+                ${
+                    selectedVariant?.stock > 0
+                        ? "bg-[var(--primary)] hover:opacity-90"
+                        : "bg-gray-400 cursor-not-allowed"
+                }
             `}
                                 >
                                     <BiCartAdd size={20} />
@@ -853,8 +813,8 @@ h-8
                                         router.visit(
                                             route(
                                                 "shop.product.show",
-                                                product.slug
-                                            )
+                                                product.slug,
+                                            ),
                                         )
                                     }
                                     className="
@@ -893,7 +853,6 @@ h-8
                                         عرض المنتج
                                     </span>
                                 </button>
-
                             </div>
                         </div>
                     </div>

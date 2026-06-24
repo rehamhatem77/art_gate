@@ -637,7 +637,7 @@ export default function Navbar({ auth }) {
     const isCart = url.startsWith("/cart") || url.startsWith("/checkout");
     const serverCartCount = props.cartCount || 0;
     const [search, setSearch] = useState("");
- const [searchOpen, setSearchOpen] = useState(false);
+    const [searchOpen, setSearchOpen] = useState(false);
 
     const [results, setResults] = useState([]);
 
@@ -1095,9 +1095,19 @@ export default function Navbar({ auth }) {
                     <div className="border-t border-white/50 p-5">
                         {auth?.user ? (
                             <div
+                                onClick={() => {
+                                    setOpen(false);
+                                    router.get(
+                                        auth.user.role === "admin"
+                                            ? "/admin/profile"
+                                            : "/profile",
+                                    );
+                                }}
                                 className="
                         flex items-center gap-3
                         animate-fade-up
+cursor-pointer
+hover:text-[var(--primary)]
                     "
                             >
                                 <FiUser size={20} />
