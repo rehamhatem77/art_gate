@@ -16,7 +16,6 @@ export default function ProductsSection({
     filters,
     setFilters,
     setShowFilters,
-
 }) {
     const [sortModal, setSortModal] = useState(false);
     const [sort, setSort] = useState("default");
@@ -38,7 +37,6 @@ export default function ProductsSection({
             value: item,
             label: item,
         })),
-
     ];
     const [items, setItems] = useState(products || []);
     const [page, setPage] = useState(1);
@@ -60,9 +58,9 @@ export default function ProductsSection({
                 method: "GET",
                 headers: {
                     "X-Load-More": "true",
-                    "Accept": "application/json",
+                    Accept: "application/json",
                 },
-            }
+            },
         );
 
         const data = await res.json();
@@ -75,12 +73,11 @@ export default function ProductsSection({
         setLoading(false);
     };
 
-
     const removeFilter = (filter) => {
         const updated = {
             ...filters,
             [filter.type]: (filters[filter.type] || []).filter(
-                (v) => v !== filter.value
+                (v) => v !== filter.value,
             ),
         };
 
@@ -123,7 +120,6 @@ export default function ProductsSection({
         },
     };
 
-
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [showQuickView, setShowQuickView] = useState(false);
 
@@ -132,14 +128,12 @@ export default function ProductsSection({
         setShowQuickView(true);
     };
 
-
     const closeQuickView = () => {
         setShowQuickView(false);
         setSelectedProduct(null);
     };
     return (
         <div className="w-full ">
-
             {/* Toolbar */}
             <motion.div
                 initial={{
@@ -158,10 +152,9 @@ export default function ProductsSection({
                     duration: 0.8,
                     ease: "easeOut",
                 }}
-
-                className="flex flex-col gap-4 mb-6">
+                className="flex flex-col gap-4 mb-6"
+            >
                 <div className="flex  md:flex-row items-center md:items-center justify-between gap-4">
-
                     <button
                         onClick={() => setShowFilters(true)}
                         className="
@@ -183,7 +176,8 @@ export default function ProductsSection({
                     </button>
 
                     <div className="hidden md:block text-md  text-[#666] font-medium">
-                        عرض  1- {items.length} من أصل {total || 0}  نتيجة                  </div>
+                        عرض 1- {items.length} من أصل {total || 0} نتيجة{" "}
+                    </div>
                     <div className="flex  items-center">
                         <div className="hidden md:block">
                             <select
@@ -197,7 +191,6 @@ export default function ProductsSection({
                                         sort: value,
                                     });
                                 }}
-
                                 className="
            
             min-w-[180px]
@@ -281,7 +274,6 @@ h-11 rounded-xl focus:ring-1
                     initial="hidden"
                     whileInView="visible"
                     animate="visible"
-
                     className="
             grid
             grid-cols-1
@@ -292,11 +284,12 @@ h-11 rounded-xl focus:ring-1
         "
                 >
                     {items.map((product) => (
-                        <motion.div
-                            key={product.id}
-                            variants={itemVariants}
-                        >
-                            <ProductCard key={product.id} product={product} onQuickView={openQuickView} />
+                        <motion.div key={product.id} variants={itemVariants}>
+                            <ProductCard
+                                key={product.id}
+                                product={product}
+                                onQuickView={openQuickView}
+                            />
                         </motion.div>
                     ))}
                 </motion.div>
@@ -331,7 +324,9 @@ h-11 rounded-xl focus:ring-1
                 mb-5
             "
                     >
-                        <span ><IoColorPaletteOutline size={38}/></span>
+                        <span>
+                            <IoColorPaletteOutline size={38} />
+                        </span>
                     </div>
 
                     <h3
@@ -395,12 +390,12 @@ h-11 rounded-xl focus:ring-1
                 disabled:opacity-50
             "
                     >
-                        {loading ? "جاري التحميل..." : " تحميل المزيد من المنتجات"}
+                        {loading
+                            ? "جاري التحميل..."
+                            : " تحميل المزيد من المنتجات"}
                     </button>
                 </div>
             )}
-
-
 
             <Modal show={sortModal} onClose={() => setSortModal(false)}>
                 <div className="p-6">
@@ -429,6 +424,12 @@ h-11 rounded-xl focus:ring-1
                                 key={item.value}
                                 onClick={() => {
                                     setSort(item.value);
+
+                                    setFilters({
+                                        ...filters,
+                                        sort: item.value,
+                                    });
+
                                     setSortModal(false);
                                 }}
                                 className={`
@@ -438,10 +439,11 @@ h-11 rounded-xl focus:ring-1
                         py-3
                         rounded-xl
                         transition
-                        ${sort === item.value
-                                        ? "bg-[var(--primary)] text-white"
-                                        : "bg-gray-50 hover:bg-gray-100"
-                                    }
+                        ${
+                            sort === item.value
+                                ? "bg-[var(--primary)] text-white"
+                                : "bg-gray-50 hover:bg-gray-100"
+                        }
                     `}
                             >
                                 <div className="flex items-center justify-between">
