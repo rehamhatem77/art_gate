@@ -231,15 +231,20 @@ profilePage
     };
 
     return (
-        <SiteLayout title="حسابي" announcement={announcement}>
-            <div dir="rtl" className="relative min-h-screen overflow-hidden">
-                {/* HERO */}
-                <ProfileHero image={profilePage.bg_image} security={profilePage.security_json} />
-                {/* CONTAINER */}
-                <div className="relative max-w-8xl mx-auto px-6 py-16">
-                    {/* MAIN CONTENT */}
-                    <div className="grid lg:grid-cols-12 gap-8 items-start">
-                        <div className="lg:col-span-4">
+    <SiteLayout title="حسابي" announcement={announcement}>
+        <div dir="rtl" className="relative min-h-screen bg-[#fbfaf8] overflow-hidden">
+            {/* HERO */}
+            <ProfileHero
+                image={profilePage.bg_image}
+                security={profilePage.security_json}
+            />
+
+            {/* MAIN */}
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-16">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+                    {/* Sidebar */}
+                    <aside className="order-1 lg:order-1 lg:col-span-4">
+                        <div className="sticky lg:top-6">
                             <ProfileSidebar
                                 activeTab={activeTab}
                                 setActiveTab={setActiveTab}
@@ -247,38 +252,41 @@ profilePage
                                 orders={orders}
                             />
                         </div>
+                    </aside>
 
-                        <div className="lg:col-span-8">
-                            <motion.div
-                                key={activeTab}
-                                initial={{
-                                    opacity: 0,
-                                    y: 20,
-                                }}
-                                animate={{
-                                    opacity: 1,
-                                    y: 0,
-                                }}
-                                transition={{
-                                    duration: 0.35,
-                                }}
-                                className="
+                    {/* Content */}
+                    <main className="order-2 lg:order-2 lg:col-span-8 min-w-0">
+                        <motion.div
+                            key={activeTab}
+                            initial={{
+                                opacity: 0,
+                                y: 20,
+                            }}
+                            animate={{
+                                opacity: 1,
+                                y: 0,
+                            }}
+                            transition={{
+                                duration: 0.35,
+                            }}
+                            className="
                                 bg-white
-                                rounded-[40px]
+                                rounded-3xl
+                                md:rounded-[40px]
                                 border
                                 border-gray-200
-                                shadow-[0_25px_80px_rgba(0,0,0,0.05)]
+                                shadow-[0_20px_60px_rgba(0,0,0,0.05)]
                                 overflow-hidden
                             "
-                            >
-                                <div className="p-5 md:p-8">
-                                    {renderContent()}
-                                </div>
-                            </motion.div>
-                        </div>
-                    </div>
+                        >
+                            <div className="p-4 sm:p-6 md:p-8 lg:p-10">
+                                {renderContent()}
+                            </div>
+                        </motion.div>
+                    </main>
                 </div>
             </div>
-        </SiteLayout>
-    );
+        </div>
+    </SiteLayout>
+);
 }

@@ -176,12 +176,14 @@ class HomePageController extends Controller
                     'id' => $cat->id,
                     'name' => $cat->name,
                     'key' => 'category_' . $cat->id,
-                    'products' => $cat->products->map(function ($product) use ($wishlistIds)  {
+                    'products' => $cat->products->map(function ($product) use ($wishlistIds) {
                         return [
                             'id' => $product->id,
                             'name' => $product->name,
+                            'code' => $product->code,
+                            'slug' => $product->slug,
                             'main_image' => $product->main_image,
-                             'isWishlisted' => in_array(
+                            'isWishlisted' => in_array(
 
                                 $product->id,
 
@@ -237,6 +239,4 @@ class HomePageController extends Controller
             'categoryTabs'  => $categoryTabs,
         ]);
     }
-
-
 }

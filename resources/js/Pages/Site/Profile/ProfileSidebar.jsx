@@ -65,65 +65,84 @@ export default function ProfileSidebar({
 
     return (
         <div dir="rtl" className="h-full flex flex-col space-y-3">
-            {/* ACCOUNT CARD */}
-            <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-                className="
+               <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="
                 rounded-[28px]
                 border
                 border-gray-200
                 bg-white
-                p-5
                 shadow-[0_10px_35px_rgba(0,0,0,.04)]
+                overflow-hidden
             "
-            >
-                {/* User */}
+        >
+            {/* Top */}
+            <div className="p-5 sm:p-6">
                 <div className="flex items-center gap-4">
                     <div
                         className="
-                        w-14 h-14
-                        rounded-full
-                        bg-gray-100
-                        flex items-center justify-center
-                    "
+                            w-16 h-16
+                            sm:w-20 sm:h-20
+                            rounded-full
+                            overflow-hidden
+                            bg-gray-100
+                            shrink-0
+                            flex
+                            items-center
+                            justify-center
+                        "
                     >
                         {user.profile.avatar ? (
                             <img
                                 src={getImage(user.profile.avatar)}
-                                className=" object-cover rounded-full"
+                                alt={user.name}
+                                className="w-full h-full object-cover"
                             />
                         ) : (
                             <FiUser
-                                size={22}
+                                size={26}
                                 className="text-[var(--primary)]"
                             />
                         )}
                     </div>
 
                     <div className="min-w-0 flex-1">
-                        <h3 className="font-bold truncate">{user?.name}</h3>
+                        <h3 className="font-bold text-lg truncate">
+                            {user?.name}
+                        </h3>
 
                         <p className="text-sm text-gray-500 truncate">
                             {user?.email}
                         </p>
+
+                        <div className="flex items-center gap-2 mt-3">
+                            <FiShield
+                                className="text-green-600"
+                                size={15}
+                            />
+
+                            <span className="text-xs text-green-700 font-medium">
+                                حساب موثق
+                            </span>
+                        </div>
                     </div>
                 </div>
 
                 {/* Completion */}
-                <div className="mt-3">
-                    <div className="flex justify-between mb-1">
+                <div className="mt-6">
+                    <div className="flex items-center justify-between mb-2">
                         <span className="text-sm text-gray-500">
                             اكتمال الملف الشخصي
                         </span>
 
-                        <span className="font-semibold text-[var(--primary)]">
+                        <span className="font-bold text-[var(--primary)]">
                             {completion}%
                         </span>
                     </div>
 
-                    <div className="h-1 rounded-full bg-gray-100 overflow-hidden">
+                    <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${completion}%` }}
@@ -132,19 +151,24 @@ export default function ProfileSidebar({
                         />
                     </div>
                 </div>
+            </div>
 
-                {/* Stats */}
-                <div className="grid grid-cols-2 gap-3 mt-5 mx-5">
+            {/* Stats */}
+            <div className="border-t bg-gray-50 p-4 sm:p-5">
+                <div className="grid grid-cols-2 gap-3">
                     <div
                         className="
-                        rounded-2xl
-                        border
-                        border-gray-200
-                        p-2
-                        text-center
-                    "
+                            rounded-2xl
+                            bg-white
+                            border
+                            border-gray-200
+                            p-4
+                            text-center
+                        "
                     >
-                        <div className="text-xl font-bold">{orders.length}</div>
+                        <div className="text-2xl font-bold text-[var(--primary)]">
+                            {orders.length}
+                        </div>
 
                         <div className="text-xs text-gray-500 mt-1">
                             إجمالي الطلبات
@@ -153,39 +177,53 @@ export default function ProfileSidebar({
 
                     <div
                         className="
-                        rounded-2xl
-                        border
-                        border-gray-200
-                        p-2
-                        flex
-                        flex-col
-                        items-center
-                        justify-center
-                    "
+                            rounded-2xl
+                            bg-white
+                            border
+                            border-gray-200
+                            p-4
+                            flex
+                            flex-col
+                            items-center
+                            justify-center
+                        "
                     >
-                        <FiShield size={16} className="text-green-600 mb-2" />
+                        <FiShield
+                            className="text-green-600 mb-2"
+                            size={18}
+                        />
 
-                        <div className="text-sm font-medium">حساب موثوق</div>
+                        <div className="font-semibold text-sm">
+                            حساب موثوق
+                        </div>
+
+                        <span className="text-xs text-gray-500 mt-1">
+                            محمي وآمن
+                        </span>
                     </div>
                 </div>
-            </motion.div>
+            </div>
+        </motion.div>
 
             {/* DESKTOP MENU */}
-            <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="
-                hidden lg:block
+                    {/* DESKTOP MENU */}
+        <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="
+                hidden
+                lg:block
                 rounded-[28px]
                 border
                 border-gray-200
                 bg-white
-                p-3
                 shadow-[0_10px_35px_rgba(0,0,0,.04)]
+                overflow-hidden
             "
-            >
-                <div className="space-y-1">
+        >
+            <div className="p-3">
+                <div className="space-y-2">
                     {menu.map((item) => {
                         const Icon = item.icon;
                         const active = activeTab === item.id;
@@ -195,20 +233,31 @@ export default function ProfileSidebar({
                                 key={item.id}
                                 onClick={() => setActiveTab(item.id)}
                                 className={`
-                                w-full
-                                h-14
-                                px-4
-                                rounded-2xl
-                                flex items-center gap-4
-                                transition-all duration-300
-                                ${
-                                    active
-                                        ? "bg-[var(--primary)] text-white"
-                                        : "hover:bg-gray-50 text-gray-700"
-                                }
-                            `}
+                                    group
+                                    w-full
+                                    min-h-[56px]
+                                    px-5
+                                    rounded-2xl
+                                    flex
+                                    items-center
+                                    gap-4
+                                    transition-all
+                                    duration-300
+                                    ${
+                                        active
+                                            ? "bg-[var(--primary)] text-white shadow-lg"
+                                            : "text-gray-700 hover:bg-gray-50"
+                                    }
+                                `}
                             >
-                                <Icon size={18} />
+                                <Icon
+                                    size={18}
+                                    className={
+                                        active
+                                            ? ""
+                                            : "text-gray-500 group-hover:text-[var(--primary)]"
+                                    }
+                                />
 
                                 <span className="font-medium">
                                     {item.title}
@@ -218,70 +267,117 @@ export default function ProfileSidebar({
                     })}
                 </div>
 
-                <div className="border-t mt-4 pt-4">
+                <div className="border-t mt-5 pt-5">
                     <button
-                        onClick={() => router.post("logout")}
+                        onClick={() => router.post(route("logout"))}
                         className="
-                        w-full
-                        h-14
-                        rounded-2xl
-                        text-red-600
-                        hover:bg-red-50
-                        flex
-                        items-center
-                        justify-center
-                        gap-3
-                        transition
-                    "
+                            w-full
+                            min-h-[56px]
+                            rounded-2xl
+                            border
+                            border-red-100
+                            text-red-600
+                            hover:bg-red-50
+                            flex
+                            items-center
+                            justify-center
+                            gap-3
+                            transition
+                        "
                     >
                         <FiLogOut size={18} />
-                        تسجيل الخروج
+
+                        <span className="font-medium">
+                            تسجيل الخروج
+                        </span>
                     </button>
                 </div>
-            </motion.div>
+            </div>
+        </motion.div>
 
-            {/* MOBILE MENU */}
-            <div className="lg:hidden">
-                <div
-                    className="
-                    flex
-                    gap-2
-                    overflow-x-auto
-                    scrollbar-none
-                "
-                >
-                    {menu.map((item) => {
-                        const Icon = item.icon;
+        {/* MOBILE MENU */}
+        <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="
+                lg:hidden
+                rounded-[28px]
+                border
+                border-gray-200
+                bg-white
+                shadow-[0_10px_35px_rgba(0,0,0,.04)]
+                overflow-hidden
+            "
+        >
+            <div className="p-4 space-y-3">
+                {menu.map((item) => {
+                    const Icon = item.icon;
+                    const active = activeTab === item.id;
 
-                        return (
-                            <button
-                                key={item.id}
-                                onClick={() => setActiveTab(item.id)}
-                                className={`
-                                shrink-0
-                                h-12
-                                px-5
-                                rounded-full
-                                border
+                    return (
+                        <button
+                            key={item.id}
+                            onClick={() => setActiveTab(item.id)}
+                            className={`
+                                w-full
+                                min-h-[54px]
+                                px-4
+                                rounded-2xl
                                 flex
                                 items-center
-                                gap-2
+                                justify-between
                                 transition-all
                                 ${
-                                    activeTab === item.id
-                                        ? "bg-[var(--primary)] text-white border-[var(--primary)]"
-                                        : "bg-white border-gray-200"
+                                    active
+                                        ? "bg-[var(--primary)] text-white"
+                                        : "bg-gray-50 text-gray-700 hover:bg-gray-100"
                                 }
                             `}
-                            >
-                                <Icon size={15} />
+                        >
+                            <div className="flex items-center gap-3">
+                                <Icon size={18} />
 
-                                <span className="text-sm">{item.title}</span>
-                            </button>
-                        );
-                    })}
+                                <span className="font-medium text-sm">
+                                    {item.title}
+                                </span>
+                            </div>
+
+                            {active && (
+                                <div className="w-2 h-2 rounded-full bg-white" />
+                            )}
+                        </button>
+                    );
+                })}
+
+                <div className="border-t pt-3 mt-2">
+                    <button
+                        onClick={() => router.post(route("logout"))}
+                        className="
+                            w-full
+                            min-h-[54px]
+                            rounded-2xl
+                            bg-red-50
+                            text-red-600
+                            flex
+                            items-center
+                            justify-center
+                            gap-3
+                            hover:bg-red-100
+                            transition
+                        "
+                    >
+                        <FiLogOut size={18} />
+
+                        <span className="font-medium">
+                            تسجيل الخروج
+                        </span>
+                    </button>
                 </div>
             </div>
-        </div>
-    );
+        </motion.div>
+    </div>
+);
+
+   
 }

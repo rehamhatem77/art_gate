@@ -7,22 +7,11 @@ import {
     FiPackage,
     FiShield,
     FiTruck,
-    FiArrowUpLeft,
     FiCheckCircle,
     FiKey,
     FiLock,
     FiEye,
 } from "react-icons/fi";
-
-const container = {
-    hidden: {},
-
-    visible: {
-        transition: {
-            staggerChildren: 0.15,
-        },
-    },
-};
 
 const fadeUp = {
     hidden: {
@@ -40,6 +29,7 @@ const fadeUp = {
         },
     },
 };
+
 const securityIcons = {
     FiShield,
     FiLock,
@@ -57,24 +47,27 @@ export default function ProfileHero({ user, orders, image, security }) {
         : typeof security === "string"
           ? JSON.parse(security || "[]")
           : [];
+
     const securityIconColors = {
         FiShield: "text-green-400",
-
         FiLock: "text-sky-400",
-
         FiCheckCircle: "text-emerald-400",
-
         FiKey: "text-amber-400",
-
         FiEye: "text-violet-400",
-
         FiTruck: "text-blue-400",
         FiUser: "text-pink-400",
     };
+
     return (
         <section
             dir="rtl"
-            className="relative h-[70vh] min-h-[550px] overflow-hidden bg-black"
+            className="
+                relative
+                min-h-[500px]
+                md:min-h-[650px]
+                overflow-hidden
+                bg-black
+            "
         >
             {/* Background */}
             <motion.div
@@ -89,28 +82,65 @@ export default function ProfileHero({ user, orders, image, security }) {
                             ? getImage(image)
                             : "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=2070&auto=format&fit=crop"
                     }
-                    alt="ArtGateContact"
+                    alt="Profile Hero"
                     className="w-full h-full object-cover"
                 />
             </motion.div>
 
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-black/55" />
+            {/* Overlays */}
+            <div className="absolute inset-0 bg-black/60" />
 
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/40" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/40" />
 
-            {/* Gold glow */}
-            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#b89b72]/20 blur-[120px] rounded-full" />
+            {/* Glow */}
+            <div
+                className="
+                    absolute
+                    bottom-0
+                    left-0
+                    w-[220px]
+                    h-[220px]
+                    md:w-[500px]
+                    md:h-[500px]
+                    bg-[#b89b72]/20
+                    blur-[100px]
+                    rounded-full
+                "
+            />
 
             {/* Content */}
-            <div className="relative z-10 h-full max-w-7xl mx-auto px-6 lg:px-10 flex items-center">
+            <div
+                className="
+                    relative
+                    z-10
+                    flex
+                    items-center
+                    min-h-[500px]
+                    md:min-h-[650px]
+                    max-w-7xl
+                    mx-auto
+                    px-4
+                    sm:px-6
+                    lg:px-10
+                    py-16
+                "
+            >
                 <div className="w-full">
                     {/* Breadcrumb */}
                     <motion.div
                         initial={{ opacity: 0, y: -10 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
-                        className="mb-10 flex items-center gap-2 text-sm text-white/70"
+                        className="
+                            mb-6
+                            md:mb-10
+                            flex
+                            items-center
+                            gap-2
+                            text-xs
+                            sm:text-sm
+                            text-white/70
+                        "
                     >
                         <button
                             onClick={() => router.visit(route("home"))}
@@ -121,23 +151,17 @@ export default function ProfileHero({ user, orders, image, security }) {
 
                         <span>/</span>
 
-                        <span className="text-[var(--primary)]">حسابي</span>
+                        <span className="text-[var(--primary)]">
+                            حسابي
+                        </span>
                     </motion.div>
 
-                    {/* Floating Card */}
+                    {/* Main Content */}
                     <motion.div
                         initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
-                        className="
-                                    max-w-4xl
-                                   
-                                   
-                                 
-                                    p-4
-                                    md:p-8
-                                    
-                                "
+                        className="max-w-4xl"
                     >
                         {/* Title */}
                         <motion.h1
@@ -145,29 +169,32 @@ export default function ProfileHero({ user, orders, image, security }) {
                             whileInView={{ opacity: 1 }}
                             transition={{ delay: 0.2 }}
                             className="
-                                        text-white
-                                        text-4xl
-                                        md:text-6xl
-                                        xl:text-7xl
-                                        font-bold
-                                        leading-[1.1]
-                                    "
+                                text-white
+                                font-bold
+                                leading-tight
+                                text-3xl
+                                sm:text-5xl
+                                lg:text-6xl
+                                xl:text-7xl
+                            "
                         >
                             حسابي
                         </motion.h1>
+
                         {/* Accent */}
                         <motion.div
                             variants={fadeUp}
                             className="
-                            mt-7
-                            flex
-                            items-center
-                            gap-4
-                        "
+                                mt-5
+                                md:mt-7
+                                flex
+                                items-center
+                                gap-3
+                            "
                         >
-                            <div className="w-24 h-[2px] bg-[var(--primary)]" />
+                            <div className="w-12 sm:w-20 md:w-24 h-[2px] bg-[var(--primary)]" />
 
-                            <span className="text-sm text-white/50">
+                            <span className="text-xs sm:text-sm text-white/50">
                                 إدارة الحساب والطلبات
                             </span>
                         </motion.div>
@@ -175,34 +202,39 @@ export default function ProfileHero({ user, orders, image, security }) {
                         {/* Description */}
                         <p
                             className="
-                                        mt-8
-                                        text-white/75
-                                        text-base
-                                        md:text-lg
-                                        leading-[2]
-                                        max-w-2xl
-                                    "
+                                mt-6
+                                md:mt-8
+                                text-white/75
+                                text-sm
+                                sm:text-base
+                                md:text-lg
+                                leading-7
+                                md:leading-8
+                                max-w-2xl
+                            "
                         >
                             قم بإدارة بياناتك الشخصية وعناوين التوصيل ومتابعة
                             طلباتك وحالة الشحن بكل سهولة من لوحة تحكم مصممة
                             لتوفر لك تجربة تسوق احترافية.
                         </p>
-                        {/* Trust chips */}
 
+                        {/* Security Items */}
                         {!!securityItems?.length ? (
                             <motion.div
                                 variants={fadeUp}
                                 className="
-            mt-10
-            flex
-            flex-wrap
-            gap-4
-        "
+                                    mt-8
+                                    md:mt-10
+                                    flex
+                                    flex-wrap
+                                    gap-3
+                                "
                             >
                                 {securityItems.map((item, index) => {
                                     const iconName = item.icon;
                                     const Icon =
                                         securityIcons[item.icon] || FiShield;
+
                                     const iconColor =
                                         securityIconColors[iconName] ||
                                         "text-[var(--primary)]";
@@ -211,36 +243,29 @@ export default function ProfileHero({ user, orders, image, security }) {
                                         <div
                                             key={index}
                                             className="
-                        h-12
-                        px-5
-                        rounded-full
-                        border
-                        border-white/10
-                        bg-white/10
-                        backdrop-blur-xl
-
-                        flex
-                        items-center
-                        gap-3
-
-                        hover:bg-white/15
-
-                        transition
-                    "
+                                                w-full
+                                                sm:w-auto
+                                                min-h-[48px]
+                                                px-4
+                                                rounded-full
+                                                border
+                                                border-white/10
+                                                bg-white/10
+                                                backdrop-blur-xl
+                                                flex
+                                                items-center
+                                                justify-center
+                                                sm:justify-start
+                                                gap-3
+                                                hover:bg-white/15
+                                                transition
+                                            "
                                         >
                                             <Icon
-                                                className={`
-                    ${iconColor}
-                    text-lg
-                `}
+                                                className={`${iconColor} text-lg`}
                                             />
 
-                                            <span
-                                                className="
-                            text-white/80
-                            text-sm
-                        "
-                                            >
+                                            <span className="text-white/80 text-sm">
                                                 {item.title}
                                             </span>
                                         </div>
@@ -251,82 +276,67 @@ export default function ProfileHero({ user, orders, image, security }) {
                             <motion.div
                                 variants={fadeUp}
                                 className="
-                            mt-10
-                            flex
-                            flex-wrap
-                            gap-4
-                        "
+                                    mt-8
+                                    md:mt-10
+                                    flex
+                                    flex-wrap
+                                    gap-3
+                                "
                             >
-                                <div
-                                    className="
-                                h-12
-                                px-5
-                                rounded-full
-                                border
-                                border-white/10
-                                bg-white/10
-                                backdrop-blur-xl
-                                flex
-                                items-center
-                                gap-3
-                            "
-                                >
-                                    <FiShield className="text-green-400" />
+                                {[
+                                    {
+                                        icon: (
+                                            <FiShield className="text-green-400" />
+                                        ),
+                                        text: "بياناتك محمية وآمنة",
+                                    },
+                                    {
+                                        icon: (
+                                            <FiPackage className="text-[var(--primary)]" />
+                                        ),
+                                        text: "متابعة الطلبات بسهولة",
+                                    },
+                                    {
+                                        icon: (
+                                            <FiCheckCircle className="text-emerald-400" />
+                                        ),
+                                        text: "تجربة تسوق موثوقة",
+                                    },
+                                ].map((item, index) => (
+                                    <div
+                                        key={index}
+                                        className="
+                                            w-full
+                                            sm:w-auto
+                                            min-h-[48px]
+                                            px-4
+                                            rounded-full
+                                            border
+                                            border-white/10
+                                            bg-white/10
+                                            backdrop-blur-xl
+                                            flex
+                                            items-center
+                                            justify-center
+                                            sm:justify-start
+                                            gap-3
+                                        "
+                                    >
+                                        {item.icon}
 
-                                    <span className="text-white/80 text-sm">
-                                        بياناتك محمية وآمنة
-                                    </span>
-                                </div>
-
-                                <div
-                                    className="
-                                h-12
-                                px-5
-                                rounded-full
-                                border
-                                border-white/10
-                                bg-white/10
-                                backdrop-blur-xl
-                                flex
-                                items-center
-                                gap-3
-                            "
-                                >
-                                    <FiPackage className="text-[var(--primary)]" />
-
-                                    <span className="text-white/80 text-sm">
-                                        متابعة الطلبات بسهولة
-                                    </span>
-                                </div>
-
-                                <div
-                                    className="
-                                h-12
-                                px-5
-                                rounded-full
-                                border
-                                border-white/10
-                                bg-white/10
-                                backdrop-blur-xl
-                                flex
-                                items-center
-                                gap-3
-                            "
-                                >
-                                    <FiCheckCircle className="text-emerald-400" />
-
-                                    <span className="text-white/80 text-sm">
-                                        تجربة تسوق موثوقة
-                                    </span>
-                                </div>
+                                        <span className="text-white/80 text-sm">
+                                            {item.text}
+                                        </span>
+                                    </div>
+                                ))}
                             </motion.div>
                         )}
                     </motion.div>
                 </div>
             </div>
 
-            {/* Bottom fade */}
-            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#fbfaf8] to-transparent" />
+            {/* Bottom Fade */}
+            <div className="absolute bottom-0 left-0 right-0 h-20 md:h-32 bg-gradient-to-t from-[#fbfaf8] to-transparent" />
         </section>
     );
 }
