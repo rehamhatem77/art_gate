@@ -1094,25 +1094,54 @@ export default function Navbar({ auth }) {
                     {/* AUTH */}
                     <div className="border-t border-white/50 p-5">
                         {auth?.user ? (
-                            <div
-                                onClick={() => {
-                                    setOpen(false);
-                                    router.get(
-                                        auth.user.role === "admin"
-                                            ? "/admin/profile"
-                                            : "/profile",
-                                    );
-                                }}
-                                className="
+                            <div>
+                                <div
+                                    onClick={() => {
+                                        setOpen(false);
+                                        router.get(
+                                            auth.user.role === "admin"
+                                                ? "/admin/profile"
+                                                : "/profile",
+                                        );
+                                    }}
+                                    className="
                         flex items-center gap-3
                         animate-fade-up
 cursor-pointer
 hover:text-[var(--primary)]
                     "
-                            >
-                                <FiUser size={20} />
+                                >
+                                    <FiUser size={20} />
 
-                                <span className="font-medium">حسابي</span>
+                                    <span className="font-medium">حسابي</span>
+                                </div>
+                                <div className="pt-2 mt-2">
+                                    <button
+                                        onClick={() => {
+                                            router.post(route("logout"));
+                                            setOpen(false);
+                                        }}
+                                        className="
+                            w-full
+                            min-h-[54px]
+                            rounded-2xl
+                            bg-red-50
+                            text-red-500
+                            flex
+                            items-center
+                            justify-center
+                            gap-3
+                            hover:opacity-80
+                            transition
+                        "
+                                    >
+                                        <FiLogOut size={18} />
+
+                                        <span className="font-medium">
+                                            تسجيل الخروج
+                                        </span>
+                                    </button>
+                                </div>
                             </div>
                         ) : (
                             <div className="flex flex-col gap-3">

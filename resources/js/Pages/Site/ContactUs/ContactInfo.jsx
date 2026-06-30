@@ -232,7 +232,7 @@ sm:text-xl
 
                 <p
                 dir={dir}
-                    className="
+                    className={`
 text-white
 
 leading-relaxed
@@ -245,7 +245,10 @@ break-words
 overflow-hidden
 
 max-w-full
-"
+
+${dir === "ltr" ? "text-right" : "text-right"}
+
+`}
                 >
                     {value}
                 </p>
